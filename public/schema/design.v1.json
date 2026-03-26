@@ -1,0 +1,228 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://luongnv89.github.io/sleek-ui/schema/design.v1.json",
+  "title": "sleek-ui Design System Schema",
+  "description": "JSON schema for AI agent-consumable design system files",
+  "type": "object",
+  "required": ["$schema", "name", "version", "tokens", "fonts", "agentInstructions", "preview"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "const": "https://luongnv89.github.io/sleek-ui/schema/design.v1.json"
+    },
+    "name": {
+      "type": "string",
+      "description": "Design name (slug format)"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "description": {
+      "type": "string"
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["dark", "light", "minimal", "warm", "bold", "playful", "corporate", "editorial"]
+      }
+    },
+    "author": {
+      "type": "string"
+    },
+    "defaultMode": {
+      "type": "string",
+      "enum": ["light", "dark"]
+    },
+    "tokens": {
+      "type": "object",
+      "required": ["colors", "typography", "spacing", "radius", "shadows"],
+      "properties": {
+        "colors": {
+          "type": "object",
+          "required": ["light", "dark"],
+          "properties": {
+            "light": {
+              "type": "object",
+              "required": ["background", "foreground", "primary", "primary-foreground", "secondary", "secondary-foreground", "muted", "muted-foreground", "accent", "accent-foreground", "destructive", "destructive-foreground", "border", "input", "ring", "card", "card-foreground"],
+              "properties": {
+                "background": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "foreground": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "primary": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "primary-foreground": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "secondary": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "secondary-foreground": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "muted": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "muted-foreground": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "accent": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "accent-foreground": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "destructive": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "destructive-foreground": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "border": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "input": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "ring": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "card": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "card-foreground": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" }
+              }
+            },
+            "dark": {
+              "type": "object",
+              "required": ["background", "foreground", "primary", "primary-foreground", "secondary", "secondary-foreground", "muted", "muted-foreground", "accent", "accent-foreground", "destructive", "destructive-foreground", "border", "input", "ring", "card", "card-foreground"],
+              "properties": {
+                "background": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "foreground": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "primary": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "primary-foreground": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "secondary": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "secondary-foreground": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "muted": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "muted-foreground": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "accent": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "accent-foreground": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "destructive": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "destructive-foreground": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "border": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "input": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "ring": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "card": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" },
+                "card-foreground": { "type": "string", "pattern": "^\\d+ \\d+(\\.\\d+)?% \\d+(\\.\\d+)?%$" }
+              }
+            }
+          }
+        },
+        "typography": {
+          "type": "object",
+          "required": ["fontFamily", "fontSize", "lineHeight"],
+          "properties": {
+            "fontFamily": {
+              "type": "object",
+              "properties": {
+                "sans": { "type": "string" },
+                "mono": { "type": "string" }
+              }
+            },
+            "fontSize": {
+              "type": "object",
+              "properties": {
+                "xs": { "type": "string" },
+                "sm": { "type": "string" },
+                "base": { "type": "string" },
+                "lg": { "type": "string" },
+                "xl": { "type": "string" },
+                "2xl": { "type": "string" },
+                "3xl": { "type": "string" },
+                "4xl": { "type": "string" }
+              }
+            },
+            "lineHeight": {
+              "type": "object",
+              "properties": {
+                "tight": { "type": "string" },
+                "normal": { "type": "string" },
+                "relaxed": { "type": "string" }
+              }
+            }
+          }
+        },
+        "spacing": {
+          "type": "object",
+          "properties": {
+            "unit": { "type": "string" },
+            "scale": {
+              "type": "array",
+              "items": { "type": "number" }
+            }
+          }
+        },
+        "radius": {
+          "type": "object",
+          "properties": {
+            "sm": { "type": "string" },
+            "default": { "type": "string" },
+            "lg": { "type": "string" },
+            "full": { "type": "string" }
+          }
+        },
+        "shadows": {
+          "type": "object",
+          "properties": {
+            "sm": { "type": "string" },
+            "default": { "type": "string" },
+            "lg": { "type": "string" }
+          }
+        }
+      }
+    },
+    "fonts": {
+      "type": "object",
+      "required": ["urls"],
+      "properties": {
+        "google": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "urls": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "accessibility": {
+      "type": "object",
+      "properties": {
+        "contrastTarget": { "type": "number" },
+        "focusRing": { "type": "string" },
+        "reducedMotion": { "type": "string" }
+      }
+    },
+    "components": {
+      "type": "object",
+      "properties": {
+        "button": {
+          "type": "object",
+          "properties": {
+            "primary": { "type": "string" },
+            "secondary": { "type": "string" },
+            "ghost": { "type": "string" }
+          }
+        },
+        "card": { "type": "string" },
+        "input": { "type": "string" }
+      }
+    },
+    "agentInstructions": {
+      "type": "object",
+      "required": ["steps"],
+      "properties": {
+        "summary": { "type": "string" },
+        "colorFormat": { "type": "string" },
+        "defaultMode": { "type": "string" },
+        "spacingGrid": { "type": "string" },
+        "fontInstallation": { "type": "string" },
+        "targetFramework": { "type": "string" },
+        "steps": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 7,
+          "maxItems": 7
+        }
+      }
+    },
+    "preview": {
+      "type": "object",
+      "required": ["thumbnail", "screenshots"],
+      "properties": {
+        "thumbnail": { "type": "string" },
+        "screenshots": {
+          "type": "object",
+          "required": ["light", "dark"],
+          "properties": {
+            "light": { "type": "string" },
+            "dark": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}
