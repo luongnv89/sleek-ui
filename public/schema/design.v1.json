@@ -1,0 +1,370 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://sleek-ui.design/schema/design.v1.json",
+  "title": "Sleek UI Design System Schema",
+  "description": "JSON Schema for Sleek UI design system configuration",
+  "type": "object",
+  "required": [
+    "$schema",
+    "name",
+    "version",
+    "description",
+    "categories",
+    "author",
+    "tokens",
+    "fonts",
+    "accessibility",
+    "components",
+    "agentInstructions",
+    "preview"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "const": "https://json-schema.org/draft-07/schema"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Name of the design system"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "Semantic version of the design system"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Description of the design system"
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "minItems": 1,
+      "description": "Categories the design system belongs to"
+    },
+    "author": {
+      "type": "object",
+      "required": ["name", "email"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    },
+    "tokens": {
+      "type": "object",
+      "required": ["colors", "typography", "spacing", "radius", "shadows"],
+      "properties": {
+        "colors": {
+          "type": "object",
+          "required": ["light", "dark"],
+          "properties": {
+            "light": {
+              "type": "object",
+              "required": [
+                "background",
+                "surface",
+                "text",
+                "textSecondary",
+                "primary",
+                "primaryHover",
+                "primaryActive",
+                "secondary",
+                "secondaryHover",
+                "secondaryActive",
+                "accent",
+                "success",
+                "warning",
+                "error",
+                "info",
+                "border",
+                "divider"
+              ],
+              "properties": {
+                "background": { "type": "string" },
+                "surface": { "type": "string" },
+                "text": { "type": "string" },
+                "textSecondary": { "type": "string" },
+                "primary": { "type": "string" },
+                "primaryHover": { "type": "string" },
+                "primaryActive": { "type": "string" },
+                "secondary": { "type": "string" },
+                "secondaryHover": { "type": "string" },
+                "secondaryActive": { "type": "string" },
+                "accent": { "type": "string" },
+                "success": { "type": "string" },
+                "warning": { "type": "string" },
+                "error": { "type": "string" },
+                "info": { "type": "string" },
+                "border": { "type": "string" },
+                "divider": { "type": "string" }
+              }
+            },
+            "dark": {
+              "type": "object",
+              "required": [
+                "background",
+                "surface",
+                "text",
+                "textSecondary",
+                "primary",
+                "primaryHover",
+                "primaryActive",
+                "secondary",
+                "secondaryHover",
+                "secondaryActive",
+                "accent",
+                "success",
+                "warning",
+                "error",
+                "info",
+                "border",
+                "divider"
+              ],
+              "properties": {
+                "background": { "type": "string" },
+                "surface": { "type": "string" },
+                "text": { "type": "string" },
+                "textSecondary": { "type": "string" },
+                "primary": { "type": "string" },
+                "primaryHover": { "type": "string" },
+                "primaryActive": { "type": "string" },
+                "secondary": { "type": "string" },
+                "secondaryHover": { "type": "string" },
+                "secondaryActive": { "type": "string" },
+                "accent": { "type": "string" },
+                "success": { "type": "string" },
+                "warning": { "type": "string" },
+                "error": { "type": "string" },
+                "info": { "type": "string" },
+                "border": { "type": "string" },
+                "divider": { "type": "string" }
+              }
+            }
+          }
+        },
+        "typography": {
+          "type": "object",
+          "properties": {
+            "fontFamily": {
+              "type": "object",
+              "properties": {
+                "sans": { "type": "string" },
+                "serif": { "type": "string" },
+                "mono": { "type": "string" }
+              }
+            },
+            "fontSize": {
+              "type": "object",
+              "additionalProperties": { "type": "string" }
+            },
+            "fontWeight": {
+              "type": "object",
+              "additionalProperties": { "type": "integer" }
+            },
+            "lineHeight": {
+              "type": "object",
+              "additionalProperties": { "type": "string" }
+            },
+            "letterSpacing": {
+              "type": "object",
+              "additionalProperties": { "type": "string" }
+            }
+          }
+        },
+        "spacing": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "radius": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "shadows": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        }
+      }
+    },
+    "fonts": {
+      "type": "object",
+      "required": ["google", "urls"],
+      "properties": {
+        "google": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["family", "weights"],
+            "properties": {
+              "family": { "type": "string" },
+              "weights": {
+                "type": "array",
+                "items": { "type": "integer" }
+              },
+              "styles": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            }
+          }
+        },
+        "urls": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["url", "format"],
+            "properties": {
+              "url": { "type": "string", "format": "uri" },
+              "format": { "type": "string" },
+              "family": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "accessibility": {
+      "type": "object",
+      "required": ["contrastTarget", "focusRing", "reducedMotion"],
+      "properties": {
+        "contrastTarget": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 21,
+          "description": "WCAG contrast ratio target"
+        },
+        "focusRing": {
+          "type": "object",
+          "required": ["width", "color", "offset"],
+          "properties": {
+            "width": { "type": "string" },
+            "color": { "type": "string" },
+            "offset": { "type": "string" }
+          }
+        },
+        "reducedMotion": {
+          "type": "boolean",
+          "description": "Whether to respect prefers-reduced-motion"
+        }
+      }
+    },
+    "components": {
+      "type": "object",
+      "required": ["button", "card", "input"],
+      "properties": {
+        "button": {
+          "type": "object",
+          "required": ["primary", "secondary", "ghost"],
+          "properties": {
+            "primary": {
+              "type": "object",
+              "properties": {
+                "background": { "type": "string" },
+                "color": { "type": "string" },
+                "borderRadius": { "type": "string" },
+                "padding": { "type": "string" },
+                "fontWeight": { "type": "string" }
+              }
+            },
+            "secondary": {
+              "type": "object",
+              "properties": {
+                "background": { "type": "string" },
+                "color": { "type": "string" },
+                "borderRadius": { "type": "string" },
+                "padding": { "type": "string" },
+                "fontWeight": { "type": "string" }
+              }
+            },
+            "ghost": {
+              "type": "object",
+              "properties": {
+                "background": { "type": "string" },
+                "color": { "type": "string" },
+                "borderRadius": { "type": "string" },
+                "padding": { "type": "string" },
+                "fontWeight": { "type": "string" }
+              }
+            }
+          }
+        },
+        "card": {
+          "type": "object",
+          "properties": {
+            "background": { "type": "string" },
+            "borderRadius": { "type": "string" },
+            "padding": { "type": "string" },
+            "shadow": { "type": "string" },
+            "border": { "type": "string" }
+          }
+        },
+        "input": {
+          "type": "object",
+          "properties": {
+            "background": { "type": "string" },
+            "color": { "type": "string" },
+            "borderRadius": { "type": "string" },
+            "padding": { "type": "string" },
+            "border": { "type": "string" },
+            "focusRing": { "type": "string" },
+            "placeholderColor": { "type": "string" }
+          }
+        }
+      }
+    },
+    "agentInstructions": {
+      "type": "object",
+      "required": ["steps"],
+      "properties": {
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1,
+          "description": "Array of instruction steps for AI agents"
+        }
+      }
+    },
+    "preview": {
+      "type": "object",
+      "required": ["thumbnail", "screenshots"],
+      "properties": {
+        "thumbnail": {
+          "type": "string",
+          "description": "URL to thumbnail image"
+        },
+        "screenshots": {
+          "type": "object",
+          "required": ["light", "dark"],
+          "properties": {
+            "light": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Array of light mode screenshot URLs"
+            },
+            "dark": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Array of dark mode screenshot URLs"
+            }
+          }
+        }
+      }
+    }
+  }
+}
