@@ -1,0 +1,218 @@
+{
+  "$schema": "https://sleek-ui.design/schema/design.v1.json",
+  "name": "neo-brutalist",
+  "version": "1.0.0",
+  "description": "Bold, high-contrast, playful neo-brutalist aesthetic. Sharp edges, vivid colors, heavy typography. Default light mode.",
+  "categories": ["bold", "playful"],
+  "defaultMode": "light",
+  "author": {
+    "name": "sleek-ui",
+    "email": "hello@sleek-ui.design",
+    "url": "https://sleek-ui.design"
+  },
+  "tokens": {
+    "colors": {
+      "light": {
+        "background": "45 100% 97%",
+        "foreground": "0 0% 0%",
+        "muted": "45 100% 90%",
+        "muted-foreground": "0 0% 40%",
+        "primary": "45 100% 50%",
+        "primary-foreground": "0 0% 0%",
+        "secondary": "0 0% 0%",
+        "secondary-foreground": "45 100% 97%",
+        "accent": "0 100% 50%",
+        "accent-foreground": "0 0% 100%",
+        "destructive": "0 100% 50%",
+        "destructive-foreground": "0 0% 100%",
+        "border": "0 0% 0%",
+        "input": "0 0% 0%",
+        "ring": "45 100% 50%",
+        "card": "45 100% 97%",
+        "card-foreground": "0 0% 0%",
+        "success": "150 100% 30%",
+        "success-foreground": "0 0% 100%",
+        "warning": "45 100% 50%",
+        "warning-foreground": "0 0% 0%",
+        "info": "210 100% 50%",
+        "info-foreground": "0 0% 100%"
+      },
+      "dark": {
+        "background": "0 0% 5%",
+        "foreground": "45 100% 97%",
+        "muted": "0 0% 10%",
+        "muted-foreground": "45 100% 60%",
+        "primary": "45 100% 50%",
+        "primary-foreground": "0 0% 0%",
+        "secondary": "45 100% 97%",
+        "secondary-foreground": "0 0% 0%",
+        "accent": "0 100% 60%",
+        "accent-foreground": "0 0% 100%",
+        "destructive": "0 100% 60%",
+        "destructive-foreground": "0 0% 100%",
+        "border": "45 100% 97%",
+        "input": "45 100% 97%",
+        "ring": "45 100% 50%",
+        "card": "0 0% 8%",
+        "card-foreground": "45 100% 97%",
+        "success": "150 100% 40%",
+        "success-foreground": "0 0% 0%",
+        "warning": "45 100% 50%",
+        "warning-foreground": "0 0% 0%",
+        "info": "210 100% 60%",
+        "info-foreground": "0 0% 0%"
+      }
+    },
+    "typography": {
+      "fontFamily": {
+        "sans": "Space Grotesk",
+        "serif": "Space Grotesk",
+        "mono": "JetBrains Mono"
+      },
+      "fontSize": {
+        "xs": "0.75rem",
+        "sm": "0.875rem",
+        "base": "1rem",
+        "lg": "1.125rem",
+        "xl": "1.25rem",
+        "2xl": "1.5rem",
+        "3xl": "2rem",
+        "4xl": "2.5rem"
+      },
+      "fontWeight": {
+        "normal": 400,
+        "medium": 500,
+        "semibold": 600,
+        "bold": 700
+      },
+      "lineHeight": {
+        "tight": "1.1",
+        "normal": "1.4",
+        "relaxed": "1.6"
+      },
+      "letterSpacing": {
+        "tight": "-0.02em",
+        "normal": "0",
+        "wide": "0.05em"
+      }
+    },
+    "spacing": {
+      "unit": "4px",
+      "xs": "4px",
+      "sm": "8px",
+      "md": "16px",
+      "lg": "24px",
+      "xl": "32px",
+      "2xl": "48px"
+    },
+    "radius": {
+      "sm": "0",
+      "default": "0",
+      "lg": "0",
+      "full": "0"
+    },
+    "shadows": {
+      "sm": "4px 4px 0 0 rgb(0 0 0 / 1)",
+      "default": "6px 6px 0 0 rgb(0 0 0 / 1)",
+      "lg": "8px 8px 0 0 rgb(0 0 0 / 1)"
+    }
+  },
+  "fonts": {
+    "google": [
+      {
+        "family": "Space Grotesk",
+        "weights": [400, 500, 600, 700]
+      },
+      {
+        "family": "JetBrains Mono",
+        "weights": [400, 500]
+      }
+    ],
+    "urls": [
+      {
+        "url": "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap",
+        "format": "css2",
+        "family": "Space Grotesk"
+      },
+      {
+        "url": "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap",
+        "format": "css2",
+        "family": "JetBrains Mono"
+      }
+    ]
+  },
+  "accessibility": {
+    "contrastTarget": 4.5,
+    "focusRing": {
+      "width": "3px",
+      "color": "currentColor",
+      "offset": "0px"
+    },
+    "reducedMotion": false
+  },
+  "components": {
+    "button": {
+      "primary": {
+        "background": "primary",
+        "color": "primary-foreground",
+        "borderRadius": "radius.default",
+        "padding": "spacing.sm spacing.md",
+        "fontWeight": "bold",
+        "border": "2px solid border",
+        "boxShadow": "shadows.default"
+      },
+      "secondary": {
+        "background": "secondary",
+        "color": "secondary-foreground",
+        "borderRadius": "radius.default",
+        "padding": "spacing.sm spacing.md",
+        "fontWeight": "bold",
+        "border": "2px solid border"
+      },
+      "ghost": {
+        "background": "transparent",
+        "color": "foreground",
+        "borderRadius": "radius.default",
+        "padding": "spacing.sm spacing.md",
+        "fontWeight": "semibold",
+        "border": "2px solid transparent"
+      }
+    },
+    "card": {
+      "background": "card",
+      "color": "card-foreground",
+      "borderRadius": "radius.lg",
+      "padding": "spacing.lg",
+      "shadow": "shadows.default",
+      "border": "3px solid border"
+    },
+    "input": {
+      "background": "background",
+      "color": "foreground",
+      "borderRadius": "radius.default",
+      "padding": "spacing.sm spacing.md",
+      "border": "2px solid input",
+      "focusRing": "focusRing",
+      "placeholderColor": "muted-foreground"
+    }
+  },
+  "agentInstructions": {
+    "steps": [
+      "Set CSS custom properties from tokens.colors on :root (light) and .dark (dark mode)",
+      "Set --radius from tokens.radius.default (should be 0 for brutalist)",
+      "Load fonts by adding the Google Fonts URL from fonts.urls as a <link> tag",
+      "Set font-family from tokens.typography.fontFamily",
+      "Apply component styles from the components field with hard box-shadow offsets (e.g., 6px 6px 0 0)",
+      "Use thick borders (2-3px) on interactive elements",
+      "Ensure focus states match accessibility.focusRing specification",
+      "Test both light and dark modes"
+    ]
+  },
+  "preview": {
+    "thumbnail": "/previews/neo-brutalist-thumb.svg",
+    "screenshots": {
+      "light": ["/previews/neo-brutalist-light.svg"],
+      "dark": ["/previews/neo-brutalist-dark.svg"]
+    }
+  }
+}
