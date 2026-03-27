@@ -36,10 +36,8 @@ jobs:
       - name: Validate designs
         run: npm run validate:designs
 
-      - name: Copy public to dist
-        run: |
-          mkdir -p dist
-          cp -r public/* dist/
+      - name: Build
+        run: npm run build
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
