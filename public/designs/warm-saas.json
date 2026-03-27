@@ -1,0 +1,213 @@
+{
+  "$schema": "https://sleek-ui.design/schema/design.v1.json",
+  "name": "warm-saas",
+  "version": "1.0.0",
+  "description": "Amber tones with a friendly, corporate aesthetic. Default light mode with warm, inviting colors perfect for SaaS applications.",
+  "categories": ["warm", "corporate"],
+  "author": {
+    "name": "sleek-ui",
+    "email": "hello@sleek-ui.design",
+    "url": "https://sleek-ui.design"
+  },
+  "tokens": {
+    "colors": {
+      "light": {
+        "background": "0 0% 100%",
+        "foreground": "30 10% 10%",
+        "muted": "30 20% 97%",
+        "muted-foreground": "30 8% 45%",
+        "primary": "38 92% 50%",
+        "primary-foreground": "0 0% 100%",
+        "secondary": "30 20% 96%",
+        "secondary-foreground": "30 10% 15%",
+        "accent": "38 92% 95%",
+        "accent-foreground": "38 92% 50%",
+        "destructive": "0 84.2% 60.2%",
+        "destructive-foreground": "0 0% 100%",
+        "border": "30 15% 88%",
+        "input": "30 15% 88%",
+        "ring": "38 92% 50%",
+        "card": "0 0% 100%",
+        "card-foreground": "30 10% 10%",
+        "success": "142 71% 45%",
+        "success-foreground": "0 0% 100%",
+        "warning": "38 92% 50%",
+        "warning-foreground": "0 0% 100%",
+        "info": "199 89% 48%",
+        "info-foreground": "0 0% 100%"
+      },
+      "dark": {
+        "background": "30 20% 8%",
+        "foreground": "30 15% 95%",
+        "muted": "30 20% 15%",
+        "muted-foreground": "30 10% 60%",
+        "primary": "38 92% 60%",
+        "primary-foreground": "0 0% 10%",
+        "secondary": "30 20% 15%",
+        "secondary-foreground": "30 15% 95%",
+        "accent": "38 92% 20%",
+        "accent-foreground": "38 92% 70%",
+        "destructive": "0 62.8% 30.6%",
+        "destructive-foreground": "0 0% 100%",
+        "border": "30 15% 25%",
+        "input": "30 15% 25%",
+        "ring": "38 92% 60%",
+        "card": "30 20% 12%",
+        "card-foreground": "30 15% 95%",
+        "success": "142 70% 50%",
+        "success-foreground": "0 0% 10%",
+        "warning": "38 92% 56%",
+        "warning-foreground": "0 0% 10%",
+        "info": "199 89% 55%",
+        "info-foreground": "0 0% 10%"
+      }
+    },
+    "typography": {
+      "fontFamily": {
+        "sans": "Plus Jakarta Sans",
+        "serif": "Plus Jakarta Sans",
+        "mono": "DM Mono"
+      },
+      "fontSize": {
+        "xs": "0.75rem",
+        "sm": "0.875rem",
+        "base": "1rem",
+        "lg": "1.125rem",
+        "xl": "1.25rem",
+        "2xl": "1.5rem",
+        "3xl": "1.875rem",
+        "4xl": "2.25rem"
+      },
+      "fontWeight": {
+        "normal": 400,
+        "medium": 500,
+        "semibold": 600,
+        "bold": 700
+      },
+      "lineHeight": {
+        "tight": "1.25",
+        "normal": "1.5",
+        "relaxed": "1.625"
+      },
+      "letterSpacing": {
+        "tight": "-0.025em",
+        "normal": "0",
+        "wide": "0.025em"
+      }
+    },
+    "spacing": {
+      "unit": "4px",
+      "xs": "4px",
+      "sm": "8px",
+      "md": "16px",
+      "lg": "24px",
+      "xl": "32px",
+      "2xl": "48px"
+    },
+    "radius": {
+      "sm": "0.125rem",
+      "default": "0.375rem",
+      "lg": "0.5rem",
+      "full": "9999px"
+    },
+    "shadows": {
+      "sm": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+      "default": "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
+      "lg": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)"
+    }
+  },
+  "fonts": {
+    "google": [
+      {
+        "family": "Plus Jakarta Sans",
+        "weights": [400, 500, 600, 700]
+      },
+      {
+        "family": "DM Mono",
+        "weights": [400, 500]
+      }
+    ],
+    "urls": [
+      {
+        "url": "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap",
+        "format": "css2",
+        "family": "Plus Jakarta Sans"
+      },
+      {
+        "url": "https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap",
+        "format": "css2",
+        "family": "DM Mono"
+      }
+    ]
+  },
+  "accessibility": {
+    "contrastTarget": 4.5,
+    "focusRing": {
+      "width": "2px",
+      "color": "currentColor",
+      "offset": "2px"
+    },
+    "reducedMotion": true
+  },
+  "components": {
+    "button": {
+      "primary": {
+        "background": "primary",
+        "color": "primary-foreground",
+        "borderRadius": "radius.default",
+        "padding": "spacing.sm spacing.md",
+        "fontWeight": "semibold"
+      },
+      "secondary": {
+        "background": "secondary",
+        "color": "secondary-foreground",
+        "borderRadius": "radius.default",
+        "padding": "spacing.sm spacing.md",
+        "fontWeight": "medium"
+      },
+      "ghost": {
+        "background": "transparent",
+        "color": "foreground",
+        "borderRadius": "radius.default",
+        "padding": "spacing.sm spacing.md",
+        "fontWeight": "medium"
+      }
+    },
+    "card": {
+      "background": "card",
+      "color": "card-foreground",
+      "borderRadius": "radius.lg",
+      "padding": "spacing.lg",
+      "shadow": "shadows.default",
+      "border": "1px solid border"
+    },
+    "input": {
+      "background": "background",
+      "color": "foreground",
+      "borderRadius": "radius.default",
+      "padding": "spacing.sm spacing.md",
+      "border": "1px solid input",
+      "focusRing": "focusRing",
+      "placeholderColor": "muted-foreground"
+    }
+  },
+  "agentInstructions": {
+    "defaultMode": "light",
+    "steps": [
+      "Set CSS custom properties from tokens.colors on :root (light) and .dark (dark mode)",
+      "Set --radius from tokens.radius.default",
+      "Load fonts by adding the Google Fonts URL from fonts.urls as a <link> tag",
+      "Set font-family from tokens.typography.fontFamily",
+      "Apply component styles from the components field (Tailwind class names for shadcn projects)",
+      "Ensure focus states match accessibility.focusRing specification",
+      "Test both light and dark modes"
+    ]
+  },
+  "preview": {
+    "thumbnail": "/previews/warm-saas-thumb.svg",
+    "screenshots": {
+      "light": ["/previews/warm-saas-light.svg"],
+      "dark": ["/previews/warm-saas-dark.svg"]
+    }
+  }
+}
