@@ -192,6 +192,7 @@
     }
   },
   "agentInstructions": {
+    "defaultMode": "dark",
     "steps": [
       "Set CSS custom properties from tokens.colors on :root (light) and .dark (dark mode)",
       "Set --radius from tokens.radius.default",
