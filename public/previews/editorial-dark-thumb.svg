@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#2a2450"/>
+  <text x="200" y="130" text-anchor="middle" fill="#d4d0f7" font-family="Inter, sans-serif" font-size="18" font-weight="600">Editorial Dark</text>
+  <text x="200" y="160" text-anchor="middle" fill="#a09bd4" font-family="Inter, sans-serif" font-size="12">Dark Mode Preview</text>
+  <rect x="100" y="180" width="200" height="40" rx="6" fill="#7c75e0"/>
+  <text x="200" y="205" text-anchor="middle" fill="#fff" font-family="Inter, sans-serif" font-size="14">Thumbnail</text>
+</svg>

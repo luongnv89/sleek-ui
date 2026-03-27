@@ -153,7 +153,7 @@ Vibe coders (people using AI tools to build apps) can ship functional software b
 
 ```
 $schema, name, version, description, categories, author
-tokens.colors.light / dark (14 semantic color roles each)
+tokens.colors.light / dark (17 semantic color roles each)
 tokens.typography.fontFamily, fontSize, lineHeight
 tokens.spacing.unit, scale
 tokens.radius (sm, default, lg, full)
