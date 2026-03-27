@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#fff"/>
+  <text x="200" y="50" text-anchor="middle" fill="#1a1412" font-family="Plus Jakarta Sans, sans-serif" font-size="20" font-weight="600">Warm SaaS</text>
+  <rect x="40" y="70" width="100" height="60" rx="8" fill="#ffedd5" stroke="#fed7aa" stroke-width="1"/>
+  <rect x="160" y="70" width="100" height="60" rx="8" fill="#f97316"/>
+  <rect x="280" y="70" width="80" height="60" rx="8" fill="#22c55e"/>
+  <rect x="40" y="150" width="320" height="100" rx="8" fill="#fff7ed" stroke="#fed7aa" stroke-width="1"/>
+  <rect x="60" y="170" width="80" height="30" rx="4" fill="#f97316"/>
+  <rect x="160" y="170" width="80" height="30" rx="4" fill="#22c55e"/>
+  <rect x="260" y="170" width="80" height="30" rx="4" fill="#3b82f6"/>
+  <text x="200" y="280" text-anchor="middle" fill="#666" font-family="Plus Jakarta Sans, sans-serif" font-size="12">Thumbnail</text>
+</svg>
