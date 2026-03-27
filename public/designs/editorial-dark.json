@@ -13,41 +13,53 @@
     "colors": {
       "light": {
         "background": "0 0% 100%",
-        "surface": "0 0% 100%",
-        "text": "240 10% 3.9%",
-        "textSecondary": "240 3.8% 46.1%",
+        "foreground": "240 10% 3.9%",
+        "muted": "240 4.8% 95.9%",
+        "muted-foreground": "240 3.8% 46.1%",
         "primary": "245 90% 73%",
-        "primaryHover": "245 90% 80%",
-        "primaryActive": "245 90% 65%",
+        "primary-foreground": "0 0% 100%",
         "secondary": "240 4.8% 95.9%",
-        "secondaryHover": "240 4.8% 90%",
-        "secondaryActive": "240 4.8% 85%",
+        "secondary-foreground": "240 10% 3.9%",
         "accent": "240 4.8% 95.9%",
-        "success": "142 71% 45%",
-        "warning": "38 92% 50%",
-        "error": "0 84.2% 60.2%",
-        "info": "199 89% 48%",
+        "accent-foreground": "240 10% 3.9%",
+        "destructive": "0 84.2% 60.2%",
+        "destructive-foreground": "0 0% 100%",
         "border": "240 5.9% 90%",
-        "divider": "240 5.9% 90%"
+        "input": "240 5.9% 90%",
+        "ring": "245 90% 73%",
+        "card": "0 0% 100%",
+        "card-foreground": "240 10% 3.9%",
+        "success": "142 71% 45%",
+        "success-foreground": "0 0% 100%",
+        "warning": "38 92% 50%",
+        "warning-foreground": "0 0% 0%",
+        "info": "199 89% 48%",
+        "info-foreground": "0 0% 100%"
       },
       "dark": {
         "background": "240 33% 14%",
-        "surface": "240 33% 17%",
-        "text": "0 0% 95%",
-        "textSecondary": "240 5% 64.9%",
+        "foreground": "0 0% 95%",
+        "muted": "240 33% 19%",
+        "muted-foreground": "240 5% 64.9%",
         "primary": "245 90% 73%",
-        "primaryHover": "245 90% 80%",
-        "primaryActive": "245 90% 65%",
+        "primary-foreground": "0 0% 100%",
         "secondary": "240 33% 19%",
-        "secondaryHover": "240 33% 25%",
-        "secondaryActive": "240 33% 30%",
+        "secondary-foreground": "0 0% 95%",
         "accent": "240 33% 19%",
-        "success": "142 70% 50%",
-        "warning": "38 92% 56%",
-        "error": "0 62.8% 30.6%",
-        "info": "199 89% 55%",
+        "accent-foreground": "0 0% 95%",
+        "destructive": "0 62.8% 30.6%",
+        "destructive-foreground": "0 0% 100%",
         "border": "240 33% 22%",
-        "divider": "240 33% 22%"
+        "input": "240 33% 22%",
+        "ring": "245 90% 73%",
+        "card": "240 33% 17%",
+        "card-foreground": "0 0% 95%",
+        "success": "142 70% 50%",
+        "success-foreground": "0 0% 0%",
+        "warning": "38 92% 56%",
+        "warning-foreground": "0 0% 0%",
+        "info": "199 89% 55%",
+        "info-foreground": "0 0% 0%"
       }
     },
     "typography": {
@@ -141,28 +153,29 @@
     "button": {
       "primary": {
         "background": "primary",
-        "color": "background",
+        "color": "primary-foreground",
         "borderRadius": "radius.default",
         "padding": "spacing.sm spacing.md",
         "fontWeight": "semibold"
       },
       "secondary": {
         "background": "secondary",
-        "color": "text",
+        "color": "secondary-foreground",
         "borderRadius": "radius.default",
         "padding": "spacing.sm spacing.md",
         "fontWeight": "medium"
       },
       "ghost": {
         "background": "transparent",
-        "color": "text",
+        "color": "foreground",
         "borderRadius": "radius.default",
         "padding": "spacing.sm spacing.md",
         "fontWeight": "medium"
       }
     },
     "card": {
-      "background": "surface",
+      "background": "card",
+      "color": "card-foreground",
       "borderRadius": "radius.lg",
       "padding": "spacing.lg",
       "shadow": "shadows.default",
@@ -170,12 +183,12 @@
     },
     "input": {
       "background": "background",
-      "color": "text",
+      "color": "foreground",
       "borderRadius": "radius.default",
       "padding": "spacing.sm spacing.md",
-      "border": "1px solid border",
+      "border": "1px solid input",
       "focusRing": "focusRing",
-      "placeholderColor": "textSecondary"
+      "placeholderColor": "muted-foreground"
     }
   },
   "agentInstructions": {
@@ -190,10 +203,10 @@
     ]
   },
   "preview": {
-    "thumbnail": "/previews/editorial-dark-thumb.png",
+    "thumbnail": "/previews/editorial-dark-thumb.svg",
     "screenshots": {
-      "light": ["/previews/editorial-dark-light.png"],
-      "dark": ["/previews/editorial-dark-dark.png"]
+      "light": ["/previews/editorial-dark-light.svg"],
+      "dark": ["/previews/editorial-dark-dark.svg"]
     }
   }
 }

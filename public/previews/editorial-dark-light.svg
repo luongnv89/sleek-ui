@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="#fafafa"/>
+  <text x="400" y="50" text-anchor="middle" fill="#0a0a0b" font-family="Inter, sans-serif" font-size="24" font-weight="600">Editorial Dark - Light Mode</text>
+  <rect x="50" y="80" width="150" height="100" rx="8" fill="#fff" stroke="#e5e5e5" stroke-width="1"/>
+  <rect x="225" y="80" width="150" height="100" rx="8" fill="#fff" stroke="#e5e5e5" stroke-width="1"/>
+  <rect x="400" y="80" width="150" height="100" rx="8" fill="#fff" stroke="#e5e5e5" stroke-width="1"/>
+  <rect x="50" y="200" width="700" height="300" rx="8" fill="#fff" stroke="#e5e5e5" stroke-width="1"/>
+  <text x="400" y="370" text-anchor="middle" fill="#78716c" font-family="Inter, sans-serif" font-size="14">Light Mode Preview</text>
+  <rect x="300" y="520" width="200" height="45" rx="6" fill="#7c75e0"/>
+  <text x="400" y="548" text-anchor="middle" fill="#fff" font-family="Inter, sans-serif" font-size="14" font-weight="600">Get Started</text>
+</svg>

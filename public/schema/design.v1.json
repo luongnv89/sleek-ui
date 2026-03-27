@@ -1,0 +1,226 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://sleek-ui.design/schema/design.v1.json",
+  "title": "sleek-ui Design Schema v1",
+  "description": "Schema for sleek-ui design token files - URL-addressable design systems for AI agents",
+  "version": "1.0.0",
+  "type": "object",
+  "required": ["$schema", "name", "version", "description", "categories", "tokens", "fonts", "agentInstructions"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "pattern": "https://sleek-ui.design/schema/design.v1.json"
+    },
+    "name": {
+      "type": "string",
+      "description": "Unique design name (slug format)"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 10
+    },
+    "categories": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "author": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "url": { "type": "string", "format": "uri" }
+      }
+    },
+    "tokens": {
+      "type": "object",
+      "required": ["colors", "typography", "spacing", "radius"],
+      "properties": {
+        "colors": {
+          "type": "object",
+          "required": ["light", "dark"],
+          "properties": {
+            "light": {
+              "type": "object",
+              "required": ["background", "foreground", "primary", "primary-foreground", "secondary", "secondary-foreground", "muted", "muted-foreground", "accent", "accent-foreground", "destructive", "destructive-foreground", "border", "input", "ring", "card", "card-foreground"],
+              "additionalProperties": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?%? [0-9]+% [0-9]+%$" }
+            },
+            "dark": {
+              "type": "object",
+              "required": ["background", "foreground", "primary", "primary-foreground", "secondary", "secondary-foreground", "muted", "muted-foreground", "accent", "accent-foreground", "destructive", "destructive-foreground", "border", "input", "ring", "card", "card-foreground"],
+              "additionalProperties": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?%? [0-9]+% [0-9]+%$" }
+            }
+          }
+        },
+        "typography": {
+          "type": "object",
+          "required": ["fontFamily", "fontSize", "fontWeight", "lineHeight", "letterSpacing"],
+          "properties": {
+            "fontFamily": {
+              "type": "object",
+              "properties": {
+                "sans": { "type": "string" },
+                "serif": { "type": "string" },
+                "mono": { "type": "string" }
+              }
+            },
+            "fontSize": {
+              "type": "object",
+              "properties": {
+                "xs": { "type": "string" },
+                "sm": { "type": "string" },
+                "base": { "type": "string" },
+                "lg": { "type": "string" },
+                "xl": { "type": "string" },
+                "2xl": { "type": "string" },
+                "3xl": { "type": "string" },
+                "4xl": { "type": "string" }
+              }
+            },
+            "fontWeight": {
+              "type": "object",
+              "properties": {
+                "normal": { "type": "integer" },
+                "medium": { "type": "integer" },
+                "semibold": { "type": "integer" },
+                "bold": { "type": "integer" }
+              }
+            },
+            "lineHeight": {
+              "type": "object",
+              "properties": {
+                "tight": { "type": "string" },
+                "normal": { "type": "string" },
+                "relaxed": { "type": "string" }
+              }
+            },
+            "letterSpacing": {
+              "type": "object",
+              "properties": {
+                "tight": { "type": "string" },
+                "normal": { "type": "string" },
+                "wide": { "type": "string" }
+              }
+            }
+          }
+        },
+        "spacing": {
+          "type": "object",
+          "required": ["unit"],
+          "properties": {
+            "unit": { "type": "string" },
+            "xs": { "type": "string" },
+            "sm": { "type": "string" },
+            "md": { "type": "string" },
+            "lg": { "type": "string" },
+            "xl": { "type": "string" },
+            "2xl": { "type": "string" }
+          }
+        },
+        "radius": {
+          "type": "object",
+          "required": ["sm", "default", "lg", "full"],
+          "properties": {
+            "sm": { "type": "string" },
+            "default": { "type": "string" },
+            "lg": { "type": "string" },
+            "full": { "type": "string" }
+          }
+        },
+        "shadows": {
+          "type": "object",
+          "properties": {
+            "sm": { "type": "string" },
+            "default": { "type": "string" },
+            "lg": { "type": "string" }
+          }
+        }
+      }
+    },
+    "fonts": {
+      "type": "object",
+      "required": ["google", "urls"],
+      "properties": {
+        "google": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "family": { "type": "string" },
+              "weights": { "type": "array", "items": { "type": "integer" } }
+            }
+          }
+        },
+        "urls": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "url": { "type": "string", "format": "uri" },
+              "format": { "type": "string" },
+              "family": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "accessibility": {
+      "type": "object",
+      "properties": {
+        "contrastTarget": { "type": "number" },
+        "focusRing": {
+          "type": "object",
+          "properties": {
+            "width": { "type": "string" },
+            "color": { "type": "string" },
+            "offset": { "type": "string" }
+          }
+        },
+        "reducedMotion": { "type": "boolean" }
+      }
+    },
+    "components": {
+      "type": "object",
+      "properties": {
+        "button": {
+          "type": "object",
+          "properties": {
+            "primary": { "type": "object" },
+            "secondary": { "type": "object" },
+            "ghost": { "type": "object" }
+          }
+        },
+        "card": { "type": "object" },
+        "input": { "type": "object" }
+      }
+    },
+    "agentInstructions": {
+      "type": "object",
+      "required": ["steps"],
+      "properties": {
+        "steps": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1
+        }
+      }
+    },
+    "preview": {
+      "type": "object",
+      "properties": {
+        "thumbnail": { "type": "string" },
+        "screenshots": {
+          "type": "object",
+          "properties": {
+            "light": { "type": "array", "items": { "type": "string" } },
+            "dark": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      }
+    }
+  }
+}
