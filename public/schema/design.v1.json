@@ -1,11 +1,19 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://sleek-ui.design/schema/design.v1.json",
-  "title": "sleek-ui Design Schema v1",
-  "description": "Schema for sleek-ui design token files - URL-addressable design systems for AI agents",
-  "version": "1.0.0",
+  "title": "Sleek UI Design System Schema",
+  "description": "JSON Schema for Sleek UI design system configuration",
   "type": "object",
-  "required": ["$schema", "name", "version", "description", "categories", "tokens", "fonts", "agentInstructions"],
+  "required": [
+    "$schema",
+    "name",
+    "version",
+    "description",
+    "categories",
+    "tokens",
+    "fonts",
+    "agentInstructions"
+  ],
   "properties": {
     "$schema": {
       "type": "string",
@@ -38,7 +46,7 @@
     },
     "tokens": {
       "type": "object",
-      "required": ["colors", "typography", "spacing", "radius"],
+      "required": ["colors", "typography", "spacing", "radius", "shadows"],
       "properties": {
         "colors": {
           "type": "object",
@@ -143,7 +151,7 @@
     },
     "fonts": {
       "type": "object",
-      "required": ["google", "urls"],
+      "required": ["urls"],
       "properties": {
         "google": {
           "type": "array",
@@ -202,6 +210,10 @@
       "type": "object",
       "required": ["steps"],
       "properties": {
+        "defaultMode": {
+          "type": "string",
+          "enum": ["light", "dark"]
+        },
         "steps": {
           "type": "array",
           "items": { "type": "string" },
