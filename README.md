@@ -1,5 +1,7 @@
 # sleek-ui
 
+[![Deploy](https://github.com/luongnv89/sleek-ui/actions/workflows/deploy.yml/badge.svg)](https://github.com/luongnv89/sleek-ui/actions/workflows/deploy.yml)
+
 Design system for AI agent-driven UI customization.
 
 > The "Unsplash of Design Systems for AI Agents" — paste a URL, get a professional design.
