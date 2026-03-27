@@ -1,5 +1,5 @@
 {
-  "$schema": "https://sleek-ui.design/schema/design.v1.json",
+  "$schema": "https://luongnv89.github.io/sleek-ui/schema/design.v1.json",
   "name": "editorial-dark",
   "version": "1.0.0",
   "description": "Sophisticated, muted purples with clean typography. A dark editorial aesthetic perfect for content-heavy applications.",
@@ -206,8 +206,8 @@
   "preview": {
     "thumbnail": "/previews/editorial-dark-thumb.svg",
     "screenshots": {
-      "light": ["/previews/editorial-dark-light.svg"],
-      "dark": ["/previews/editorial-dark-dark.svg"]
+      "light": "/previews/editorial-dark-light.svg",
+      "dark": "/previews/editorial-dark-dark.svg"
     }
   }
 }
