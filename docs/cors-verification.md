@@ -61,3 +61,28 @@ If GitHub Pages CORS verification fails, migrate to **Cloudflare Pages**:
 - CORS is enabled by default for all static files
 - Custom domains on GitHub Pages also support CORS
 - Cloudflare Pages is an alternative with no configuration needed
+
+## Agent Loop Test Results
+
+### Task 1.8: Claude Code (#11)
+- Document: `docs/agent-loop-test-11.md`
+- Status: MANUAL TEST REQUIRED
+- Same test prompt as Task 1.9
+
+### Task 1.9: Codex CLI (#12)
+- Document: `docs/agent-loop-test-12.md`
+- Status: MANUAL TEST REQUIRED
+- Uses same test prompt as Task 1.8
+
+### Cross-Agent Comparison
+
+| Agent | Test Doc | Status |
+|-------|----------|--------|
+| Claude Code | #11 | Manual test required |
+| Codex CLI | #12 | Manual test required |
+
+Both agents test the same workflow:
+1. Fetch `https://luongnv89.github.io/sleek-ui/designs/editorial-dark.json`
+2. Apply design to `demo-app/index.html`
+3. Verify "Recognizable Fidelity" checklist
+4. Document any agent-specific quirks
