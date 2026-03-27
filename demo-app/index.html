@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo App - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.5;
+        }
+        
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .sidebar {
+            width: 200px;
+            background-color: #ddd;
+            padding: 20px;
+            border-right: 1px solid #999;
+        }
+        
+        .sidebar h1 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #999;
+        }
+        
+        .nav-link {
+            display: block;
+            padding: 8px 12px;
+            margin-bottom: 5px;
+            color: #0066cc;
+            text-decoration: underline;
+            background-color: #eee;
+            border: 1px solid #ccc;
+        }
+        
+        .nav-link:hover {
+            background-color: #ddd;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 20px;
+        }
+        
+        .page-title {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background-color: #fff;
+            border: 1px solid #999;
+            padding: 15px;
+        }
+        
+        .stat-card h3 {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+        
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        .section h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #999;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+        }
+        
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #999;
+        }
+        
+        th {
+            background-color: #ddd;
+            font-weight: bold;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .settings-form {
+            background-color: #fff;
+            border: 1px solid #999;
+            padding: 20px;
+            max-width: 500px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #999;
+            font-size: 14px;
+        }
+        
+        .form-group textarea {
+            min-height: 80px;
+        }
+        
+        .form-group input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background-color: #ccc;
+            border: 1px solid #999;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background-color: #bbb;
+        }
+        
+        button.primary {
+            background-color: #666;
+            color: white;
+            border-color: #333;
+        }
+        
+        button.primary:hover {
+            background-color: #444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <h1>Dashboard</h1>
+            <a href="#" class="nav-link">Overview</a>
+            <a href="#" class="nav-link">Analytics</a>
+            <a href="#" class="nav-link">Reports</a>
+            <a href="#" class="nav-link">Settings</a>
+        </aside>
+        
+        <main class="main-content">
+            <h1 class="page-title">Dashboard Overview</h1>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Users</h3>
+                    <div class="value">1,234</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Active Sessions</h3>
+                    <div class="value">89</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Revenue</h3>
+                    <div class="value">$45,678</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Growth</h3>
+                    <div class="value">12%</div>
+                </div>
+            </div>
+            
+            <section class="section">
+                <h2>Recent Data</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>001</td>
+                            <td>John Smith</td>
+                            <td>Active</td>
+                            <td>2024-01-15</td>
+                            <td>$1,200</td>
+                        </tr>
+                        <tr>
+                            <td>002</td>
+                            <td>Jane Doe</td>
+                            <td>Pending</td>
+                            <td>2024-01-14</td>
+                            <td>$850</td>
+                        </tr>
+                        <tr>
+                            <td>003</td>
+                            <td>Bob Wilson</td>
+                            <td>Active</td>
+                            <td>2024-01-13</td>
+                            <td>$2,100</td>
+                        </tr>
+                        <tr>
+                            <td>004</td>
+                            <td>Alice Brown</td>
+                            <td>Inactive</td>
+                            <td>2024-01-12</td>
+                            <td>$450</td>
+                        </tr>
+                        <tr>
+                            <td>005</td>
+                            <td>Charlie Davis</td>
+                            <td>Active</td>
+                            <td>2024-01-11</td>
+                            <td>$1,500</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+            
+            <section class="section">
+                <h2>Settings</h2>
+                <form class="settings-form">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" value="admin">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" value="admin@example.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="timezone">Timezone</label>
+                        <select id="timezone" name="timezone">
+                            <option value="utc">UTC</option>
+                            <option value="est">EST</option>
+                            <option value="pst">PST</option>
+                            <option value="cet">CET</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="notifications">Notification Preferences</label>
+                        <textarea id="notifications" name="notifications">Receive email notifications for important updates.</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" name="newsletter" checked>
+                            Subscribe to newsletter
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" name="analytics">
+                            Enable analytics tracking
+                        </label>
+                    </div>
+                    
+                    <button type="button" class="primary">Save Changes</button>
+                    <button type="button">Cancel</button>
+                </form>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
