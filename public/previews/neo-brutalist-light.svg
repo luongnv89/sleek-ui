@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <rect width="800" height="600" fill="#f9f5f0"/>
+  <text x="400" y="40" text-anchor="middle" fill="#000" font-family="Space Grotesk, sans-serif" font-size="28" font-weight="700">Neo-Brutalist — Light Mode</text>
+  <rect x="50" y="70" width="200" height="80" fill="#fff" stroke="#000" stroke-width="3"/>
+  <text x="150" y="115" text-anchor="middle" fill="#000" font-family="Space Grotesk, sans-serif" font-size="14" font-weight="600">CARD</text>
+  <rect x="270" y="70" width="200" height="80" fill="#ffe066" stroke="#000" stroke-width="3"/>
+  <text x="370" y="115" text-anchor="middle" fill="#000" font-family="Space Grotesk, sans-serif" font-size="14" font-weight="600">BUTTON</text>
+  <rect x="490" y="70" width="200" height="80" fill="#ff3333" stroke="#000" stroke-width="3"/>
+  <text x="590" y="115" text-anchor="middle" fill="#fff" font-family="Space Grotesk, sans-serif" font-size="14" font-weight="600">ALERT</text>
+  <rect x="50" y="170" width="700" height="350" fill="#fff" stroke="#000" stroke-width="3"/>
+  <rect x="80" y="200" width="150" height="30" fill="#000" stroke="#000" stroke-width="2"/>
+  <text x="155" y="220" text-anchor="middle" fill="#fff" font-family="Space Grotesk, sans-serif" font-size="12" font-weight="600">PRIMARY</text>
+  <rect x="250" y="200" width="150" height="30" fill="#fff" stroke="#000" stroke-width="2"/>
+  <text x="325" y="220" text-anchor="middle" fill="#000" font-family="Space Grotesk, sans-serif" font-size="12" font-weight="600">SECONDARY</text>
+  <rect x="420" y="200" width="150" height="30" fill="transparent" stroke="#000" stroke-width="2"/>
+  <text x="495" y="220" text-anchor="middle" fill="#000" font-family="Space Grotesk, sans-serif" font-size="12" font-weight="600">GHOST</text>
+  <rect x="80" y="260" width="300" height="40" fill="#000" stroke="#000" stroke-width="2"/>
+  <rect x="400" y="260" width="300" height="40" fill="#ffe066" stroke="#000" stroke-width="2"/>
+  <rect x="80" y="320" width="620" height="40" fill="#fff" stroke="#000" stroke-width="2"/>
+  <text x="390" y="345" text-anchor="middle" fill="#666" font-family="Space Grotesk, sans-serif" font-size="14">Input field</text>
+  <rect x="80" y="380" width="150" height="40" fill="#ff3333" stroke="#000" stroke-width="2"/>
+  <text x="155" y="405" text-anchor="middle" fill="#fff" font-family="Space Grotesk, sans-serif" font-size="14" font-weight="600">DANGER</text>
+  <rect x="250" y="380" width="150" height="40" fill="#00cc00" stroke="#000" stroke-width="2"/>
+  <text x="325" y="405" text-anchor="middle" fill="#000" font-family="Space Grotesk, sans-serif" font-size="14" font-weight="600">SUCCESS</text>
+  <rect x="80" y="450" width="620" height="50" fill="#ffe066" stroke="#000" stroke-width="3" stroke-dasharray="8 4"/>
+  <text x="390" y="482" text-anchor="middle" fill="#000" font-family="Space Grotesk, sans-serif" font-size="16" font-weight="700">BOX SHADOW BUTTON</text>
+  <text x="400" y="580" text-anchor="middle" fill="#666" font-family="Space Grotesk, sans-serif" font-size="14">Light Mode Preview</text>
+</svg>

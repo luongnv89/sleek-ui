@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#f9f5f0"/>
+  <text x="200" y="50" text-anchor="middle" fill="#000" font-family="Space Grotesk, sans-serif" font-size="20" font-weight="700">Neo-Brutalist</text>
+  <rect x="40" y="70" width="100" height="60" fill="#ffe066" stroke="#000" stroke-width="3"/>
+  <rect x="160" y="70" width="100" height="60" fill="#000" stroke="#000" stroke-width="3"/>
+  <rect x="280" y="70" width="80" height="60" fill="#ff3333" stroke="#000" stroke-width="3"/>
+  <rect x="40" y="150" width="320" height="100" fill="#fff" stroke="#000" stroke-width="3"/>
+  <rect x="60" y="170" width="80" height="30" fill="#ffe066" stroke="#000" stroke-width="2"/>
+  <rect x="160" y="170" width="80" height="30" fill="#000" stroke="#000" stroke-width="2"/>
+  <rect x="260" y="170" width="80" height="30" fill="#ff3333" stroke="#000" stroke-width="2"/>
+  <text x="200" y="280" text-anchor="middle" fill="#666" font-family="Space Grotesk, sans-serif" font-size="12">Thumbnail</text>
+</svg>
