@@ -342,6 +342,7 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@vitejs/plugin-react": "^4.7.0",
     "ajv": "^8.18.0",
     "ajv-formats": "^3.0.1",
     "jest": "^30.3.0"
