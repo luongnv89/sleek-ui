@@ -54,9 +54,16 @@ jobs:
       - name: Verify CORS headers
         run: |
           sleep 2
-          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://luongnv89.github.io/sleek-ui/designs/editorial-dark.json)
+          # Check both GitHub Pages and custom domain (which redirects to custom domain)
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -L https://luongnv89.github.io/sleek-ui/designs/editorial-dark.json)
           if [ "$HTTP_CODE" -ne 200 ]; then
             echo "CORS check failed: received HTTP $HTTP_CODE"
             exit 1
           fi
-          echo "CORS check passed: design files accessible"
+          # Also verify CORS header is present
+          CORS_HEADER=$(curl -s -I -L https://luongnv89.github.io/sleek-ui/designs/editorial-dark.json | grep -i "access-control-allow-origin" || true)
+          if [ -z "$CORS_HEADER" ]; then
+            echo "CORS check failed: Access-Control-Allow-Origin header not found"
+            exit 1
+          fi
+          echo "CORS check passed: design files accessible with CORS headers"
