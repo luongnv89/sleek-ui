@@ -4,6 +4,7 @@
 
 @layer base {
   :root {
+    /* Catalog Light Mode - A neutral, clean palette that showcases all designs well */
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
@@ -22,11 +23,19 @@
     --destructive-foreground: 0 0% 98%;
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
-    --ring: 240 10% 3.9%;
-    --radius: 0.5rem;
+    --ring: 240 5.9% 10%;
+    --radius: 0.75rem;
+
+    /* Catalog-specific extras */
+    --header-height: 4rem;
+    --nav-height: 3rem;
+    --sidebar-width: 280px;
+    --transition-fast: 150ms ease;
+    --transition-normal: 200ms ease;
   }
 
   .dark {
+    /* Catalog Dark Mode - Elegant dark theme for night browsing */
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
     --card: 240 10% 3.9%;
@@ -46,28 +55,126 @@
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
+
+    /* Catalog-specific extras */
+    --header-height: 4rem;
+    --nav-height: 3rem;
+    --sidebar-width: 280px;
+    --transition-fast: 150ms ease;
+    --transition-normal: 200ms ease;
   }
 }
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
   }
+
   body {
-    @apply bg-background text-foreground;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Remove default margins and add smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body, h1, h2, h3, h4, h5, h6, p, ol, ul, li {
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Selection colors */
+  ::selection {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
   }
 }
 
-@layer components {
-  .copy-button {
-    @apply inline-flex items-center justify-center rounded-md border border-input bg-transparent px-2 py-1.5 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+@layer utilities {
+  /* Typography utilities */
+  .font-heading {
+    font-weight: 700;
+    letter-spacing: -0.025em;
   }
 
-  .search-bar-input {
-    @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 pl-10 pr-10 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+  .text-pretty {
+    text-wrap: pretty;
   }
 
-  .category-pill {
-    @apply inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  /* Focus visible for accessibility */
+  .focus-visible {
+    outline: none;
+    ring-width: 2px;
+    ring-color: hsl(var(--ring));
+    ring-offset-width: 2px;
+    ring-offset-color: hsl(var(--background));
+  }
+
+  /* Gradient text for headings */
+  .gradient-text {
+    background-image: linear-gradient(to right, hsl(var(--foreground)), hsl(var(--muted-foreground)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Glassmorphism effect */
+  .glass {
+    background-color: hsla(var(--background), 0.8);
+    backdrop-filter: blur(12px);
+    border-color: hsla(var(--border), 0.5);
+  }
+
+  /* Fade in animations */
+  .fade-in {
+    animation: fadeIn 300ms ease-out forwards;
+  }
+
+  .fade-in-up {
+    animation: fadeInUp 300ms ease-out forwards;
+  }
+
+  .fade-in-down {
+    animation: fadeInDown 300ms ease-out forwards;
+  }
+
+  .fade-in-left {
+    animation: fadeInLeft 300ms ease-out forwards;
+  }
+
+  .fade-in-right {
+    animation: fadeInRight 300ms ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeInLeft {
+    from { opacity: 0; transform: translateX(-16px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes fadeInRight {
+    from { opacity: 0; transform: translateX(16px); }
+    to { opacity: 1; transform: translateX(0); }
   }
 }
