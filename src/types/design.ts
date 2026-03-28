@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 export interface Design {
   slug: string
   name: string
@@ -12,3 +13,8 @@ export interface Design {
   detailUrl: string
   description?: string
 }
+=======
+// Type definitions for Sleek UI Design System
+
+export type { DesignTokens, DesignData, TransformedDesign } from './design-types';
+>>>>>>> origin/main

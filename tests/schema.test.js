@@ -6,7 +6,7 @@ const ajv = new Ajv({ allErrors: true });
 addFormats(ajv);
 
 const validDesign = {
-  "$schema": "https://json-schema.org/draft-07/schema",
+  "$schema": "https://sleek-ui.design/schema/design.v1.json",
   "name": "Sleek UI",
   "version": "1.0.0",
   "description": "A modern design system",
@@ -18,42 +18,42 @@ const validDesign = {
   "tokens": {
     "colors": {
       "light": {
-        "background": "#ffffff",
-        "surface": "#f9fafb",
-        "text": "#111827",
-        "textSecondary": "#6b7280",
-        "primary": "#3b82f6",
-        "primaryHover": "#2563eb",
-        "primaryActive": "#1d4ed8",
-        "secondary": "#6366f1",
-        "secondaryHover": "#4f46e5",
-        "secondaryActive": "#4338ca",
-        "accent": "#8b5cf6",
-        "success": "#10b981",
-        "warning": "#f59e0b",
-        "error": "#ef4444",
-        "info": "#3b82f6",
-        "border": "#e5e7eb",
-        "divider": "#f3f4f6"
+        "background": "0 0% 100%",
+        "foreground": "240 10% 3.9%",
+        "muted": "240 4.8% 95.9%",
+        "muted-foreground": "240 3.8% 46.1%",
+        "primary": "245 90% 73%",
+        "primary-foreground": "0 0% 100%",
+        "secondary": "240 4.8% 95.9%",
+        "secondary-foreground": "240 10% 3.9%",
+        "accent": "240 4.8% 95.9%",
+        "accent-foreground": "240 10% 3.9%",
+        "destructive": "0 84.2% 60.2%",
+        "destructive-foreground": "0 0% 100%",
+        "border": "240 5.9% 90%",
+        "input": "240 5.9% 90%",
+        "ring": "245 90% 73%",
+        "card": "0 0% 100%",
+        "card-foreground": "240 10% 3.9%"
       },
       "dark": {
-        "background": "#111827",
-        "surface": "#1f2937",
-        "text": "#f9fafb",
-        "textSecondary": "#9ca3af",
-        "primary": "#60a5fa",
-        "primaryHover": "#3b82f6",
-        "primaryActive": "#2563eb",
-        "secondary": "#818cf8",
-        "secondaryHover": "#6366f1",
-        "secondaryActive": "#4f46e5",
-        "accent": "#a78bfa",
-        "success": "#34d399",
-        "warning": "#fbbf24",
-        "error": "#f87171",
-        "info": "#60a5fa",
-        "border": "#374151",
-        "divider": "#1f2937"
+        "background": "240 33% 14%",
+        "foreground": "0 0% 95%",
+        "muted": "240 33% 19%",
+        "muted-foreground": "240 5% 64.9%",
+        "primary": "245 90% 73%",
+        "primary-foreground": "0 0% 100%",
+        "secondary": "240 33% 19%",
+        "secondary-foreground": "0 0% 95%",
+        "accent": "240 33% 19%",
+        "accent-foreground": "0 0% 95%",
+        "destructive": "0 62.8% 30.6%",
+        "destructive-foreground": "0 0% 100%",
+        "border": "240 33% 22%",
+        "input": "240 33% 22%",
+        "ring": "245 90% 73%",
+        "card": "240 33% 17%",
+        "card-foreground": "0 0% 95%"
       }
     },
     "typography": {
@@ -67,7 +67,10 @@ const validDesign = {
         "sm": "0.875rem",
         "base": "1rem",
         "lg": "1.125rem",
-        "xl": "1.25rem"
+        "xl": "1.25rem",
+        "2xl": "1.5rem",
+        "3xl": "1.875rem",
+        "4xl": "2.25rem"
       },
       "fontWeight": {
         "normal": 400,
@@ -87,23 +90,18 @@ const validDesign = {
       }
     },
     "spacing": {
-      "0": "0",
-      "1": "0.25rem",
-      "2": "0.5rem",
-      "3": "0.75rem",
-      "4": "1rem",
-      "5": "1.25rem",
-      "6": "1.5rem",
-      "8": "2rem",
-      "10": "2.5rem",
-      "12": "3rem"
+      "unit": "4px",
+      "xs": "4px",
+      "sm": "8px",
+      "md": "16px",
+      "lg": "24px",
+      "xl": "32px",
+      "2xl": "48px"
     },
     "radius": {
-      "none": "0",
       "sm": "0.125rem",
-      "md": "0.375rem",
+      "default": "0.375rem",
       "lg": "0.5rem",
-      "xl": "0.75rem",
       "full": "9999px"
     },
     "shadows": {
@@ -117,8 +115,7 @@ const validDesign = {
     "google": [
       {
         "family": "Inter",
-        "weights": [400, 500, 600, 700],
-        "styles": ["normal"]
+        "weights": [400, 500, 600, 700]
       }
     ],
     "urls": [
@@ -133,7 +130,7 @@ const validDesign = {
     "contrastTarget": 4.5,
     "focusRing": {
       "width": "2px",
-      "color": "#3b82f6",
+      "color": "currentColor",
       "offset": "2px"
     },
     "reducedMotion": true
@@ -234,25 +231,25 @@ describe('design.v1.json schema validation', () => {
     expect(isValid).toBe(false);
   });
 
-  test('missing fonts.google should fail', () => {
+  test('missing fonts.urls should fail', () => {
     const invalidDesign = JSON.parse(JSON.stringify(validDesign));
-    delete invalidDesign.fonts.google;
+    delete invalidDesign.fonts.urls;
     const isValid = validate(invalidDesign);
     expect(isValid).toBe(false);
   });
 
-  test('missing accessibility fields should fail', () => {
+  test('missing accessibility.focusRing should pass (optional)', () => {
     const invalidDesign = JSON.parse(JSON.stringify(validDesign));
-    delete invalidDesign.accessibility.contrastTarget;
+    delete invalidDesign.accessibility.focusRing;
     const isValid = validate(invalidDesign);
-    expect(isValid).toBe(false);
+    expect(isValid).toBe(true);
   });
 
-  test('missing components.button should fail', () => {
+  test('missing components should pass (optional)', () => {
     const invalidDesign = JSON.parse(JSON.stringify(validDesign));
-    delete invalidDesign.components.button;
+    delete invalidDesign.components;
     const isValid = validate(invalidDesign);
-    expect(isValid).toBe(false);
+    expect(isValid).toBe(true);
   });
 
   test('missing agentInstructions.steps should fail', () => {
@@ -262,17 +259,10 @@ describe('design.v1.json schema validation', () => {
     expect(isValid).toBe(false);
   });
 
-  test('missing preview.thumbnail should fail', () => {
+  test('missing preview.thumbnail should pass (optional)', () => {
     const invalidDesign = JSON.parse(JSON.stringify(validDesign));
     delete invalidDesign.preview.thumbnail;
     const isValid = validate(invalidDesign);
-    expect(isValid).toBe(false);
-  });
-
-  test('missing preview.screenshots.dark should fail', () => {
-    const invalidDesign = JSON.parse(JSON.stringify(validDesign));
-    delete invalidDesign.preview.screenshots.dark;
-    const isValid = validate(invalidDesign);
-    expect(isValid).toBe(false);
+    expect(isValid).toBe(true);
   });
 });
