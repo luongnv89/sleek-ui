@@ -59,7 +59,7 @@ export const CopyButton = ({
   // Determine accessibility label
   const getAriaLabel = () => {
     if (error) return `Error: ${error}. Click to try again`;
-    if (copied) 'Text copied to clipboard';
+    if (copied) return 'Text copied to clipboard';
     return 'Copy to clipboard';
   };
 

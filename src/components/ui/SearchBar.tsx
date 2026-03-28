@@ -1,4 +1,4 @@
-import { X } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SearchBarProps } from '@/types/components';
 
@@ -33,7 +33,7 @@ export const SearchBar = ({
   return (
     <div className={cn('relative flex w-full items-center', className)}>
       <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">
-        <SearchIcon />
+        <Search className="h-4 w-4" />
       </div>
       <input
         type="text"
@@ -66,25 +66,7 @@ export const SearchBar = ({
   );
 };
 
-// Inline Search icon since lucide-react Search is not imported at top
-function SearchIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="11" cy="11" r="8" />
-      <path d="m21 21-4.3-4.3" />
-    </svg>
-  );
-}
+// Search icon from lucide-react
 
 SearchBar.displayName = 'SearchBar';
 
