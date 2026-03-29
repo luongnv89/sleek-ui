@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { CopyButton } from '@/components/ui/CopyButton';
 import { SearchBar } from '@/components/ui/SearchBar';
 import { CategoryFilter } from '@/components/ui/CategoryFilter';
+import { DesignDetail } from '@/components/DesignDetail';
 
 function App() {
   const [searchValue, setSearchValue] = useState('');
@@ -96,6 +97,7 @@ function App() {
             </div>
           }
         />
+        <Route path="/designs/:slug" element={<DesignDetail />} />
       </Routes>
     </HashRouter>
   );

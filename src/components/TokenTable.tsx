@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { CopyButton } from './CopyButton';
+import { CopyButton } from '@/components/ui/CopyButton';
 import { DesignTokens } from '../types/design';
 
 interface TokenTableProps {
@@ -47,7 +47,7 @@ function TokenRow({ name, lightValue, darkValue, showDarkMode }: TokenRowProps) 
                   {showDarkMode ? 'Dark' : 'Light'}
                 </span>
               )}
-              <CopyButton value={displayValue} />
+              <CopyButton text={displayValue} />
             </div>
           </div>
         </div>
