@@ -1,0 +1,212 @@
+{
+  "$schema": "https://sleek-ui.design/schema/design.v1.json",
+  "name": "deep-ocean",
+  "version": "1.0.0",
+  "description": "Immersive deep ocean design with rich dark navy blues and vibrant teals. Created for AI agent-driven UI customization.",
+  "categories": ["dark", "immersive"],
+  "defaultMode": "dark",
+  "author": {
+    "name": "sleek-ui",
+    "email": "hello@sleek-ui.design",
+    "url": "https://sleek-ui.design"
+  },
+  "tokens": {
+    "colors": {
+      "light": {
+        "background": "220 20% 98%",
+        "foreground": "220 50% 25%",
+        "muted": "220 15% 94%",
+        "muted-foreground": "220 20% 50%",
+        "primary": "185 80% 40%",
+        "primary-foreground": "220 20% 15%",
+        "secondary": "220 25% 92%",
+        "secondary-foreground": "220 50% 25%",
+        "accent": "185 70% 35%",
+        "accent-foreground": "220 20% 15%",
+        "destructive": "0 72% 51%",
+        "destructive-foreground": "220 20% 98%",
+        "border": "220 20% 88%",
+        "input": "220 20% 88%",
+        "ring": "185 80% 40%",
+        "card": "220 25% 96%",
+        "card-foreground": "220 50% 25%",
+        "success": "150 60% 40%",
+        "success-foreground": "220 20% 98%",
+        "warning": "38 92% 50%",
+        "warning-foreground": "220 20% 15%",
+        "info": "199 89% 48%",
+        "info-foreground": "220 20% 98%"
+      },
+      "dark": {
+        "background": "220 40% 8%",
+        "foreground": "185 80% 75%",
+        "muted": "220 30% 15%",
+        "muted-foreground": "220 15% 65%",
+        "primary": "185 80% 55%",
+        "primary-foreground": "220 25% 15%",
+        "secondary": "220 35% 12%",
+        "secondary-foreground": "185 80% 75%",
+        "accent": "185 70% 50%",
+        "accent-foreground": "220 25% 15%",
+        "destructive": "0 62% 31%",
+        "destructive-foreground": "185 80% 90%",
+        "border": "220 30% 20%",
+        "input": "220 30% 20%",
+        "ring": "185 80% 55%",
+        "card": "220 35% 10%",
+        "card-foreground": "185 80% 75%",
+        "success": "150 50% 45%",
+        "success-foreground": "220 25% 15%",
+        "warning": "38 92% 56%",
+        "warning-foreground": "220 25% 15%",
+        "info": "199 89% 55%",
+        "info-foreground": "220 25% 15%"
+      }
+    },
+    "typography": {
+      "fontFamily": {
+        "sans": "Inter",
+        "serif": "Playfair Display",
+        "mono": "JetBrains Mono"
+      },
+      "fontSize": {
+        "xs": "0.75rem",
+        "sm": "0.875rem",
+        "base": "1rem",
+        "lg": "1.125rem",
+        "xl": "1.25rem",
+        "2xl": "1.5rem",
+        "3xl": "1.875rem",
+        "4xl": "2.25rem"
+      },
+      "fontWeight": {
+        "normal": 400,
+        "medium": 500,
+        "semibold": 600,
+        "bold": 700
+      },
+      "lineHeight": {
+        "tight": "1.25",
+        "normal": "1.6",
+        "relaxed": "1.75"
+      },
+      "letterSpacing": {
+        "tight": "-0.025em",
+        "normal": "0",
+        "wide": "0.025em"
+      }
+    },
+    "spacing": {
+      "unit": "4px",
+      "xs": "4px",
+      "sm": "8px",
+      "md": "16px",
+      "lg": "24px",
+      "xl": "32px",
+      "2xl": "48px"
+    },
+    "radius": {
+      "sm": "0.25rem",
+      "default": "0.5rem",
+      "lg": "0.75rem",
+      "full": "9999px"
+    },
+    "shadows": {
+      "sm": "0 1px 2px 0 rgb(0 0 0 / 0.2)",
+      "default": "0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3)",
+      "lg": "0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4)"
+    }
+  },
+  "fonts": {
+    "google": [
+      {
+        "family": "Inter",
+        "weights": [400, 500, 600, 700]
+      },
+      {
+        "family": "Playfair Display",
+        "weights": [400, 600, 700]
+      },
+      {
+        "family": "JetBrains Mono",
+        "weights": [400, 500, 600]
+      }
+    ],
+    "urls": [
+      {
+        "url": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap",
+        "format": "css2",
+        "family": "Inter, Playfair Display, JetBrains Mono"
+      }
+    ]
+  },
+  "accessibility": {
+    "contrastTarget": 4.5,
+    "focusRing": {
+      "width": "2px",
+      "color": "hsl(185, 80%, 55%)",
+      "offset": "2px"
+    },
+    "reducedMotion": true
+  },
+  "components": {
+    "button": {
+      "primary": {
+        "background": "primary",
+        "color": "primary-foreground",
+        "borderRadius": "radius.default",
+        "padding": "spacing.sm spacing.md",
+        "fontWeight": "semibold"
+      },
+      "secondary": {
+        "background": "secondary",
+        "color": "secondary-foreground",
+        "borderRadius": "radius.default",
+        "padding": "spacing.sm spacing.md",
+        "fontWeight": "medium"
+      },
+      "ghost": {
+        "background": "transparent",
+        "color": "primary",
+        "borderRadius": "radius.default",
+        "padding": "spacing.sm spacing.md",
+        "fontWeight": "medium"
+      }
+    },
+    "card": {
+      "background": "card",
+      "color": "card-foreground",
+      "borderRadius": "radius.lg",
+      "padding": "spacing.lg",
+      "shadow": "shadows.default",
+      "border": "1px solid border"
+    },
+    "input": {
+      "background": "background",
+      "color": "foreground",
+      "borderRadius": "radius.default",
+      "padding": "spacing.sm spacing.md",
+      "border": "1px solid input",
+      "focusRing": "focusRing",
+      "placeholderColor": "muted-foreground"
+    }
+  },
+  "agentInstructions": {
+    "steps": [
+      "Set CSS custom properties from tokens.colors on :root (light) and .dark (dark mode)",
+      "Set --radius from tokens.radius.default",
+      "Load fonts by adding the Google Fonts URL from fonts.urls as a <link> tag",
+      "Set font-family from tokens.typography.fontFamily",
+      "Apply component styles from the components field (Tailwind class names for shadcn projects)",
+      "Ensure focus states match accessibility.focusRing specification",
+      "Test both light and dark modes"
+    ]
+  },
+  "preview": {
+    "thumbnail": "/previews/deep-ocean-thumb.svg",
+    "screenshots": {
+      "light": ["/previews/deep-ocean-light.svg"],
+      "dark": ["/previews/deep-ocean-dark.svg"]
+    }
+  }
+}

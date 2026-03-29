@@ -21,6 +21,24 @@ and apply this design to my project"
 | Editorial Dark | Sophisticated, muted purples | dark | [JSON](https://luongnv89.github.io/sleek-ui/designs/editorial-dark.json) |
 | Warm SaaS | Friendly, amber tones | light | [JSON](https://luongnv89.github.io/sleek-ui/designs/warm-saas.json) |
 | Neo Brutalist | Bold, high contrast | light | [JSON](https://luongnv89.github.io/sleek-ui/designs/neo-brutalist.json) |
+| Swiss Clean | Precise, minimal, corporate | light | [JSON](https://luongnv89.github.io/sleek-ui/designs/swiss-clean.json) |
+| Deep Ocean | Immersive, deep navy blues | dark | [JSON](https://luongnv89.github.io/sleek-ui/designs/deep-ocean.json) |
+
+## Before & After Transformations
+
+See how sleek-ui transforms your app from the "ugly demo app" to a beautiful, professional design:
+
+| Design | Before | After |
+|--------|--------|-------|
+| Editorial Dark | ![Editorial Dark Before](docs/before-after/editorial-dark-before.png) | ![Editorial Dark After](docs/before-after/editorial-dark-after.png) |
+| Warm SaaS | ![Warm SaaS Before](docs/before-after/warm-saas-before.png) | ![Warm SaaS After](docs/before-after/warm-saas-after.png) |
+| Neo Brutalist | ![Neo Brutalist Before](docs/before-after/neo-brutalist-before.png) | ![Neo Brutalist After](docs/before-after/neo-brutalist-after.png) |
+| Swiss Clean | ![Swiss Clean Before](docs/before-after/swiss-clean-before.png) | ![Swiss Clean After](docs/before-after/swiss-clean-after.png) |
+| Deep Ocean | ![Deep Ocean Before](docs/before-after/deep-ocean-before.png) | ![Deep Ocean After](docs/before-after/deep-ocean-after.png) |
+
+For detailed transformation documentation, see [docs/before-after/](docs/before-after/).
+
+## Usage
 
 ## Usage
 
