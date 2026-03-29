@@ -882,7 +882,7 @@
 | # | Ambiguity | Location | Recommended Resolution |
 |---|-----------|---------|------------------------|
 | A1 | `CategoryFilter` single-select vs multi-select not decided | Task 2.10 | Default to single-select for MVP simplicity; ship multi-select in Phase 3 |
-| A2 | `tailwindConfig` override field — add or defer? | Task 4.5 | Evaluate in Sprint 4; lean toward defer to avoid schema complexity |
+| A2 | `tailwindConfig` override field — add or defer? | Task 4.5 | Rejected (2026-03-29): Schema covers impact via tokens (colors, typography, radius, spacing, shadows); avoiding complexity. See `docs/schema-decisions.md` |
 | A3 | Design versioning — do old URLs stay live when designs update? | PRD §9.1 OQ3 | Informational only for MVP; no versioned URLs |
 | A4 | Preview thumbnails — generated or hand-crafted? | Task 2.3 | Hand-crafted for MVP; pipeline deferred to Phase 3 |
 | A5 | Demo video format — with or without voiceover? | Task 4.6 | No voiceover; subtitles preferred for async sharing |

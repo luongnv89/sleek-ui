@@ -587,7 +587,7 @@ Key events to capture if analytics is added:
 | 2.4 | Write README with usage instructions for Claude Code, Cursor, Codex | Dev | ☐ |
 | 2.5 | Add "Built with sleek-ui" badge to README | Dev | ☐ |
 | 2.6 | Record demo video (before → agent command → after transformation) | Dev | ☐ |
-| 2.7 | Evaluate adding `tailwindConfig` override field to schema | Dev | ☐ |
+| 2.7 | Evaluate adding `tailwindConfig` override field to schema | Dev | ✓ (Rejected: schema sufficient via tokens) |
 | 2.8 | Post to Twitter/X, Reddit r/webdev, Hacker News | Dev | ☐ |
 
 **Phase 2 Exit Criteria:**
@@ -613,7 +613,7 @@ Key events to capture if analytics is added:
 
 | # | Question | Status | Resolution |
 |---|---------|--------|------------|
-| OQ1 | Should the JSON format include `tailwindConfig` overrides? | Open | Evaluate in Phase 2 (F14) |
+| OQ1 | Should the JSON format include `tailwindConfig` overrides? | Resolved: rejected | Schema provides sufficient coverage via tokens (colors, typography, radius, spacing, shadows); adding tailwindConfig would increase complexity without proportional benefit. See `docs/schema-decisions.md` |
 | OQ2 | Version strategy: should old design versions remain at versioned URLs? | Open | MVP: `version` field is informational only; versioned URLs deferred to Phase 3 |
 | OQ3 | MCP integration timeline? | Resolved: deferred | Phase 3 only |
 | OQ4 | Font loading strategy? | Resolved | `fonts.urls[]` + agent instruction to add `<link>` tag |
