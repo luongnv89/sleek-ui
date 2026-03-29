@@ -1,6 +1,8 @@
 import neoBrutalist from '../../public/designs/neo-brutalist.json';
 import warmSaas from '../../public/designs/warm-saas.json';
 import editorialDark from '../../public/designs/editorial-dark.json';
+import swissClean from '../../public/designs/swiss-clean.json';
+import deepOcean from '../../public/designs/deep-ocean.json';
 import type { TransformedDesign } from '../types/design';
 
 const GITHUB_PAGES_BASE = 'https://luongnv89.github.io/sleek-ui';
@@ -49,6 +51,8 @@ const designs: TransformedDesign[] = [
   transformDesign(neoBrutalist),
   transformDesign(warmSaas),
   transformDesign(editorialDark),
+  transformDesign(swissClean),
+  transformDesign(deepOcean),
 ];
 
 export default designs;
