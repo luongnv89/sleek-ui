@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://luongnv89.github.io/sleek-ui/logo/logo-mark.svg" alt="sleek-ui logo" width="120" height="120">
+</p>
+
 # Sleek UI Design Systems
 
 [![GitHub Stars](https://img.shields.io/github/stars/luongnv89/sleek-ui?style=flat-square&color=%2300FF41)](https://github.com/luongnv89/sleek-ui/stargazers)
@@ -161,7 +165,9 @@ The agent will:
 
 [**View all designs →**](https://sleek-ui.design)
 
-[**Read the docs →**](docs/) · [**GitHub →**](https://github.com/luongnv89/sleek-ui)
+[**Brand Showcase →**](https://luongnv89.github.io/sleek-ui/logo/brand-showcase.html)
+
+[**GitHub →**](https://github.com/luongnv89/sleek-ui)
 
 MIT Licensed
 
