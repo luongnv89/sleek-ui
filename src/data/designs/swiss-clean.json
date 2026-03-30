@@ -1,0 +1,203 @@
+{
+  "$schema": "https://sleek-ui.design/schema/design.v1.json",
+  "name": "swiss-clean",
+  "version": "1.0.0",
+  "description": "Swiss International Typographic Style design system - precise grid-based layout with neutral palette and one accent color",
+  "categories": ["minimal", "corporate", "typography"],
+  "author": {
+    "name": "sleek-ui",
+    "email": "hello@sleek-ui.design",
+    "url": "https://sleek-ui.design"
+  },
+  "tokens": {
+    "colors": {
+      "light": {
+        "background": "0 0% 100%",
+        "foreground": "0 0% 15%",
+        "primary": "0 72% 51%",
+        "primary-foreground": "0 0% 100%",
+        "secondary": "0 0% 96%",
+        "secondary-foreground": "0 0% 20%",
+        "muted": "0 0% 96%",
+        "muted-foreground": "0 0% 45%",
+        "accent": "0 0% 96%",
+        "accent-foreground": "0 0% 20%",
+        "destructive": "0 72% 51%",
+        "destructive-foreground": "0 0% 100%",
+        "border": "0 0% 85%",
+        "input": "0 0% 85%",
+        "ring": "0 72% 51%",
+        "card": "0 0% 100%",
+        "card-foreground": "0 0% 15%",
+        "success": "142 71% 45%",
+        "success-foreground": "0 0% 15%",
+        "warning": "38 92% 50%",
+        "warning-foreground": "0 0% 15%",
+        "info": "199 89% 48%",
+        "info-foreground": "0 0% 100%"
+      },
+      "dark": {
+        "background": "0 0% 5%",
+        "foreground": "0 0% 85%",
+        "primary": "0 72% 51%",
+        "primary-foreground": "0 0% 100%",
+        "secondary": "0 0% 9%",
+        "secondary-foreground": "0 0% 70%",
+        "muted": "0 0% 10%",
+        "muted-foreground": "0 0% 60%",
+        "accent": "0 0% 15%",
+        "accent-foreground": "0 0% 85%",
+        "destructive": "0 62% 30%",
+        "destructive-foreground": "0 0% 100%",
+        "border": "0 0% 15%",
+        "input": "0 0% 15%",
+        "ring": "0 72% 51%",
+        "card": "0 0% 7%",
+        "card-foreground": "0 0% 85%",
+        "success": "142 70% 50%",
+        "success-foreground": "0 0% 15%",
+        "warning": "38 92% 56%",
+        "warning-foreground": "0 0% 15%",
+        "info": "199 89% 55%",
+        "info-foreground": "0 0% 100%"
+      }
+    },
+    "typography": {
+      "fontFamily": {
+        "sans": "Helvetica Neue, Inter, system-ui, sans-serif",
+        "serif": "Georgia, serif",
+        "mono": "Menlo, Monaco, Consolas, monospace"
+      },
+      "fontSize": {
+        "xs": "0.75rem",
+        "sm": "0.875rem",
+        "base": "1rem",
+        "lg": "1.125rem",
+        "xl": "1.25rem",
+        "2xl": "1.5rem",
+        "3xl": "1.875rem",
+        "4xl": "2.25rem"
+      },
+      "fontWeight": {
+        "normal": 400,
+        "medium": 500,
+        "semibold": 600,
+        "bold": 700
+      },
+      "lineHeight": {
+        "tight": "1.25",
+        "normal": "1.5",
+        "relaxed": "1.75"
+      },
+      "letterSpacing": {
+        "tight": "-0.025em",
+        "normal": "0",
+        "wide": "0.05em"
+      }
+    },
+    "spacing": {
+      "unit": "4px",
+      "xs": "4px",
+      "sm": "8px",
+      "md": "16px",
+      "lg": "24px",
+      "xl": "32px",
+      "2xl": "48px"
+    },
+    "radius": {
+      "sm": "0",
+      "default": "0",
+      "lg": "0",
+      "full": "9999px"
+    },
+    "shadows": {
+      "sm": "0 1px 0 rgb(0 0 0 / 0.1)",
+      "default": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+      "lg": "0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05)"
+    }
+  },
+  "fonts": {
+    "google": [
+      {
+        "family": "Inter",
+        "weights": [400, 500, 600, 700]
+      }
+    ],
+    "urls": [
+      {
+        "url": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
+        "format": "css2",
+        "family": "Inter"
+      }
+    ]
+  },
+  "accessibility": {
+    "contrastTarget": 4.5,
+    "focusRing": {
+      "width": "2px",
+      "color": "currentColor",
+      "offset": "2px"
+    },
+    "reducedMotion": true
+  },
+  "components": {
+    "button": {
+      "primary": {
+        "background": "primary",
+        "color": "primary-foreground",
+        "borderRadius": "radius.default",
+        "padding": "spacing.sm spacing.md",
+        "fontWeight": "semibold"
+      },
+      "secondary": {
+        "background": "secondary",
+        "color": "secondary-foreground",
+        "borderRadius": "radius.default",
+        "padding": "spacing.sm spacing.md",
+        "fontWeight": "medium"
+      },
+      "ghost": {
+        "background": "transparent",
+        "color": "foreground",
+        "borderRadius": "radius.default",
+        "padding": "spacing.sm spacing.md",
+        "fontWeight": "medium"
+      }
+    },
+    "card": {
+      "background": "card",
+      "color": "card-foreground",
+      "borderRadius": "radius.default",
+      "padding": "spacing.lg",
+      "shadow": "shadows.default",
+      "border": "1px solid border"
+    },
+    "input": {
+      "background": "background",
+      "color": "foreground",
+      "borderRadius": "radius.default",
+      "padding": "spacing.sm spacing.md",
+      "border": "1px solid input",
+      "focusRing": "focusRing",
+      "placeholderColor": "muted-foreground"
+    }
+  },
+  "agentInstructions": {
+    "steps": [
+      "Set CSS custom properties from tokens.colors on :root (light) and .dark (dark mode)",
+      "Set --radius from tokens.radius.default",
+      "Load fonts by adding the Google Fonts URL from fonts.urls as a <link> tag",
+      "Set font-family from tokens.typography.fontFamily - prioritize Helvetica Neue for Swiss aesthetic",
+      "Apply component styles from the components field (Tailwind class names for shadcn projects)",
+      "Ensure focus states match accessibility.focusRing specification",
+      "Test both light and dark modes"
+    ]
+  },
+  "preview": {
+    "thumbnail": "/previews/swiss-clean-thumb.svg",
+    "screenshots": {
+      "light": ["/previews/swiss-clean-light.svg"],
+      "dark": ["/previews/swiss-clean-dark.svg"]
+    }
+  }
+}
