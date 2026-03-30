@@ -13,7 +13,7 @@ export function Header({ theme, onToggleTheme }: HeaderProps) {
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 font-bold text-xl tracking-tight">
           <img
-            src="/logo/logo-mark.svg"
+            src="/sleek-ui/logo/logo-mark.svg"
             alt="sleek-ui logo mark"
             className="h-8 w-8 text-foreground"
           />

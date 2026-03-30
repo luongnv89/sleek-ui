@@ -24,7 +24,7 @@ function App() {
                 <section className="text-center space-y-6 py-12 md:py-20">
                   <div className="flex justify-center mb-6">
                     <img
-                      src="/logo/logo-mark.svg"
+                      src="/sleek-ui/logo/logo-mark.svg"
                       alt="sleek-ui logo mark"
                       className="h-20 w-20 text-foreground"
                     />
@@ -41,7 +41,7 @@ function App() {
                 {/* Brand Showcase Link */}
                 <section className="text-center">
                   <p className="text-sm text-muted-foreground">
-                    View the <a href="/logo/brand-showcase.html" className="text-[#00FF41] hover:underline">brand showcase</a>
+                    View the <a href="/sleek-ui/logo/brand-showcase.html" className="text-[#00FF41] hover:underline">brand showcase</a>
                   </p>
                 </section>
 
