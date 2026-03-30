@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <!-- Background circle -->
+  <rect x="0" y="0" width="512" height="512" rx="96" fill="#0A0A0A"/>
+
+  <!-- Logo Mark centered (scale: 5.3, translate to center) -->
+  <g transform="translate(86, 76) scale(5.3)">
+    <!-- Layer 1: Outer brush stroke curve (stroke) -->
+    <path d="M12 32 C 12 12 20 12 26 16 C 32 20 36 4 48 4 C 62 4 58 28 44 28 C 30 28 34 44 26 44 C 20 44 12 36 12 32 Z" fill="none" stroke="#FAFAFA" stroke-width="0.66" stroke-linecap="round"/>
+
+    <!-- Layer 2: Inner brush stroke curve (fill) -->
+    <path d="M16 32 C 16 16 22 16 28 19 C 34 22 38 10 46 10 C 58 10 54 30 42 30 C 30 30 34 42 28 42 C 22 42 16 34 16 32 Z" fill="#FAFAFA"/>
+
+    <!-- Layer 3: Accent dot (neon green) -->
+    <circle cx="42" cy="20" r="0.66" fill="#00FF41"/>
+  </g>
+</svg>

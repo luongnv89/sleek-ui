@@ -23,6 +23,9 @@ export function Layout({ theme, onToggleTheme }: LayoutProps) {
             <a href="https://github.com/luongnv89/sleek-ui" className="hover:text-foreground transition-colors">
               GitHub
             </a>
+            <a href="/logo/brand-showcase.html" className="hover:text-foreground transition-colors">
+              Brand
+            </a>
           </div>
         </div>
       </footer>

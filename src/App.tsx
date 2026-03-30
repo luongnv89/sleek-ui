@@ -22,12 +22,26 @@ function App() {
             <div className="min-h-screen bg-background p-8">
               <div className="mx-auto max-w-7xl space-y-12">
                 <section className="text-center space-y-6 py-12 md:py-20">
+                  <div className="flex justify-center mb-6">
+                    <img
+                      src="/logo/logo-mark.svg"
+                      alt="sleek-ui logo mark"
+                      className="h-20 w-20 text-foreground"
+                    />
+                  </div>
                   <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-6xl">
-                    Sleek UI Design Systems
+                    Sleek <span className="text-[#00FF41]">UI</span> Design Systems
                   </h1>
                   <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
                     Beautiful, ready-to-use design systems for your next project.
                     Simply pick a design and apply it to your codebase.
+                  </p>
+                </section>
+
+                {/* Brand Showcase Link */}
+                <section className="text-center">
+                  <p className="text-sm text-muted-foreground">
+                    View the <a href="/logo/brand-showcase.html" className="text-[#00FF41] hover:underline">brand showcase</a>
                   </p>
                 </section>
 
