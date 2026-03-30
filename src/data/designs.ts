@@ -3,26 +3,11 @@ import warmSaas from './designs/warm-saas.json';
 import editorialDark from './designs/editorial-dark.json';
 import swissClean from './designs/swiss-clean.json';
 import deepOcean from './designs/deep-ocean.json';
-import type { TransformedDesign } from '../types/design';
+import type { TransformedDesign, DesignData } from '../types/design';
 
 const GITHUB_PAGES_BASE = 'https://luongnv89.github.io/sleek-ui';
 
-const transformDesign = (designJson: {
-  name: string;
-  defaultMode?: string;
-  tokens: {
-    colors?: {
-      light?: Record<string, string>;
-      [key: string]: any;
-    };
-    [key: string]: any;
-  };
-  categories: string[];
-  preview?: {
-    thumbnail?: string;
-    [key: string]: any;
-  };
-}): TransformedDesign => {
+const transformDesign = (designJson: DesignData): TransformedDesign => {
   const slug = designJson.name;
   const mode = designJson.defaultMode || 'light';
   const colors = designJson.tokens?.colors?.[mode] || designJson.tokens?.colors?.light || {};
@@ -44,6 +29,8 @@ const transformDesign = (designJson: {
     description: designJson.tokens?.typography?.fontFamily?.sans
       ? `A ${designJson.tokens.typography.fontFamily.sans} based design system`
       : 'A beautiful design system',
+    // Include raw design data to avoid CORS fetch issues
+    rawData: designJson,
   };
 };
 

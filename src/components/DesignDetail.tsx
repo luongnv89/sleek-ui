@@ -95,16 +95,7 @@ export function DesignDetail() {
     const foundDesign = designs.find((d) => d.slug === slug);
     if (foundDesign) {
       setDesign(foundDesign);
-
-      // Fetch the actual design JSON
-      fetch(foundDesign.jsonUrl)
-        .then((res) => res.json())
-        .then((data) => {
-          setDesignData(data);
-        })
-        .catch((err) => {
-          console.error('Failed to fetch design data:', err);
-        });
+      setDesignData(foundDesign.rawData);
     }
   }, [slug]);
 

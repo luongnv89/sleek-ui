@@ -143,4 +143,5 @@ export interface TransformedDesign {
   thumbnailUrl: string;
   detailUrl: string;
   description: string;
+  rawData: DesignData;
 }
