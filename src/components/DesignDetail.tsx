@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Check, Copy, Eye, Moon, Sun } from 'lucide-react';
+import { ArrowLeft, Check, Copy, Moon, Sun } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -153,6 +153,27 @@ export function DesignDetail() {
           </div>
         </div>
 
+        {/* Agent Prompt — primary action */}
+        <div className="mb-10 rounded-xl border-2 border-primary/30 bg-primary/5 p-6">
+          <div className="mb-3 flex items-center justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-widest text-primary">Agent Prompt</p>
+              <p className="mt-0.5 text-sm text-muted-foreground">Copy and paste this into Claude Code, Cursor, or any AI agent</p>
+            </div>
+            <Button
+              size="sm"
+              onClick={() => handleCopy(agentPrompt, 'agentPrompt')}
+              className="shrink-0 gap-2"
+            >
+              {isCopied === 'agentPrompt' ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+              {isCopied === 'agentPrompt' ? 'Copied!' : 'Copy'}
+            </Button>
+          </div>
+          <pre className="whitespace-pre-wrap rounded-lg bg-background/80 p-4 text-sm font-mono text-foreground/90 border border-border">
+            {agentPrompt}
+          </pre>
+        </div>
+
         {/* Design Info */}
         <div className="mb-8 grid gap-6 md:grid-cols-2">
           <Card>
@@ -258,85 +279,6 @@ export function DesignDetail() {
           )}
         </section>
 
-        {/* Copy Actions */}
-        <section className="mb-12">
-          <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-            Copy Actions
-          </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
-            Share this design with your AI agent of choice
-          </p>
-
-          <div className="mt-6 grid gap-4 sm:grid-cols-3">
-            {/* Copy URL */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Copy className="h-5 w-5" />
-                  Copy URL
-                </CardTitle>
-                <CardDescription>Copies the JSON design URL</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center gap-2">
-                  <Input value={design.jsonUrl} readOnly className="flex-1" />
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleCopy(design.jsonUrl, 'url')}
-                    className="shrink-0"
-                  >
-                    {isCopied === 'url' ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* View JSON */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Eye className="h-5 w-5" />
-                  View JSON
-                </CardTitle>
-                <CardDescription>Opens the raw JSON in a new tab</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button
-                  variant="outline"
-                  onClick={() => setJsonOpen(true)}
-                  className="w-full"
-                >
-                  Open in New Tab
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Copy Agent Prompt */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Copy className="h-5 w-5" />
-                  Copy Agent Prompt
-                </CardTitle>
-                <CardDescription>Copies a ready-to-paste agent instruction</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center gap-2">
-                  <Input value={agentPrompt} readOnly className="flex-1" />
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleCopy(agentPrompt, 'agentPrompt')}
-                    className="shrink-0"
-                  >
-                    {isCopied === 'agentPrompt' ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </section>
 
         {/* JSON Viewer Modal */}
         {jsonOpen && designData && (

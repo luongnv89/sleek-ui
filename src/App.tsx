@@ -11,6 +11,19 @@ function App() {
   const [searchValue, setSearchValue] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
+  const categories = Object.entries(
+    designs.flatMap(d => d.categories).reduce((acc, cat) => {
+      acc[cat] = (acc[cat] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>)
+  ).map(([id, count]) => ({ id, label: id, count }));
+
+  const filteredDesigns = designs.filter(d => {
+    const matchesSearch = !searchValue || d.name.toLowerCase().includes(searchValue.toLowerCase());
+    const matchesCategory = !selectedCategory || d.categories.includes(selectedCategory);
+    return matchesSearch && matchesCategory;
+  });
+
   const exampleText = 'https://luongnv89.github.io/sleek-ui/designs/warm-saas.json';
 
   return (
@@ -72,54 +85,33 @@ function App() {
                       Available Designs
                     </h2>
                     <span className="text-sm text-muted-foreground">
-                      {designs.length} designs
+                      {filteredDesigns.length} / {designs.length} designs
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {designs.map((design) => (
-                      <DesignCard key={design.slug} design={design} />
-                    ))}
-                  </div>
-                </section>
+                  <SearchBar
+                    value={searchValue}
+                    onChange={setSearchValue}
+                    placeholder="Search designs..."
+                  />
 
-                {/* SearchBar Demo */}
-                <section className="rounded-lg border bg-card p-6 shadow-sm">
-                  <h2 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-                    SearchBar
-                  </h2>
-                  <p className="mt-4 text-lg text-muted-foreground">
-                    A search input component with icon and clear button
-                  </p>
-                  <div className="mt-6 max-w-md">
-                    <SearchBar
-                      value={searchValue}
-                      onChange={setSearchValue}
-                      placeholder="Search components..."
-                    />
-                  </div>
-                </section>
+                  <CategoryFilter
+                    categories={categories}
+                    selected={selectedCategory}
+                    onChange={setSelectedCategory}
+                  />
 
-                {/* CategoryFilter Demo */}
-                <section className="rounded-lg border bg-card p-6 shadow-sm">
-                  <h2 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-                    CategoryFilter
-                  </h2>
-                  <p className="mt-4 text-lg text-muted-foreground">
-                    A pill-style filter component for categories with count badges
-                  </p>
-                  <div className="mt-6">
-                    <CategoryFilter
-                      categories={designs.map(d => d.categories).flat()}
-                      selected={selectedCategory}
-                      onChange={setSelectedCategory}
-                    />
-                    <div className="mt-6 rounded-md bg-muted p-4">
-                      <p className="text-sm">
-                        Selected: {selectedCategory || 'All categories'}
-                      </p>
+                  {filteredDesigns.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {filteredDesigns.map((design) => (
+                        <DesignCard key={design.slug} design={design} />
+                      ))}
                     </div>
-                  </div>
+                  ) : (
+                    <div className="py-16 text-center text-muted-foreground">
+                      No designs match your search.
+                    </div>
+                  )}
                 </section>
               </div>
             </div>

@@ -1,8 +1,3 @@
-import neoBrutalist from './designs/neo-brutalist.json';
-import warmSaas from './designs/warm-saas.json';
-import editorialDark from './designs/editorial-dark.json';
-import swissClean from './designs/swiss-clean.json';
-import deepOcean from './designs/deep-ocean.json';
 import type { TransformedDesign, DesignData } from '../types/design';
 
 const GITHUB_PAGES_BASE = 'https://luongnv89.github.io/sleek-ui';
@@ -29,17 +24,85 @@ const transformDesign = (designJson: DesignData): TransformedDesign => {
     description: designJson.tokens?.typography?.fontFamily?.sans
       ? `A ${designJson.tokens.typography.fontFamily.sans} based design system`
       : 'A beautiful design system',
-    // Include raw design data to avoid CORS fetch issues
     rawData: designJson,
   };
 };
 
-const designs: TransformedDesign[] = [
-  transformDesign(neoBrutalist),
-  transformDesign(warmSaas),
-  transformDesign(editorialDark),
-  transformDesign(swissClean),
-  transformDesign(deepOcean),
+// Design list for dynamic imports - all designs from VoltAgent + original 5
+const DESIGN_LIST = [
+  // Original 5 designs
+  'neo-brutalist',
+  'warm-saas',
+  'editorial-dark',
+  'swiss-clean',
+  'deep-ocean',
+  // VoltAgent imports (54 designs)
+  'airbnb',
+  'airtable',
+  'apple',
+  'bmw',
+  'cal',
+  'claude',
+  'clay',
+  'clickhouse',
+  'cohere',
+  'coinbase',
+  'composio',
+  'cursor',
+  'elevenlabs',
+  'expo',
+  'figma',
+  'framer',
+  'hashicorp',
+  'ibm',
+  'intercom',
+  'kraken',
+  'linear.app',
+  'lovable',
+  'minimax',
+  'mintlify',
+  'miro',
+  'mistral.ai',
+  'mongodb',
+  'notion',
+  'nvidia',
+  'ollama',
+  'opencode.ai',
+  'pinterest',
+  'posthog',
+  'raycast',
+  'replicate',
+  'resend',
+  'revolut',
+  'runwayml',
+  'sanity',
+  'sentry',
+  'spacex',
+  'spotify',
+  'stripe',
+  'supabase',
+  'superhuman',
+  'together.ai',
+  'uber',
+  'vercel',
+  'voltagent',
+  'warp',
+  'webflow',
+  'wise',
+  'x.ai',
+  'zapier',
 ];
+
+// Dynamic import map
+const designModules = import.meta.glob('./designs/*.json', { eager: true });
+
+const designs: TransformedDesign[] = DESIGN_LIST.map(slug => {
+  const moduleKey = `./designs/${slug}.json`;
+  const designJson = designModules[moduleKey] as DesignData;
+  if (designJson) {
+    return transformDesign(designJson);
+  }
+  return null;
+}).filter((d): d is TransformedDesign => d !== null);
 
 export default designs;
