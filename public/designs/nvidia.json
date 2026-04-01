@@ -1,5 +1,5 @@
 {
-  "$schema": "https://sleek-ui.design/schema/design.v1.json",
+  "$schema": "https://luongnv.com/sleek-ui/schema/design.v1.json",
   "name": "nvidia",
   "version": "1.0.0",
   "description": "NVIDIA's website is a high-contrast, technology-forward experience that communicates raw computational power through design restraint. The page is built on a stark black (`#000000`) and white (`#fffff",

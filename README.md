@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="https://luongnv89.github.io/sleek-ui/logo/logo-mark.svg" alt="sleek-ui logo" width="120" height="120">
+  <img src="https://luongnv.com/sleek-ui/logo/logo-full.svg" alt="sleek-ui logo" width="300" height="68">
 </p>
 
 # Sleek UI Design Systems
 
 [![GitHub Stars](https://img.shields.io/github/stars/luongnv89/sleek-ui?style=flat-square&color=%2300FF41)](https://github.com/luongnv89/sleek-ui/stargazers)
-[![GitHub Pages](https://img.shields.io/website?url=https%3A%2F%2Fsleek-ui.design&down_message=offline&style=flat-square)](https://sleek-ui.design)
+[![GitHub Pages](https://img.shields.io/website?url=https%3A%2F%2Fluongnv.com/sleek-ui&down_message=offline&style=flat-square)](https://luongnv.com/sleek-ui)
 [![License](https://img.shields.io/github/license/luongnv89/sleek-ui?style=flat-square)](LICENSE)
 
 **The Unsplash of Design Systems for AI Agents**
@@ -27,7 +27,7 @@ graph LR
 ```
 
 1. **Pick a design** from the catalog
-2. **Copy the URL** (e.g., `https://luongnv89.github.io/sleek-ui/designs/editorial-dark.json`)
+2. **Copy the URL** (e.g., `https://luongnv.com/sleek-ui/designs/editorial-dark.json`)
 3. **Tell your AI agent** to apply the design
 4. The agent sets CSS custom properties and component styles
 
@@ -37,11 +37,11 @@ graph LR
 
 | Design | Vibe | Mode | URL |
 |--------|------|------|-----|
-| Editorial Dark | Sophisticated, muted purples | Dark | [JSON](https://luongnv89.github.io/sleek-ui/designs/editorial-dark.json) |
-| Warm SaaS | Friendly, amber tones | Light | [JSON](https://luongnv89.github.io/sleek-ui/designs/warm-saas.json) |
-| Neo Brutalist | Bold, high contrast | Light | [JSON](https://luongnv89.github.io/sleek-ui/designs/neo-brutalist.json) |
-| Swiss Clean | Precise, minimal, corporate | Light | [JSON](https://luongnv89.github.io/sleek-ui/designs/swiss-clean.json) |
-| Deep Ocean | Immersive, deep navy blues | Dark | [JSON](https://luongnv89.github.io/sleek-ui/designs/deep-ocean.json) |
+| Editorial Dark | Sophisticated, muted purples | Dark | [JSON](https://luongnv.com/sleek-ui/designs/editorial-dark.json) |
+| Warm SaaS | Friendly, amber tones | Light | [JSON](https://luongnv.com/sleek-ui/designs/warm-saas.json) |
+| Neo Brutalist | Bold, high contrast | Light | [JSON](https://luongnv.com/sleek-ui/designs/neo-brutalist.json) |
+| Swiss Clean | Precise, minimal, corporate | Light | [JSON](https://luongnv.com/sleek-ui/designs/swiss-clean.json) |
+| Deep Ocean | Immersive, deep navy blues | Dark | [JSON](https://luongnv.com/sleek-ui/designs/deep-ocean.json) |
 
 ---
 
@@ -49,12 +49,12 @@ graph LR
 
 **1. Fetch a design:**
 ```bash
-curl https://luongnv89.github.io/sleek-ui/designs/editorial-dark.json
+curl https://luongnv.com/sleek-ui/designs/editorial-dark.json
 ```
 
 **2. Apply with your AI agent:**
 ```
-Fetch https://luongnv89.github.io/sleek-ui/designs/editorial-dark.json
+Fetch https://luongnv.com/sleek-ui/designs/editorial-dark.json
 and apply this design system to my project.
 ```
 
@@ -149,7 +149,7 @@ classDiagram
 ## Agent Prompt Template
 
 ```
-Fetch https://luongnv89.github.io/sleek-ui/designs/{slug}.json
+Fetch https://luongnv.com/sleek-ui/designs/{slug}.json
 and apply this design system to my project.
 ```
 
@@ -163,9 +163,9 @@ The agent will:
 
 ## Get Started
 
-[**View all designs →**](https://sleek-ui.design)
+[**View all designs →**](https://luongnv.com/sleek-ui)
 
-[**Brand Showcase →**](https://luongnv89.github.io/sleek-ui/logo/brand-showcase.html)
+[**Brand Showcase →**](https://luongnv.com/sleek-ui/logo/brand-showcase.html)
 
 [**GitHub →**](https://github.com/luongnv89/sleek-ui)
 
@@ -180,19 +180,19 @@ MIT Licensed
 
 ### Claude Code
 1. Run `claude`
-2. Paste: `Fetch https://luongnv89.github.io/sleek-ui/designs/{slug}.json and apply this design system`
+2. Paste: `Fetch https://luongnv.com/sleek-ui/designs/{slug}.json and apply this design system`
 
 ### Cursor
 1. Open Composer (Cmd+K)
-2. Paste: `Fetch https://luongnv89.github.io/sleek-ui/designs/{slug}.json and apply this design system`
+2. Paste: `Fetch https://luongnv.com/sleek-ui/designs/{slug}.json and apply this design system`
 
 ### Codex CLI
 1. Run `codex`
-2. Paste: `Fetch https://luongnv89.github.io/sleek-ui/designs/{slug}.json and apply this design system`
+2. Paste: `Fetch https://luongnv.com/sleek-ui/designs/{slug}.json and apply this design system`
 
 ## Custom Domain
 
-Designs are also served from `https://sleek-ui.design/designs/{slug}.json`
+Designs are also served from `https://luongnv.com/sleek-ui/designs/{slug}.json`
 
 ## Development
 

@@ -1,13 +1,13 @@
 {
-  "$schema": "https://sleek-ui.design/schema/design.v1.json",
+  "$schema": "https://luongnv.com/sleek-ui/schema/design.v1.json",
   "name": "warm-saas",
   "version": "1.0.0",
   "description": "Amber tones with a friendly, corporate aesthetic. Default light mode with warm, inviting colors perfect for SaaS applications.",
   "categories": ["warm", "corporate"],
   "author": {
     "name": "sleek-ui",
-    "email": "hello@sleek-ui.design",
-    "url": "https://sleek-ui.design"
+    "email": "hello@luongnv.com",
+    "url": "https://luongnv.com/sleek-ui"
   },
   "tokens": {
     "colors": {

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://sleek-ui.design/schema/design.v1.json",
+  "$schema": "https://luongnv.com/sleek-ui/schema/design.v1.json",
   "name": "spotify",
   "version": "1.0.0",
   "description": "Spotify's web interface is a dark, immersive music player that wraps listeners in a near-black cocoon (`#121212`, `#181818`, `#1f1f1f`) where album art and content become the primary source of color. ",

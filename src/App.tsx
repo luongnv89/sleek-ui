@@ -168,6 +168,25 @@ function HomePage() {
         </div>
       </section>
 
+      {/* ── VIDEO ── */}
+      <section className="border-t border-border/60 px-4 py-16 sm:py-20 bg-muted/20">
+        <div className="mx-auto max-w-4xl text-center space-y-6">
+          <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">See it in action</h2>
+          <p className="text-muted-foreground">From catalog to beautiful UI — in seconds.</p>
+          <div className="rounded-xl overflow-hidden border border-border shadow-lg">
+            <video
+              src="/sleek-ui/promotional-video.mp4"
+              controls
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="w-full aspect-video"
+            />
+          </div>
+        </div>
+      </section>
+
       {/* ── HOW IT WORKS ── */}
       <section id="how-it-works" className="border-t border-border/60 bg-muted/30 px-4 py-16 sm:py-20">
         <div className="mx-auto max-w-5xl">

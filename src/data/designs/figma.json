@@ -1,5 +1,5 @@
 {
-  "$schema": "https://sleek-ui.design/schema/design.v1.json",
+  "$schema": "https://luongnv.com/sleek-ui/schema/design.v1.json",
   "name": "figma",
   "version": "1.0.0",
   "description": "Figma's interface is the design tool that designed itself — a masterclass in typographic sophistication where a custom variable font (figmaSans) modulates between razor-thin (weight 320) and bold (wei",

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://sleek-ui.design/schema/design.v1.json",
+  "$schema": "https://luongnv.com/sleek-ui/schema/design.v1.json",
   "name": "voltagent",
   "version": "1.0.0",
   "description": "VoltAgent's interface is a deep-space command terminal for the AI age — a developer-facing darkness built on near-pure-black surfaces (`#050507`) where the only interruption is the electric pulse of e",

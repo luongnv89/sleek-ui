@@ -189,7 +189,7 @@ function convertToSleekUi(designMdContent, slug, name, category) {
     '240 10% 3.9%';
 
   const design = {
-    $schema: 'https://sleek-ui.design/schema/design.v1.json',
+    $schema: 'https://luongnv.com/sleek-ui/schema/design.v1.json',
     name: slug,
     version: '1.0.0',
     description: theme.slice(0, 200) || `${name} design system for AI agents`,

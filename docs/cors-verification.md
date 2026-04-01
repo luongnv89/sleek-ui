@@ -6,7 +6,7 @@ This document tracks the CORS verification for GitHub Pages serving design JSON 
 
 ## Expected Behavior
 
-GitHub Pages should serve static files with CORS headers enabled by default. When files are served from `https://luongnv89.github.io/sleek-ui/`, the response should include:
+GitHub Pages should serve static files with CORS headers enabled by default. When files are served from `https://luongnv.com/sleek-ui/`, the response should include:
 
 ```
 Access-Control-Allow-Origin: *
@@ -18,10 +18,10 @@ Once Task 1.7 (CI/CD) is complete, verify CORS with:
 
 ```bash
 # Test from command line (shows all headers)
-curl -sI -H "Origin: https://example.com" "https://luongnv89.github.io/sleek-ui/designs/editorial-dark.json"
+curl -sI -H "Origin: https://example.com" "https://luongnv.com/sleek-ui/designs/editorial-dark.json"
 
 # Or check specific header
-curl -sI "https://luongnv89.github.io/sleek-ui/designs/editorial-dark.json" | grep -i "access-control"
+curl -sI "https://luongnv.com/sleek-ui/designs/editorial-dark.json" | grep -i "access-control"
 ```
 
 ## Browser Console Test
@@ -29,7 +29,7 @@ curl -sI "https://luongnv89.github.io/sleek-ui/designs/editorial-dark.json" | gr
 Once deployed, run in browser console:
 
 ```javascript
-fetch('https://luongnv89.github.io/sleek-ui/designs/editorial-dark.json')
+fetch('https://luongnv.com/sleek-ui/designs/editorial-dark.json')
   .then(r => r.json())
   .then(console.log)
 ```
@@ -51,7 +51,7 @@ If GitHub Pages CORS verification fails, migrate to **Cloudflare Pages**:
 1. Connect repository to Cloudflare Pages
 2. Set build command: `npm run build`
 3. Set output directory: `dist`
-4. Custom domain: `https://sleek-ui.design`
+4. Custom domain: `https://luongnv.com/sleek-ui`
 
 **Zero code changes required** — just update the deployment target.
 
@@ -82,7 +82,7 @@ If GitHub Pages CORS verification fails, migrate to **Cloudflare Pages**:
 | Codex CLI | #12 | Manual test required |
 
 Both agents test the same workflow:
-1. Fetch `https://luongnv89.github.io/sleek-ui/designs/editorial-dark.json`
+1. Fetch `https://luongnv.com/sleek-ui/designs/editorial-dark.json`
 2. Apply design to `demo-app/index.html`
 3. Verify "Recognizable Fidelity" checklist
 4. Document any agent-specific quirks

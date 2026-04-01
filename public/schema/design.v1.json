@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://sleek-ui.design/schema/design.v1.json",
+  "$id": "https://luongnv.com/sleek-ui/schema/design.v1.json",
   "title": "Sleek UI Design System Schema",
   "description": "JSON Schema for Sleek UI design system configuration",
   "type": "object",
@@ -17,7 +17,7 @@
   "properties": {
     "$schema": {
       "type": "string",
-      "pattern": "https://sleek-ui.design/schema/design.v1.json"
+      "pattern": "https://luongnv.com/sleek-ui/schema/design.v1.json"
     },
     "name": {
       "type": "string",

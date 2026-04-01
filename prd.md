@@ -141,7 +141,7 @@ Vibe coders (people using AI tools to build apps) can ship functional software b
 **User Story:** As an AI agent, I need a self-contained JSON file at a stable URL that tells me everything I need to re-skin an app: colors (light/dark), typography, spacing, radius, shadows, component hints, and step-by-step natural language instructions.
 
 **Acceptance Criteria:**
-- [ ] Schema published at `https://luongnv89.github.io/sleek-ui/schema/design.v1.json`
+- [ ] Schema published at `https://luongnv.com/sleek-ui/schema/design.v1.json`
 - [ ] Each design JSON validates against the schema
 - [ ] Colors use HSL without `hsl()` wrapper (shadcn convention)
 - [ ] `agentInstructions.steps` is a numbered, complete steps array
@@ -182,7 +182,7 @@ preview.thumbnail, screenshots.light/dark
 - [ ] Primary colors are visually distinct across designs
 - [ ] Each design has both `light` and `dark` token sets
 - [ ] Each design includes thumbnail and screenshot paths
-- [ ] Served at `https://luongnv89.github.io/sleek-ui/designs/{name}.json`
+- [ ] Served at `https://luongnv.com/sleek-ui/designs/{name}.json`
 - [ ] CORS verification passes (fetch from browser console confirms `Access-Control-Allow-Origin: *`)
 
 ---
@@ -459,7 +459,7 @@ See full schema in §3.2 F01. Key decisions:
 | Hosting | GitHub Pages | Serves `/dist` and `/public` |
 | CI/CD | GitHub Actions | Triggers on push to `main` |
 | Branch strategy | `main` (source) → `gh-pages` (deployment) |  |
-| Domain | `luongnv89.github.io/sleek-ui` | Custom domain optional in Phase 2 |
+| Domain | `luongnv.com/sleek-ui` | Custom domain optional in Phase 2 |
 | CORS | GitHub Pages default (`*`) | Verify pre-launch; fallback to Cloudflare Pages |
 
 ### 6.6 JSON Schema Validation
@@ -681,7 +681,7 @@ Key events to capture if analytics is added:
 The following is the ready-to-paste agent prompt surfaced by the "Copy Agent Prompt" button in the catalog:
 
 ```
-Fetch the design system at: https://luongnv89.github.io/sleek-ui/designs/{slug}.json
+Fetch the design system at: https://luongnv.com/sleek-ui/designs/{slug}.json
 
 Read the JSON, then follow the steps in agentInstructions.steps to apply this design system to my project:
 1. Set CSS custom properties from tokens.colors on :root (light) and .dark (dark mode)

@@ -8,7 +8,7 @@ Task 1.9: Agent loop test — second agent (Cursor or Codex) (#12)
 
 ## Test Prompt
 ```
-Fetch https://luongnv89.github.io/sleek-ui/designs/editorial-dark.json and apply this design system to my demo-app/index.html
+Fetch https://luongnv.com/sleek-ui/designs/editorial-dark.json and apply this design system to my demo-app/index.html
 ```
 
 ## Expected Design Changes (from editorial-dark.json)
@@ -25,7 +25,7 @@ Fetch https://luongnv89.github.io/sleek-ui/designs/editorial-dark.json and apply
 - Version: Installed via bun
 
 ### Design JSON URL
-- URL: `https://luongnv89.github.io/sleek-ui/designs/editorial-dark.json`
+- URL: `https://luongnv.com/sleek-ui/designs/editorial-dark.json`
 - Status: Redirects to `https://luong.com/sleek-ui/designs/editorial-dark.json`
 - Accessible: Yes (after redirect)
 

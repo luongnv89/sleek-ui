@@ -1,5 +1,5 @@
 {
-  "$schema": "https://sleek-ui.design/schema/design.v1.json",
+  "$schema": "https://luongnv.com/sleek-ui/schema/design.v1.json",
   "name": "neo-brutalist",
   "version": "1.0.0",
   "description": "Bold, high-contrast, playful neo-brutalist aesthetic. Sharp edges, vivid colors, heavy typography. Default light mode.",
@@ -7,8 +7,8 @@
   "defaultMode": "light",
   "author": {
     "name": "sleek-ui",
-    "email": "hello@sleek-ui.design",
-    "url": "https://sleek-ui.design"
+    "email": "hello@luongnv.com",
+    "url": "https://luongnv.com/sleek-ui"
   },
   "tokens": {
     "colors": {

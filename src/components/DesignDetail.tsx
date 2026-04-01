@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Check, Copy, Moon, Sun } from 'lucide-react';
+import { ArrowLeft, Check, Copy, Moon, Paintbrush, RotateCcw, Sun } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,6 +10,7 @@ import { CopyButton } from '@/components/ui/CopyButton';
 import { TokenTable } from '@/components/TokenTable';
 import designs from '@/data/designs';
 import type { TransformedDesign } from '@/types/design';
+import { useTheme } from '@/context/ThemeContext';
 
 // Agent prompt template from PRD section 10.3
 const AGENT_PROMPT_TEMPLATE = (designUrl: string) => `Fetch the design system at: ${designUrl}
@@ -79,6 +80,8 @@ export function DesignDetail() {
   const [showPreviewDark, setShowPreviewDark] = useState(false);
   const [isCopied, setIsCopied] = useState<string | null>(null);
   const [jsonOpen, setJsonOpen] = useState(false);
+  const { appliedDesign, applyDesign, resetDesign } = useTheme();
+  const isApplied = appliedDesign?.slug === slug;
 
   // Copy handlers
   const handleCopy = (text: string, type: string) => {
@@ -150,6 +153,26 @@ export function DesignDetail() {
             >
               {showPreviewDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </Button>
+            {isApplied ? (
+              <Button
+                variant="outline"
+                onClick={resetDesign}
+                className="gap-2"
+                aria-label="Reset design"
+              >
+                <RotateCcw className="h-4 w-4" />
+                Reset
+              </Button>
+            ) : (
+              <Button
+                onClick={() => design && designData && applyDesign(design.slug, design.name, designData as any)}
+                className="gap-2"
+                aria-label="Apply this design to the website"
+              >
+                <Paintbrush className="h-4 w-4" />
+                Apply
+              </Button>
+            )}
           </div>
         </div>
 
