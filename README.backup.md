@@ -1,166 +1,210 @@
-# sleek-ui
+<p align="center">
+  <img src="https://luongnv.com/sleek-ui/logo/logo-white.svg" alt="sleek-ui logo" width="300" height="68" #gh-dark-mode-only>
+  <img src="https://luongnv.com/sleek-ui/logo/logo-black.svg" alt="sleek-ui logo" width="300" height="68" #gh-light-mode-only>
+</p>
 
-[![Deploy](https://github.com/luongnv89/sleek-ui/actions/workflows/deploy.yml/badge.svg)](https://github.com/luongnv89/sleek-ui/actions/workflows/deploy.yml)
+# Sleek UI Design Systems
 
-Design system for AI agent-driven UI customization.
+[![GitHub Stars](https://img.shields.io/github/stars/luongnv89/sleek-ui?style=flat-square&color=%2300FF41)](https://github.com/luongnv89/sleek-ui/stargazers)
+[![GitHub Pages](https://img.shields.io/website?url=https%3A%2F%2Fluongnv.com/sleek-ui&down_message=offline&style=flat-square)](https://luongnv.com/sleek-ui)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue?style=flat-square)](LICENSE)
 
-> The "Unsplash of Design Systems for AI Agents" — paste a URL, get a professional design.
+**The Unsplash of Design Systems for AI Agents**
+
+Paste a design URL, get a professional UI system. Sleek-ui provides curated, accessible design systems that AI agents can apply to any web project.
+
+[**View Designs →**](#available-designs)
+
+---
+
+## How It Works
+
+```mermaid
+graph LR
+    A[Choose Design] --> B[Fetch JSON]
+    B --> C[AI Agent Reads]
+    C --> D[Apply CSS Tokens]
+    D --> E[Design Applied]
+```
+
+1. **Pick a design** from the catalog
+2. **Copy the URL** (e.g., `https://luongnv.com/sleek-ui/designs/editorial-dark.json`)
+3. **Tell your AI agent** to apply the design
+4. The agent sets CSS custom properties and component styles
+
+---
+
+## Available Designs
+
+| Design | Vibe | Mode | URL |
+|--------|------|------|-----|
+| Editorial Dark | Sophisticated, muted purples | Dark | [JSON](https://luongnv.com/sleek-ui/designs/editorial-dark.json) |
+| Warm SaaS | Friendly, amber tones | Light | [JSON](https://luongnv.com/sleek-ui/designs/warm-saas.json) |
+| Neo Brutalist | Bold, high contrast | Light | [JSON](https://luongnv.com/sleek-ui/designs/neo-brutalist.json) |
+| Swiss Clean | Precise, minimal, corporate | Light | [JSON](https://luongnv.com/sleek-ui/designs/swiss-clean.json) |
+| Deep Ocean | Immersive, deep navy blues | Dark | [JSON](https://luongnv.com/sleek-ui/designs/deep-ocean.json) |
+
+---
 
 ## Quick Start
 
+**1. Fetch a design:**
 ```bash
-# Pick a design URL, then tell your AI agent:
-"Fetch https://luongnv.com/sleek-ui/designs/editorial-dark.json 
-and apply this design to my project"
+curl https://luongnv.com/sleek-ui/designs/editorial-dark.json
 ```
 
-## Designs
-
-| Design | Vibe | Default Mode | URL |
-|--------|------|--------------|-----|
-| Editorial Dark | Sophisticated, muted purples | dark | [JSON](https://luongnv.com/sleek-ui/designs/editorial-dark.json) |
-| Warm SaaS | Friendly, amber tones | light | [JSON](https://luongnv.com/sleek-ui/designs/warm-saas.json) |
-| Neo Brutalist | Bold, high contrast | light | [JSON](https://luongnv.com/sleek-ui/designs/neo-brutalist.json) |
-| Swiss Clean | Precise, minimal, corporate | light | [JSON](https://luongnv.com/sleek-ui/designs/swiss-clean.json) |
-| Deep Ocean | Immersive, deep navy blues | dark | [JSON](https://luongnv.com/sleek-ui/designs/deep-ocean.json) |
-
-## Before & After Transformations
-
-See how sleek-ui transforms your app from the "ugly demo app" to a beautiful, professional design:
-
-| Design | Before | After |
-|--------|--------|-------|
-| Editorial Dark | ![Editorial Dark Before](docs/before-after/editorial-dark-before.png) | ![Editorial Dark After](docs/before-after/editorial-dark-after.png) |
-| Warm SaaS | ![Warm SaaS Before](docs/before-after/warm-saas-before.png) | ![Warm SaaS After](docs/before-after/warm-saas-after.png) |
-| Neo Brutalist | ![Neo Brutalist Before](docs/before-after/neo-brutalist-before.png) | ![Neo Brutalist After](docs/before-after/neo-brutalist-after.png) |
-| Swiss Clean | ![Swiss Clean Before](docs/before-after/swiss-clean-before.png) | ![Swiss Clean After](docs/before-after/swiss-clean-after.png) |
-| Deep Ocean | ![Deep Ocean Before](docs/before-after/deep-ocean-before.png) | ![Deep Ocean After](docs/before-after/deep-ocean-after.png) |
-
-For detailed transformation documentation, see [docs/before-after/](docs/before-after/).
-
-## Usage
-
-## Usage
-
-### Claude Code
-
-1. Run Claude Code: `claude`
-2. Paste the design URL and prompt:
-
+**2. Apply with your AI agent:**
 ```
-Fetch https://luongnv.com/sleek-ui/designs/{slug}.json and apply this design system to my project.
+Fetch https://luongnv.com/sleek-ui/designs/editorial-dark.json
+and apply this design system to my project.
 ```
 
-3. Claude will:
-   - Fetch the JSON from GitHub Pages
-   - Read `agentInstructions.steps` for application instructions
-   - Set CSS custom properties for colors (`:root` for light, `.dark` for dark mode)
-   - Add Google Fonts via `<link>` tag
-   - Apply component styles from the `components` field
+**3. The agent will:**
+- Set CSS custom properties on `:root` and `.dark`
+- Add Google Fonts via `<link>` tag
+- Apply component styles for Tailwind + shadcn/ui
 
-### Cursor
+---
 
-1. Open your project in Cursor
-2. Use Cmd+K (or Ctrl+K) to open the composer
-3. Paste the design URL and prompt:
+## Usage Examples
 
-```
-Fetch https://luongnv.com/sleek-ui/designs/{slug}.json and apply this design system to my project.
+### Before (default browser styles)
+```html
+<button>Click me</button>
+<div class="card">Content</div>
 ```
 
-4. Cursor will modify your CSS files to apply the design tokens
-
-### Codex CLI
-
-1. Run Codex: `codex` or `codex cli`
-2. Enter the design URL and prompt:
-
-```
-Fetch https://luongnv.com/sleek-ui/designs/{slug}.json and apply this design system to my project.
-```
-
-## Standard Agent Prompt Template
-
-```
-Fetch the design system at: https://luongnv.com/sleek-ui/designs/{slug}.json
-
-Read the JSON, then follow the steps in agentInstructions.steps to apply this design system to my project:
-1. Set CSS custom properties from tokens.colors on :root (light) and .dark (dark mode)
-2. Set --radius from tokens.radius.default
-3. Load fonts by adding the Google Fonts URL from fonts.urls as a <link> tag
-4. Set font-family from tokens.typography.fontFamily
-5. Apply component styles from the components field (Tailwind class names for shadcn projects)
-6. Ensure focus states match accessibility.focusRing specification
-7. Test both light and dark modes
-
-Target framework: Tailwind CSS + shadcn/ui. For other frameworks, map token names to CSS custom properties semantically.
+### After (applying Editorial Dark)
+```css
+:root {
+  --background: 0 0% 100%;
+  --foreground: 240 10% 3.9%;
+  --primary: 245 90% 73%;
+  --radius: 0.375rem;
+}
+.dark {
+  --background: 240 33% 14%;
+  --foreground: 0 0% 95%;
+}
+button {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border-radius: var(--radius);
+}
 ```
 
-## Known Agent Quirks
+---
 
-### Redirect Handling
+## Tech Stack
 
-- **GitHub Pages URL**: `https://luongnv.com/sleek-ui/designs/*.json`
-- **Note**: Some agents may encounter redirects. The URL should work directly, but if you see issues, ensure your agent is following HTTP 301/302 redirects automatically.
+| Layer | Technology |
+|-------|------------|
+| Frontend | React 18.3 + TypeScript |
+| Build Tool | Vite 5.4 |
+| Styling | Tailwind CSS + shadcn/ui |
+| Schema | JSON Schema (design.v1.json) |
 
-### Fetch Timeout
-
-- Default HTTP client timeouts may vary by agent
-- Design JSON files are <20KB each, well within typical timeout limits
-- If you encounter timeouts, increase the timeout to 30 seconds
-
-### JSON Size Limits
-
-- All design files are optimized to <20KB
-- No known JSON parsing issues with any major agent
-- HSL color format: `240 33% 14%` (no `hsl()` wrapper, shadcn convention)
-
-### Font Loading
-
-- Some agents may not automatically add `<link>` tags for Google Fonts
-- If fonts don't load, manually add the font URL from `fonts.urls` to your HTML `<head>`
-- Example: `<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">`
-
-### Dark Mode Implementation
-
-- The design JSON uses `.dark` class for dark mode tokens
-- Ensure your app toggles a `.dark` class on the `<html>` or `<body>` element
-- CSS variables should be set on both `:root` (light defaults) and `.dark` (overrides)
+---
 
 ## Project Structure
 
 ```
-├── public/designs/     # Design JSON files (served by GitHub Pages)
-├── public/previews/    # Preview images
-├── public/schema/      # JSON Schema for design files
-├── docs/               # Documentation
-│   ├── agent-loop-test-11.md  # Claude Code test results
-│   ├── agent-loop-test-12.md  # Codex test results
-│   └── cors-verification.md   # CORS configuration
-└── .github/workflows/  # CI/CD workflows
-```
-
-## Deployment
-
-- **GitHub Pages**: https://luongnv.com/sleek-ui/
-- **Custom domain**: https://luongnv.com/sleek-ui
-
-## CORS Verification
-
-See [docs/cors-verification.md](docs/cors-verification.md) for CORS configuration and testing.
-
----
-
-## Built with sleek-ui
-
-If you use sleek-ui in your project, add this badge to your README:
-
-```markdown
-[![Built with sleek-ui](https://img.shields.io/badge/Built%20with-sleek--ui-blue?style=flat-square)](https://github.com/luongnv89/sleek-ui)
+public/
+├── designs/       # JSON design files
+├── previews/      # Thumbnail images
+├── schema/        # JSON Schema for validation
+└── logo/          # Brand assets
 ```
 
 ---
+
+## Design Schema
+
+Each design follows `design.v1.json`:
+
+```mermaid
+classDiagram
+    class Design {
+        +string name
+        +string version
+        +Tokens tokens
+        +Fonts fonts
+        +Components components
+        +AgentInstructions agentInstructions
+    }
+
+    class Tokens {
+        +Colors colors
+        +Typography typography
+        +Radius radius
+    }
+
+    class Colors {
+        +string light
+        +string dark
+    }
+```
+
+---
+
+## Agent Prompt Template
+
+```
+Fetch https://luongnv.com/sleek-ui/designs/{slug}.json
+and apply this design system to my project.
+```
+
+The agent will:
+1. Set `--background`, `--foreground`, `--primary`, etc.
+2. Set `--radius` from tokens
+3. Load fonts via `<link>` tag
+4. Apply component styles
+
+---
+
+## Get Started
+
+[**View all designs →**](https://luongnv.com/sleek-ui)
+
+[**Brand Showcase →**](https://luongnv.com/sleek-ui/logo/brand-showcase.html)
+
+[**GitHub →**](https://github.com/luongnv89/sleek-ui)
+
+MIT Licensed
+
+---
+
+<details>
+<summary>Full Documentation</summary>
+
+## Supported AI Agents
+
+### Claude Code
+1. Run `claude`
+2. Paste: `Fetch https://luongnv.com/sleek-ui/designs/{slug}.json and apply this design system`
+
+### Cursor
+1. Open Composer (Cmd+K)
+2. Paste: `Fetch https://luongnv.com/sleek-ui/designs/{slug}.json and apply this design system`
+
+### Codex CLI
+1. Run `codex`
+2. Paste: `Fetch https://luongnv.com/sleek-ui/designs/{slug}.json and apply this design system`
+
+## Custom Domain
+
+Designs are also served from `https://luongnv.com/sleek-ui/designs/{slug}.json`
+
+## Development
+
+```bash
+npm run dev      # Start dev server
+npm run build    # Build for production
+npm run preview  # Preview build
+```
 
 ## License
 
 MIT
+
+</details>
