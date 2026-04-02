@@ -6,7 +6,7 @@
 
 [![GitHub Stars](https://img.shields.io/github/stars/luongnv89/sleek-ui?style=flat-square&color=%2300FF41)](https://github.com/luongnv89/sleek-ui/stargazers)
 [![GitHub Pages](https://img.shields.io/website?url=https%3A%2F%2Fluongnv.com/sleek-ui&down_message=offline&style=flat-square)](https://luongnv.com/sleek-ui)
-[![License](https://img.shields.io/github/license/luongnv89/sleek-ui?style=flat-square)](LICENSE)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue?style=flat-square)](LICENSE)
 
 **The Unsplash of Design Systems for AI Agents**
 
