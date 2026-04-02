@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { ThemeToggle } from './theme-toggle'
+import { LogoMark } from './LogoMark'
 
 interface HeaderProps {
   theme: 'light' | 'dark'
@@ -12,11 +13,7 @@ export function Header({ theme, onToggleTheme }: HeaderProps) {
       <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 font-bold text-xl tracking-tight">
-          <img
-            src="/sleek-ui/logo/logo-mark.svg"
-            alt="sleek-ui logo mark"
-            className="h-8 w-8 text-foreground"
-          />
+          <LogoMark className="h-8 w-8 text-foreground" />
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-foreground to-muted-foreground">
             sleek<span className="text-[#00FF41]">ui</span>
           </span>

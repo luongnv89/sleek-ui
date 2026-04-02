@@ -39,8 +39,8 @@ npm run validate:designs  # Validate design JSON files against schema
 
 ## Deploy Process
 
-- **GitHub Pages**: https://luongnv89.github.io/sleek-ui/
-- **Custom domain**: https://sleek-ui.design
+- **GitHub Pages**: https://luongnv.com/sleek-ui/
+- **Custom domain**: https://luongnv.com/sleek-ui
 - **CI/CD**: GitHub Actions workflow in `.github/workflows/deploy.yml`
 - **Build output**: Served from `public/` directory
 
@@ -72,7 +72,7 @@ See [public/schema/design.v1.json](public/schema/design.v1.json) for the complet
 To apply a design system, tell your AI agent:
 
 ```
-Fetch https://luongnv89.github.io/sleek-ui/designs/{slug}.json
+Fetch https://luongnv.com/sleek-ui/designs/{slug}.json
 and apply this design system to my project.
 ```
 
@@ -97,4 +97,4 @@ See [README.md](README.md) for detailed agent-specific instructions (Claude Code
 
 - [GitHub Repository](https://github.com/luongnv89/sleek-ui)
 - [Design Schema](public/schema/design.v1.json)
-- [Design Systems Directory](https://luongnv89.github.io/sleek-ui/designs/)
+- [Design Systems Directory](https://luongnv.com/sleek-ui/designs/)

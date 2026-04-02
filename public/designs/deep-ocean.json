@@ -1,5 +1,5 @@
 {
-  "$schema": "https://sleek-ui.design/schema/design.v1.json",
+  "$schema": "https://luongnv.com/sleek-ui/schema/design.v1.json",
   "name": "deep-ocean",
   "version": "1.0.0",
   "description": "Immersive deep ocean design with rich dark navy blues and vibrant teals. Created for AI agent-driven UI customization.",
@@ -7,8 +7,8 @@
   "defaultMode": "dark",
   "author": {
     "name": "sleek-ui",
-    "email": "hello@sleek-ui.design",
-    "url": "https://sleek-ui.design"
+    "email": "luongnv89@gmail.com",
+    "url": "https://luongnv.com/sleek-ui"
   },
   "tokens": {
     "colors": {

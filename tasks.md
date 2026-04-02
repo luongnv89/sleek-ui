@@ -129,7 +129,7 @@
 
 **Acceptance Criteria:**
 - [ ] Deploy a test JSON to GitHub Pages (can be editorial-dark.json after Task 1.7)
-- [ ] Run from browser console: `fetch('https://luongnv89.github.io/sleek-ui/designs/editorial-dark.json').then(r => r.json()).then(console.log)` — succeeds
+- [ ] Run from browser console: `fetch('https://luongnv.com/sleek-ui/designs/editorial-dark.json').then(r => r.json()).then(console.log)` — succeeds
 - [ ] Confirm response header: `Access-Control-Allow-Origin: *`
 - [ ] Document result in README `docs/cors-verification.md`
 - [ ] Fallback plan documented: "if CORS fails, move to Cloudflare Pages (zero code changes)"
@@ -150,7 +150,7 @@
 - [ ] Steps: checkout → `npm ci` → `npm run validate:designs` → `npm run build` → deploy to `gh-pages`
 - [ ] Uses `peaceiris/actions-gh-pages` or `JamesIves/github-pages-deploy-action`
 - [ ] `public/designs/` files are included in the deployed `/dist`
-- [ ] After push, `https://luongnv89.github.io/sleek-ui/designs/editorial-dark.json` returns 200
+- [ ] After push, `https://luongnv.com/sleek-ui/designs/editorial-dark.json` returns 200
 
 **Dependencies:** Task 1.1, Task 1.4
 
@@ -163,7 +163,7 @@
 **Description:** Execute the core hypothesis test. Feed the editorial-dark.json URL to Claude Code and instruct it to re-skin the demo app. Record and document the result.
 
 **Acceptance Criteria:**
-- [ ] Test prompt: `"Fetch https://luongnv89.github.io/sleek-ui/designs/editorial-dark.json and apply this design system to my demo-app/index.html"`
+- [ ] Test prompt: `"Fetch https://luongnv.com/sleek-ui/designs/editorial-dark.json and apply this design system to my demo-app/index.html"`
 - [ ] Agent successfully fetches the JSON without errors
 - [ ] "Recognizable fidelity" checklist passes:
   - [ ] Primary color (`hsl(245 90% 73%)` purple) visible in result
@@ -306,7 +306,7 @@
 **Acceptance Criteria:**
 - [ ] `deploy.yml` runs `npm run validate:designs` before build; fails workflow if validation errors
 - [ ] CI/CD also runs `npm run build` and fails on build error
-- [ ] (Optional) curl step checks `https://luongnv89.github.io/sleek-ui/designs/editorial-dark.json` returns 200 after deploy
+- [ ] (Optional) curl step checks `https://luongnv.com/sleek-ui/designs/editorial-dark.json` returns 200 after deploy
 - [ ] Workflow badge added to README
 
 **Dependencies:** Task 1.7, Task 1.4
@@ -443,7 +443,7 @@
   - [ ] Card with title + body text
 - [ ] `TokenTable` embedded, toggled by light/dark switch
 - [ ] 3 copy action buttons with `CopyButton`:
-  - [ ] "Copy URL" → copies `https://luongnv89.github.io/sleek-ui/designs/{slug}.json`
+  - [ ] "Copy URL" → copies `https://luongnv.com/sleek-ui/designs/{slug}.json`
   - [ ] "View JSON" → opens JSON URL in new tab
   - [ ] "Copy Agent Prompt" → copies the full agent prompt template from PRD §10.3
 - [ ] Back button → navigates to home
@@ -518,7 +518,7 @@
 **Description:** After deploying, manually test the entire user flow on the live GitHub Pages URL before announcing.
 
 **Acceptance Criteria:**
-- [ ] Home page loads at `https://luongnv89.github.io/sleek-ui/`
+- [ ] Home page loads at `https://luongnv.com/sleek-ui/`
 - [ ] All 3 design cards visible with thumbnails
 - [ ] Category filter works for each existing category tag
 - [ ] Search filters cards by name

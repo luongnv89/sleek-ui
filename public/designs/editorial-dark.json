@@ -1,13 +1,13 @@
 {
-  "$schema": "https://sleek-ui.design/schema/design.v1.json",
+  "$schema": "https://luongnv.com/sleek-ui/schema/design.v1.json",
   "name": "editorial-dark",
   "version": "1.0.0",
   "description": "Sophisticated, muted purples with clean typography. A dark editorial aesthetic perfect for content-heavy applications.",
   "categories": ["dark", "minimal"],
   "author": {
     "name": "sleek-ui",
-    "email": "hello@sleek-ui.design",
-    "url": "https://sleek-ui.design"
+    "email": "luongnv89@gmail.com",
+    "url": "https://luongnv.com/sleek-ui"
   },
   "tokens": {
     "colors": {

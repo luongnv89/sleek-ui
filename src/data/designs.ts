@@ -1,6 +1,6 @@
 import type { TransformedDesign, DesignData } from '../types/design';
 
-const GITHUB_PAGES_BASE = 'https://luongnv89.github.io/sleek-ui';
+const GITHUB_PAGES_BASE = 'https://luongnv.com/sleek-ui';
 
 const transformDesign = (designJson: DesignData): TransformedDesign => {
   const slug = designJson.name;

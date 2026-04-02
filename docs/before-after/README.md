@@ -29,4 +29,4 @@ To use these screenshots in your documentation:
 
 ## Production
 
-These images are served from: https://luongnv89.github.io/sleek-ui/docs/before-after/
+These images are served from: https://luongnv.com/sleek-ui/docs/before-after/

@@ -6,7 +6,7 @@ const ajv = new Ajv({ allErrors: true });
 addFormats(ajv);
 
 const validDesign = {
-  "$schema": "https://sleek-ui.design/schema/design.v1.json",
+  "$schema": "https://luongnv.com/sleek-ui/schema/design.v1.json",
   "name": "Sleek UI",
   "version": "1.0.0",
   "description": "A modern design system",

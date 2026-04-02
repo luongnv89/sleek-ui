@@ -10,7 +10,7 @@ Design system for AI agent-driven UI customization.
 
 ```bash
 # Pick a design URL, then tell your AI agent:
-"Fetch https://luongnv89.github.io/sleek-ui/designs/editorial-dark.json 
+"Fetch https://luongnv.com/sleek-ui/designs/editorial-dark.json 
 and apply this design to my project"
 ```
 
@@ -18,11 +18,11 @@ and apply this design to my project"
 
 | Design | Vibe | Default Mode | URL |
 |--------|------|--------------|-----|
-| Editorial Dark | Sophisticated, muted purples | dark | [JSON](https://luongnv89.github.io/sleek-ui/designs/editorial-dark.json) |
-| Warm SaaS | Friendly, amber tones | light | [JSON](https://luongnv89.github.io/sleek-ui/designs/warm-saas.json) |
-| Neo Brutalist | Bold, high contrast | light | [JSON](https://luongnv89.github.io/sleek-ui/designs/neo-brutalist.json) |
-| Swiss Clean | Precise, minimal, corporate | light | [JSON](https://luongnv89.github.io/sleek-ui/designs/swiss-clean.json) |
-| Deep Ocean | Immersive, deep navy blues | dark | [JSON](https://luongnv89.github.io/sleek-ui/designs/deep-ocean.json) |
+| Editorial Dark | Sophisticated, muted purples | dark | [JSON](https://luongnv.com/sleek-ui/designs/editorial-dark.json) |
+| Warm SaaS | Friendly, amber tones | light | [JSON](https://luongnv.com/sleek-ui/designs/warm-saas.json) |
+| Neo Brutalist | Bold, high contrast | light | [JSON](https://luongnv.com/sleek-ui/designs/neo-brutalist.json) |
+| Swiss Clean | Precise, minimal, corporate | light | [JSON](https://luongnv.com/sleek-ui/designs/swiss-clean.json) |
+| Deep Ocean | Immersive, deep navy blues | dark | [JSON](https://luongnv.com/sleek-ui/designs/deep-ocean.json) |
 
 ## Before & After Transformations
 
@@ -48,7 +48,7 @@ For detailed transformation documentation, see [docs/before-after/](docs/before-
 2. Paste the design URL and prompt:
 
 ```
-Fetch https://luongnv89.github.io/sleek-ui/designs/{slug}.json and apply this design system to my project.
+Fetch https://luongnv.com/sleek-ui/designs/{slug}.json and apply this design system to my project.
 ```
 
 3. Claude will:
@@ -65,7 +65,7 @@ Fetch https://luongnv89.github.io/sleek-ui/designs/{slug}.json and apply this de
 3. Paste the design URL and prompt:
 
 ```
-Fetch https://luongnv89.github.io/sleek-ui/designs/{slug}.json and apply this design system to my project.
+Fetch https://luongnv.com/sleek-ui/designs/{slug}.json and apply this design system to my project.
 ```
 
 4. Cursor will modify your CSS files to apply the design tokens
@@ -76,13 +76,13 @@ Fetch https://luongnv89.github.io/sleek-ui/designs/{slug}.json and apply this de
 2. Enter the design URL and prompt:
 
 ```
-Fetch https://luongnv89.github.io/sleek-ui/designs/{slug}.json and apply this design system to my project.
+Fetch https://luongnv.com/sleek-ui/designs/{slug}.json and apply this design system to my project.
 ```
 
 ## Standard Agent Prompt Template
 
 ```
-Fetch the design system at: https://luongnv89.github.io/sleek-ui/designs/{slug}.json
+Fetch the design system at: https://luongnv.com/sleek-ui/designs/{slug}.json
 
 Read the JSON, then follow the steps in agentInstructions.steps to apply this design system to my project:
 1. Set CSS custom properties from tokens.colors on :root (light) and .dark (dark mode)
@@ -100,7 +100,7 @@ Target framework: Tailwind CSS + shadcn/ui. For other frameworks, map token name
 
 ### Redirect Handling
 
-- **GitHub Pages URL**: `https://luongnv89.github.io/sleek-ui/designs/*.json`
+- **GitHub Pages URL**: `https://luongnv.com/sleek-ui/designs/*.json`
 - **Note**: Some agents may encounter redirects. The URL should work directly, but if you see issues, ensure your agent is following HTTP 301/302 redirects automatically.
 
 ### Fetch Timeout
@@ -142,8 +142,8 @@ Target framework: Tailwind CSS + shadcn/ui. For other frameworks, map token name
 
 ## Deployment
 
-- **GitHub Pages**: https://luongnv89.github.io/sleek-ui/
-- **Custom domain**: https://sleek-ui.design
+- **GitHub Pages**: https://luongnv.com/sleek-ui/
+- **Custom domain**: https://luongnv.com/sleek-ui
 
 ## CORS Verification
 

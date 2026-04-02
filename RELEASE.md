@@ -14,4 +14,4 @@ This release marks the Phase 2 (Full MVP Launch) of sleek-ui.
 
 ### Design Files
 
-- Editorial Dark - https://luongnv89.github.io/sleek-ui/designs/editorial-dark.json
+- Editorial Dark - https://luongnv.com/sleek-ui/designs/editorial-dark.json

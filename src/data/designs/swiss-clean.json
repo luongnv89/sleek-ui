@@ -1,13 +1,13 @@
 {
-  "$schema": "https://sleek-ui.design/schema/design.v1.json",
+  "$schema": "https://luongnv.com/sleek-ui/schema/design.v1.json",
   "name": "swiss-clean",
   "version": "1.0.0",
   "description": "Swiss International Typographic Style design system - precise grid-based layout with neutral palette and one accent color",
   "categories": ["minimal", "corporate", "typography"],
   "author": {
     "name": "sleek-ui",
-    "email": "hello@sleek-ui.design",
-    "url": "https://sleek-ui.design"
+    "email": "luongnv89@gmail.com",
+    "url": "https://luongnv.com/sleek-ui"
   },
   "tokens": {
     "colors": {
