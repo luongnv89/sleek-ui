@@ -1,7 +1,7 @@
 {
   "name": "sleek-ui",
   "version": "1.0.0",
-  "description": "",
+  "description": "The Unsplash of Design Systems for AI Agents — curated, accessible UI design systems ready to be applied by any AI coding agent.",
   "main": "index.js",
   "dependencies": {
     "acorn": "^8.16.0",
@@ -358,9 +358,9 @@
     "type": "git",
     "url": "git+https://github.com/luongnv89/sleek-ui.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["design-system", "ai-agents", "ui", "tailwindcss", "shadcn", "react", "css-tokens", "design-tokens"],
+  "author": "Luong Nguyen <luongnv89@gmail.com>",
+  "license": "Apache-2.0",
   "type": "commonjs",
   "bugs": {
     "url": "https://github.com/luongnv89/sleek-ui/issues"
