@@ -1,5 +1,6 @@
 <p align="center">
-  <img src="https://luongnv.com/sleek-ui/logo/logo-full.svg" alt="sleek-ui logo" width="300" height="68">
+  <img src="https://luongnv.com/sleek-ui/logo/logo-white.svg" alt="sleek-ui logo" width="300" height="68" #gh-dark-mode-only>
+  <img src="https://luongnv.com/sleek-ui/logo/logo-black.svg" alt="sleek-ui logo" width="300" height="68" #gh-light-mode-only>
 </p>
 
 # Sleek UI Design Systems
