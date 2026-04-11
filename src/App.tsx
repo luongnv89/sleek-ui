@@ -1,6 +1,6 @@
-import { HashRouter, Routes, Route, Outlet } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import { useState } from 'react';
-import { ThemeProvider, useTheme } from '@/context/ThemeContext';
+import { ThemeProvider } from '@/context/ThemeContext';
 import { DesignProvider } from '@/context/DesignContext';
 import { Layout } from '@/components/layout/Layout';
 import { LogoMark } from '@/components/ui/LogoMark';
@@ -267,28 +267,20 @@ function HomePageInner() {
   );
 }
 
-function HomePage() {
-  const { theme, toggleTheme } = useTheme();
-
-  return (
-    <Layout theme={theme} onToggleTheme={toggleTheme}>
-      <HomePageInner />
-    </Layout>
-  );
-}
-
 function App() {
   return (
     <ThemeProvider>
       <DesignProvider>
         <HashRouter>
           <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/designs/:slug" element={<DesignDetail />} />
+            <Route element={<Layout />}>
+              <Route path="/" element={<HomePageInner />} />
+              <Route path="/designs/:slug" element={<DesignDetail />} />
+            </Route>
           </Routes>
+          <AppliedDesignBanner />
         </HashRouter>
       </DesignProvider>
-      <AppliedDesignBanner />
     </ThemeProvider>
   );
 }

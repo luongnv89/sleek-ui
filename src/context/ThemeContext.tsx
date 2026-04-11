@@ -23,17 +23,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
 
-  const [isReady, setIsReady] = useState(false);
-
-  // Mark as ready after initial mount
   useEffect(() => {
-    setIsReady(true);
-  }, []);
-
-  // Sync theme with DOM
-  useEffect(() => {
-    if (!isReady) return;
-
     const root = document.documentElement;
     if (theme === 'dark') {
       root.classList.add('dark');
@@ -42,7 +32,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
 
     localStorage.setItem(STORAGE_KEY, theme);
-  }, [theme, isReady]);
+  }, [theme]);
 
   const toggleTheme = () => {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
