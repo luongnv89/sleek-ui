@@ -28,7 +28,7 @@ export function Header() {
 
         {/* Actions */}
         <div className="flex items-center gap-2">
-          <ThemeToggle theme={theme} onToggle={onToggleTheme} />
+          <ThemeToggle theme={theme} onToggle={toggleTheme} />
         </div>
       </div>
     </header>

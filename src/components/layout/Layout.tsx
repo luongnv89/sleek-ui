@@ -6,7 +6,7 @@ export function Layout() {
   const { theme, toggleTheme } = useTheme()
   return (
     <div className="min-h-screen bg-background text-foreground font-sans">
-      <Header theme={theme} onToggleTheme={onToggleTheme} />
+      <Header theme={theme} onToggleTheme={toggleTheme} />
       <main className="flex-1">
         <Outlet />
       </main>
