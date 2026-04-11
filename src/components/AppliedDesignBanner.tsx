@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
 import { X, Paintbrush } from 'lucide-react';
-import { useTheme } from '@/context/ThemeContext';
+import { useDesign } from '@/context/DesignContext';
 import { Button } from '@/components/ui/button';
 
 export function AppliedDesignBanner() {
-  const { appliedDesign, resetDesign } = useTheme();
+  const { appliedDesign, resetDesign } = useDesign();
 
   if (!appliedDesign) return null;
 

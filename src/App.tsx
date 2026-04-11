@@ -1,5 +1,8 @@
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import { useState } from 'react';
+import { ThemeProvider } from '@/context/ThemeContext';
+import { DesignProvider } from '@/context/DesignContext';
+import { Layout } from '@/components/layout/Layout';
 import { LogoMark } from '@/components/ui/LogoMark';
 import { CopyButton } from '@/components/ui/CopyButton';
 import { SearchBar } from '@/components/ui/SearchBar';
@@ -65,7 +68,7 @@ function getRandomPrompt() {
 
 const PROMPT_EXAMPLE = getRandomPrompt();
 
-function HomePage() {
+function HomePageInner() {
   const [searchValue, setSearchValue] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
@@ -84,33 +87,6 @@ function HomePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* ── HEADER ── */}
-      <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-md">
-        <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6">
-          <div className="flex items-center gap-2">
-            <LogoMark className="h-7 w-7 text-foreground" />
-            <span className="font-bold tracking-tight">
-              sleek<span className="text-[#00FF41]">ui</span>
-            </span>
-          </div>
-          <nav className="flex items-center gap-6 text-sm">
-            <button onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })} className="text-muted-foreground hover:text-foreground transition-colors">How it works</button>
-            <button onClick={() => document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' })} className="text-muted-foreground hover:text-foreground transition-colors">Catalog</button>
-            <a
-              href="https://github.com/luongnv89/sleek-ui"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-sm font-medium hover:bg-muted transition-colors"
-            >
-              <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.92.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" />
-              </svg>
-              GitHub
-            </a>
-          </nav>
-        </div>
-      </header>
-
       {/* ── HERO ── */}
       <section className="relative overflow-hidden px-4 py-20 sm:py-28 text-center">
         {/* Subtle grid background */}
@@ -273,33 +249,25 @@ function HomePage() {
         </div>
       </section>
 
-      {/* ── FOOTER ── */}
-      <footer className="border-t border-border/60 px-4 py-10">
-        <div className="mx-auto max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <LogoMark className="h-5 w-5 text-foreground" />
-            <span className="font-semibold text-foreground">sleek<span className="text-[#00FF41]">ui</span></span>
-            <span className="ml-2">MIT Licensed</span>
-          </div>
-          <div className="flex items-center gap-5">
-            <a href="https://github.com/luongnv89/sleek-ui" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">GitHub</a>
-            <a href="/sleek-ui/logo/brand-showcase.html" className="hover:text-foreground transition-colors">Brand Showcase</a>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
 
 function App() {
   return (
-    <HashRouter>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/designs/:slug" element={<DesignDetail />} />
-      </Routes>
-      <AppliedDesignBanner />
-    </HashRouter>
+    <ThemeProvider>
+      <DesignProvider>
+        <HashRouter>
+          <Routes>
+            <Route element={<Layout />}>
+              <Route path="/" element={<HomePageInner />} />
+              <Route path="/designs/:slug" element={<DesignDetail />} />
+            </Route>
+          </Routes>
+          <AppliedDesignBanner />
+        </HashRouter>
+      </DesignProvider>
+    </ThemeProvider>
   );
 }
 

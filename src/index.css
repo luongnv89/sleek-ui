@@ -70,6 +70,11 @@
     border-color: hsl(var(--border));
   }
 
+  /* Theme transition animation */
+  body, .dark {
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));

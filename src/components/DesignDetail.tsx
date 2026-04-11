@@ -10,7 +10,7 @@ import { CopyButton } from '@/components/ui/CopyButton';
 import { TokenTable } from '@/components/TokenTable';
 import designs from '@/data/designs';
 import type { TransformedDesign } from '@/types/design';
-import { useTheme } from '@/context/ThemeContext';
+import { useDesign } from '@/context/DesignContext';
 
 // Agent prompt template from PRD section 10.3
 const AGENT_PROMPT_TEMPLATE = (designUrl: string) => `Fetch the design system at: ${designUrl}
@@ -80,7 +80,7 @@ export function DesignDetail() {
   const [showPreviewDark, setShowPreviewDark] = useState(false);
   const [isCopied, setIsCopied] = useState<string | null>(null);
   const [jsonOpen, setJsonOpen] = useState(false);
-  const { appliedDesign, applyDesign, resetDesign } = useTheme();
+  const { appliedDesign, applyDesign, resetDesign } = useDesign();
   const isApplied = appliedDesign?.slug === slug;
 
   // Copy handlers

@@ -1,15 +1,10 @@
 import { Outlet, Link } from 'react-router-dom'
 import { Header } from '@/components/ui/header'
 
-interface LayoutProps {
-  theme: 'light' | 'dark'
-  onToggleTheme: () => void
-}
-
-export function Layout({ theme, onToggleTheme }: LayoutProps) {
+export function Layout() {
   return (
     <div className="min-h-screen bg-background text-foreground font-sans">
-      <Header theme={theme} onToggleTheme={onToggleTheme} />
+      <Header />
       <main className="flex-1">
         <Outlet />
       </main>
@@ -23,7 +18,7 @@ export function Layout({ theme, onToggleTheme }: LayoutProps) {
             <a href="https://github.com/luongnv89/sleek-ui" className="hover:text-foreground transition-colors">
               GitHub
             </a>
-            <a href="/logo/brand-showcase.html" className="hover:text-foreground transition-colors">
+            <a href="/sleek-ui/logo/brand-showcase.html" className="hover:text-foreground transition-colors">
               Brand
             </a>
           </div>
