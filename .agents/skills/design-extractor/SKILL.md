@@ -144,7 +144,7 @@ If accepted, follow [references/catalog-integration.md](references/catalog-integ
 Before finishing (with or without a PR):
 
 - **Schema validity** — if inside sleek-ui, run `npm run validate:designs`. Must pass.
-- **HSL format** — every color token matches `^[0-9.]+ [0-9.]+% [0-9.]+%*$` — space-separated, no `hsl()` wrapper, no commas.
+- **HSL format** — every color token matches `^[0-9.]+ [0-9.]+% [0-9.]+%$` — space-separated, no `hsl()` wrapper, no commas.
 - **Required fields** — `$schema`, `name`, `version`, `description`, `categories`, `tokens.colors.{light,dark}`, `tokens.typography`, `tokens.spacing`, `tokens.radius`, `tokens.shadows`, `fonts.urls`, `agentInstructions.steps` are all present.
 - **Dark mode exists** — both `light` and `dark` color sets must be complete, even if the source only has one mode.
 - **Font URLs resolve** — Google Fonts URLs use the `css2` API format with explicit `wght@` tuples.

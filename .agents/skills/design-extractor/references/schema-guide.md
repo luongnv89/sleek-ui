@@ -32,7 +32,7 @@ All seven top-level keys (`$schema`, `name`, `version`, `description`, `categori
 Every color token in `tokens.colors.light` and `tokens.colors.dark` must match this regex:
 
 ```
-^[0-9.]+ [0-9.]+% [0-9.]+%*$
+^[0-9.]+ [0-9.]+% [0-9.]+%$
 ```
 
 **Format**: `hue saturation% lightness%` — space-separated, no commas, no `hsl()` wrapper.

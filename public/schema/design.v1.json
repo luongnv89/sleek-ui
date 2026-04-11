@@ -55,12 +55,12 @@
             "light": {
               "type": "object",
               "required": ["background", "foreground", "primary", "primary-foreground", "secondary", "secondary-foreground", "muted", "muted-foreground", "accent", "accent-foreground", "destructive", "destructive-foreground", "border", "input", "ring", "card", "card-foreground"],
-              "additionalProperties": { "type": "string", "pattern": "^[0-9.]+ [0-9.]+% [0-9.]+%*$" }
+              "additionalProperties": { "type": "string", "pattern": "^[0-9.]+ [0-9.]+% [0-9.]+%$" }
             },
             "dark": {
               "type": "object",
               "required": ["background", "foreground", "primary", "primary-foreground", "secondary", "secondary-foreground", "muted", "muted-foreground", "accent", "accent-foreground", "destructive", "destructive-foreground", "border", "input", "ring", "card", "card-foreground"],
-              "additionalProperties": { "type": "string", "pattern": "^[0-9.]+ [0-9.]+% [0-9.]+%*$" }
+              "additionalProperties": { "type": "string", "pattern": "^[0-9.]+ [0-9.]+% [0-9.]+%$" }
             }
           }
         },
