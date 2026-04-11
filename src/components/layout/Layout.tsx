@@ -1,12 +1,9 @@
 import { Outlet, Link } from 'react-router-dom'
 import { Header } from '@/components/ui/header'
+import { useTheme } from '@/context/ThemeContext'
 
-interface LayoutProps {
-  theme: 'light' | 'dark'
-  onToggleTheme: () => void
-}
-
-export function Layout({ theme, onToggleTheme }: LayoutProps) {
+export function Layout() {
+  const { theme, toggleTheme } = useTheme()
   return (
     <div className="min-h-screen bg-background text-foreground font-sans">
       <Header theme={theme} onToggleTheme={onToggleTheme} />
