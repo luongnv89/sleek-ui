@@ -249,20 +249,6 @@ function HomePageInner() {
         </div>
       </section>
 
-      {/* ── FOOTER ── */}
-      <footer className="border-t border-border/60 px-4 py-10">
-        <div className="mx-auto max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <LogoMark className="h-5 w-5 text-foreground" />
-            <span className="font-semibold text-foreground">sleek<span className="text-[#00FF41]">ui</span></span>
-            <span className="ml-2">MIT Licensed</span>
-          </div>
-          <div className="flex items-center gap-5">
-            <a href="https://github.com/luongnv89/sleek-ui" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">GitHub</a>
-            <a href="/sleek-ui/logo/brand-showcase.html" className="hover:text-foreground transition-colors">Brand Showcase</a>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
