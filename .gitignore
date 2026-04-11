@@ -1,4 +1,7 @@
-.agents
+.agents/*
+!.agents/skills/
+.agents/skills/*
+!.agents/skills/design-extractor/
 .antigravity
 .claude
 .gstack
