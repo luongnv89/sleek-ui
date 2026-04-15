@@ -1,4 +1,3 @@
-// CopyButton Props
 export interface CopyButtonProps {
   text: string;
   onCopy?: (success: boolean) => void;
@@ -7,7 +6,6 @@ export interface CopyButtonProps {
   copyTimeout?: number;
 }
 
-// SearchBar Props
 export interface SearchBarProps {
   value: string;
   onChange: (value: string) => void;
@@ -17,7 +15,6 @@ export interface SearchBarProps {
   clearButtonClassName?: string;
 }
 
-// CategoryFilter Props
 export interface CategoryFilterProps {
   categories: { id: string; label: string; count: number }[];
   selected: string | null;

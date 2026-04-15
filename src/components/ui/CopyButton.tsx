@@ -3,10 +3,6 @@ import { Check, Copy, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { CopyButtonProps } from '@/types/components';
 
-/**
- * CopyButton component
- * Copies text to clipboard with visual feedback
- */
 export const CopyButton = ({
   text,
   onCopy,
@@ -30,7 +26,6 @@ export const CopyButton = ({
       setError(null);
       onCopy?.(true);
 
-      // Reset copied state after timeout
       setTimeout(() => {
         setCopied(false);
       }, copyTimeout);
@@ -41,7 +36,6 @@ export const CopyButton = ({
     }
   }, [text, copyTimeout, onCopy]);
 
-  // Keyboard navigation handler
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
@@ -49,14 +43,12 @@ export const CopyButton = ({
     }
   };
 
-  // Determine icon based on state
   const getIcon = () => {
     if (error) return <AlertCircle className={cn('h-4 w-4 text-red-500', iconClassName)} />;
     if (copied) return <Check className={cn('h-4 w-4 text-green-500', iconClassName)} />;
     return <Copy className={cn('h-4 w-4', iconClassName)} />;
   };
 
-  // Determine accessibility label
   const getAriaLabel = () => {
     if (error) return `Error: ${error}. Click to try again`;
     if (copied) return 'Text copied to clipboard';

@@ -12,7 +12,6 @@ import designs from '@/data/designs';
 import type { TransformedDesign } from '@/types/design';
 import { useDesign } from '@/context/DesignContext';
 
-// Agent prompt template from PRD section 10.3
 const AGENT_PROMPT_TEMPLATE = (designUrl: string) => `Fetch the design system at: ${designUrl}
 
 Read the JSON, then follow the steps in agentInstructions.steps to apply this design system to my project:
@@ -27,7 +26,6 @@ Read the JSON, then follow the steps in agentInstructions.steps to apply this de
 
 Target framework: Tailwind CSS + shadcn/ui. For other frameworks, map token names to CSS custom properties semantically.`;
 
-// Component Previews with standard button variants that exist in the button component
 function ButtonPreview() {
   return (
     <div className="flex items-center gap-2">
@@ -83,7 +81,6 @@ export function DesignDetail() {
   const { appliedDesign, applyDesign, resetDesign } = useDesign();
   const isApplied = appliedDesign?.slug === slug;
 
-  // Copy handlers
   const handleCopy = (text: string, type: string) => {
     navigator.clipboard.writeText(text).then(() => {
       setIsCopied(type);
@@ -94,7 +91,6 @@ export function DesignDetail() {
   useEffect(() => {
     if (!slug) return;
 
-    // Find design by slug
     const foundDesign = designs.find((d) => d.slug === slug);
     if (foundDesign) {
       setDesign(foundDesign);
@@ -102,7 +98,6 @@ export function DesignDetail() {
     }
   }, [slug]);
 
-  // Set page title
   useEffect(() => {
     if (design) {
       document.title = `${design.name} — sleek-ui`;

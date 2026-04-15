@@ -10,16 +10,14 @@ const STORAGE_KEY = 'sleek-ui:theme';
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    // Check localStorage first on mount
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored === 'light' || stored === 'dark') {
         return stored;
       }
     } catch {
-      // localStorage unavailable, fallback to system preference
+      // localStorage may be unavailable (e.g. private mode); fall through to system preference
     }
-    // Fallback to system preference
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
 

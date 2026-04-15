@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback, useRef, type ReactNode } from 'react';
-import type { DesignData } from '@/types/design-types';
+import type { DesignData } from '@/types/design';
 
 const STORAGE_KEY = 'sleek-ui:applied-design';
 
@@ -116,14 +116,9 @@ export function DesignProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  // On mount, if there's a stored design, we can't re-apply (no data) — clear it
-  // The user will need to navigate to the design page to re-apply
-  // (We intentionally do NOT store the full JSON in localStorage to avoid bloat)
+  // On mount, restore the applied design's CSS from localStorage if present
   useEffect(() => {
     if (appliedDesign) {
-      // We have metadata but lost the CSS (page refresh) — mark with a flag CSS
-      // so the banner still shows, but warn that a refresh cleared the styles
-      // Actually, store the CSS separately so we can restore it
       const storedCss = localStorage.getItem(STORAGE_KEY + ':css');
       if (storedCss) {
         upsertStyle('sleek-applied-design', storedCss);
