@@ -12,8 +12,6 @@ export const CopyButton = ({
 }: CopyButtonProps) => {
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isHovered, setIsHovered] = useState(false);
-
   const handleCopy = useCallback(async () => {
     if (!text) {
       setError('Cannot copy empty text');
@@ -60,8 +58,6 @@ export const CopyButton = ({
       type="button"
       onClick={handleCopy}
       onKeyDown={handleKeyDown}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       className={cn(
         'group relative inline-flex items-center justify-center rounded-md border border-input bg-transparent px-2 py-1.5 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
         className

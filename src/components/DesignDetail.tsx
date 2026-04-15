@@ -77,7 +77,6 @@ export function DesignDetail() {
   const [designData, setDesignData] = useState<Record<string, any> | null>(null);
   const [showPreviewDark, setShowPreviewDark] = useState(false);
   const [isCopied, setIsCopied] = useState<string | null>(null);
-  const [jsonOpen, setJsonOpen] = useState(false);
   const { appliedDesign, applyDesign, resetDesign } = useDesign();
   const isApplied = appliedDesign?.slug === slug;
 
@@ -217,10 +216,7 @@ export function DesignDetail() {
                 <p className="text-sm font-medium text-muted-foreground">JSON URL</p>
                 <div className="mt-2 flex items-center gap-2">
                   <Input value={design.jsonUrl} readOnly className="flex-1" />
-                  <CopyButton
-                    text={design.jsonUrl}
-                    onCopy={(success) => console.log('Copy success:', success)}
-                  />
+                  <CopyButton text={design.jsonUrl} />
                 </div>
               </div>
             </CardContent>
@@ -297,24 +293,6 @@ export function DesignDetail() {
           )}
         </section>
 
-
-        {/* JSON Viewer Modal */}
-        {jsonOpen && designData && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4">
-            <div className="relative w-full max-w-4xl rounded-lg border bg-background p-6 shadow-lg">
-              <div className="mb-4 flex items-center justify-between">
-                <h3 className="text-xl font-bold">Design JSON: {design.name}</h3>
-                <Button variant="ghost" size="sm" onClick={() => setJsonOpen(false)}>
-                  <ArrowLeft className="h-4 w-4 rotate-180" />
-                  Close
-                </Button>
-              </div>
-              <pre className="max-h-[70vh] overflow-auto rounded-md bg-muted p-4 text-sm font-mono">
-                {JSON.stringify(designData, null, 2)}
-              </pre>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
