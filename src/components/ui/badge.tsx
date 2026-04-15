@@ -48,7 +48,6 @@ export function Badge({ className, variant = 'default', ...props }: BadgeProps) 
 }
 
 export function DesignCategoryBadge({ category, className }: { category: string; className?: string }) {
-  // Generate a consistent color for each category
   const categoryColors: Record<string, string> = {
     dark: badgeCustomVariants({ variant: 'secondary' }),
     light: badgeCustomVariants({ variant: 'primary' }),

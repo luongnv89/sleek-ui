@@ -1,10 +1,6 @@
 import { cn } from '@/lib/utils';
 import { CategoryFilterProps } from '@/types/components';
 
-/**
- * CategoryFilter component
- * Pill-style filter component for categories with count badges
- */
 export const CategoryFilter = ({
   categories,
   selected,
@@ -21,7 +17,6 @@ export const CategoryFilter = ({
 
   return (
     <div className={cn('flex flex-wrap items-center gap-2', className)} role="tablist" aria-label="Filter by category">
-      {/* All / Reset button */}
       <button
         type="button"
         role="tab"
@@ -41,7 +36,6 @@ export const CategoryFilter = ({
         </span>
       </button>
 
-      {/* Individual category pills */}
       {categories.map((category) => {
         const isSelected = selected === category.id;
         return (

@@ -84,7 +84,6 @@ function parseDesignMd(content) {
   const sections = {};
 
   for (const line of lines) {
-    // Match H2 headers (## Section Name)
     if (line.startsWith('## ')) {
       if (currentSection && sectionContent.length) {
         sections[currentSection] = sectionContent.join('\n').trim();

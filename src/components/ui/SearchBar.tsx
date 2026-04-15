@@ -2,10 +2,6 @@ import { Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SearchBarProps } from '@/types/components';
 
-/**
- * SearchBar component
- * Search input with icon and clear button
- */
 export const SearchBar = ({
   value,
   onChange,
@@ -65,8 +61,6 @@ export const SearchBar = ({
     </div>
   );
 };
-
-// Search icon from lucide-react
 
 SearchBar.displayName = 'SearchBar';
 

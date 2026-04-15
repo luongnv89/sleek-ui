@@ -28,15 +28,12 @@ const transformDesign = (designJson: DesignData): TransformedDesign => {
   };
 };
 
-// Design list for dynamic imports - all designs from VoltAgent + original 5
 const DESIGN_LIST = [
-  // Original 5 designs
   'neo-brutalist',
   'warm-saas',
   'editorial-dark',
   'swiss-clean',
   'deep-ocean',
-  // VoltAgent imports (54 designs)
   'airbnb',
   'airtable',
   'apple',
@@ -93,7 +90,6 @@ const DESIGN_LIST = [
   'zapier',
 ];
 
-// Dynamic import map
 const designModules = import.meta.glob('./designs/*.json', { eager: true });
 
 const designs: TransformedDesign[] = DESIGN_LIST.map(slug => {
