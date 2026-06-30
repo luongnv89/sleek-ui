@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Check, Copy, Moon, Sun } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { DesignTokens } from '../types/design';
@@ -12,6 +12,39 @@ interface TokenTableProps {
    * controls. The local toggle button can still override afterwards.
    */
   previewDark?: boolean;
+}
+
+/**
+ * Copy-to-clipboard with transient "copied" feedback that is cancelled on
+ * unmount. `flag` is the value written to state while copied (a boolean for the
+ * single-target pills, or `'l' | 'd'` for the two-target swatches); `reset` is
+ * the value it returns to. The pending timer is tracked in a ref and cleared on
+ * unmount so the timeout never fires `setState` on an unmounted component.
+ */
+function useCopyFeedback<T>(flag: T, reset: T) {
+  const [copied, setCopied] = useState<T>(reset);
+  const timer = useRef<ReturnType<typeof setTimeout>>();
+
+  useEffect(() => () => clearTimeout(timer.current), []);
+
+  const copy = useCallback(
+    (value?: string, copiedFlag: T = flag) => {
+      if (!value || !navigator.clipboard) return;
+      navigator.clipboard
+        .writeText(value)
+        .then(() => {
+          setCopied(copiedFlag);
+          clearTimeout(timer.current);
+          timer.current = setTimeout(() => setCopied(reset), 1500);
+        })
+        .catch(() => {
+          /* clipboard unavailable (insecure context / denied) — fail silently */
+        });
+    },
+    [flag, reset]
+  );
+
+  return [copied, copy] as const;
 }
 
 /**
@@ -30,25 +63,12 @@ function CopyPill({
   className?: string;
   swatch?: React.ReactNode;
 }) {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = useCallback(() => {
-    if (!value || !navigator.clipboard) return;
-    navigator.clipboard
-      .writeText(value)
-      .then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1500);
-      })
-      .catch(() => {
-        /* clipboard unavailable (insecure context / denied) — fail silently */
-      });
-  }, [value]);
+  const [copied, copy] = useCopyFeedback(true, false);
 
   return (
     <button
       type="button"
-      onClick={handleCopy}
+      onClick={() => copy(value)}
       className={cn(
         'group flex w-full items-center gap-2 rounded-md border border-border bg-card px-2 py-1.5 text-left transition-colors hover:border-ring/40 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
         className
@@ -67,7 +87,7 @@ function CopyPill({
         <Check className="h-3.5 w-3.5 shrink-0 text-green-500" aria-hidden="true" />
       ) : (
         <Copy
-          className="h-3.5 w-3.5 shrink-0 text-muted-foreground/50 transition-colors group-hover:text-foreground"
+          className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60 transition-colors group-hover:text-foreground"
           aria-hidden="true"
         />
       )}
@@ -106,20 +126,7 @@ function ColorSwatch({
   previewDark: boolean;
 }) {
   const previewValue = (previewDark ? darkValue : lightValue) || lightValue || darkValue || '';
-  const [copied, setCopied] = useState<'l' | 'd' | null>(null);
-
-  const copy = (value: string | undefined, which: 'l' | 'd') => {
-    if (!value || !navigator.clipboard) return;
-    navigator.clipboard
-      .writeText(value)
-      .then(() => {
-        setCopied(which);
-        setTimeout(() => setCopied(null), 1500);
-      })
-      .catch(() => {
-        /* clipboard unavailable (insecure context / denied) — fail silently */
-      });
-  };
+  const [copied, copy] = useCopyFeedback<'l' | 'd' | null>('l', null);
 
   return (
     <div className="flex flex-col gap-0.5 rounded-lg border border-border bg-card p-1.5">
@@ -149,7 +156,7 @@ function ColorSwatch({
             {copied === 'l' ? (
               <Check className="h-3 w-3 shrink-0 text-green-500" aria-hidden="true" />
             ) : (
-              <Copy className="h-3 w-3 shrink-0 text-muted-foreground/40 transition-colors group-hover:text-foreground" aria-hidden="true" />
+              <Copy className="h-3 w-3 shrink-0 text-muted-foreground/60 transition-colors group-hover:text-foreground" aria-hidden="true" />
             )}
           </button>
         )}
@@ -168,7 +175,7 @@ function ColorSwatch({
             {copied === 'd' ? (
               <Check className="h-3 w-3 shrink-0 text-green-500" aria-hidden="true" />
             ) : (
-              <Copy className="h-3 w-3 shrink-0 text-muted-foreground/40 transition-colors group-hover:text-foreground" aria-hidden="true" />
+              <Copy className="h-3 w-3 shrink-0 text-muted-foreground/60 transition-colors group-hover:text-foreground" aria-hidden="true" />
             )}
           </button>
         )}
@@ -208,7 +215,7 @@ export function TokenTable({ tokens, className, previewDark: previewDarkProp }: 
     <div className={cn('flex flex-col gap-4', className)}>
       {/* Colors */}
       <section className="flex flex-col gap-2">
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-0.5">
           <h3 className="text-sm font-semibold text-foreground">
             Colors <span className="font-normal text-muted-foreground">({colorKeys.length})</span>
           </h3>
@@ -231,6 +238,10 @@ export function TokenTable({ tokens, className, previewDark: previewDarkProp }: 
               </>
             )}
           </button>
+          <p className="w-full text-[11px] text-muted-foreground">
+            Previews the swatch color only — the page theme is unchanged. Both light (L) and
+            dark (D) values stay copyable below.
+          </p>
         </div>
         <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {colorKeys.map((key) => (
