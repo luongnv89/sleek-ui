@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Check, Copy, Moon, Sun } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { DesignTokens } from '../types/design';
@@ -6,6 +6,12 @@ import { DesignTokens } from '../types/design';
 interface TokenTableProps {
   tokens: DesignTokens;
   className?: string;
+  /**
+   * When the parent (DesignDetail) flips its page-level light/dark preview, keep
+   * the swatch preview in sync so the two toggles don't read as independent
+   * controls. The local toggle button can still override afterwards.
+   */
+  previewDark?: boolean;
 }
 
 /**
@@ -27,11 +33,16 @@ function CopyPill({
   const [copied, setCopied] = useState(false);
 
   const handleCopy = useCallback(() => {
-    if (!value) return;
-    navigator.clipboard.writeText(value).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    });
+    if (!value || !navigator.clipboard) return;
+    navigator.clipboard
+      .writeText(value)
+      .then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1500);
+      })
+      .catch(() => {
+        /* clipboard unavailable (insecure context / denied) — fail silently */
+      });
   }, [value]);
 
   return (
@@ -98,11 +109,16 @@ function ColorSwatch({
   const [copied, setCopied] = useState<'l' | 'd' | null>(null);
 
   const copy = (value: string | undefined, which: 'l' | 'd') => {
-    if (!value) return;
-    navigator.clipboard.writeText(value).then(() => {
-      setCopied(which);
-      setTimeout(() => setCopied(null), 1500);
-    });
+    if (!value || !navigator.clipboard) return;
+    navigator.clipboard
+      .writeText(value)
+      .then(() => {
+        setCopied(which);
+        setTimeout(() => setCopied(null), 1500);
+      })
+      .catch(() => {
+        /* clipboard unavailable (insecure context / denied) — fail silently */
+      });
   };
 
   return (
@@ -133,7 +149,7 @@ function ColorSwatch({
             {copied === 'l' ? (
               <Check className="h-3 w-3 shrink-0 text-green-500" aria-hidden="true" />
             ) : (
-              <Copy className="h-3 w-3 shrink-0 text-muted-foreground/0 transition-colors group-hover:text-foreground" aria-hidden="true" />
+              <Copy className="h-3 w-3 shrink-0 text-muted-foreground/40 transition-colors group-hover:text-foreground" aria-hidden="true" />
             )}
           </button>
         )}
@@ -152,7 +168,7 @@ function ColorSwatch({
             {copied === 'd' ? (
               <Check className="h-3 w-3 shrink-0 text-green-500" aria-hidden="true" />
             ) : (
-              <Copy className="h-3 w-3 shrink-0 text-muted-foreground/0 transition-colors group-hover:text-foreground" aria-hidden="true" />
+              <Copy className="h-3 w-3 shrink-0 text-muted-foreground/40 transition-colors group-hover:text-foreground" aria-hidden="true" />
             )}
           </button>
         )}
@@ -161,8 +177,13 @@ function ColorSwatch({
   );
 }
 
-export function TokenTable({ tokens, className }: TokenTableProps) {
-  const [previewDark, setPreviewDark] = useState(false);
+export function TokenTable({ tokens, className, previewDark: previewDarkProp }: TokenTableProps) {
+  const [previewDark, setPreviewDark] = useState(previewDarkProp ?? false);
+
+  // Follow the parent's page-level preview toggle when it changes.
+  useEffect(() => {
+    if (previewDarkProp !== undefined) setPreviewDark(previewDarkProp);
+  }, [previewDarkProp]);
 
   const lightColors = tokens.colors?.light ?? {};
   const darkColors = tokens.colors?.dark ?? {};
@@ -178,7 +199,8 @@ export function TokenTable({ tokens, className }: TokenTableProps) {
   const fontWeightEntries = Object.entries(typography?.fontWeight ?? {});
   const lineHeightEntries = Object.entries(typography?.lineHeight ?? {});
   const letterSpacingEntries = Object.entries(typography?.letterSpacing ?? {});
-  const spacingEntries = Object.entries(spacing ?? {});
+  // `unit` is the base unit (meta), not a spacing step — exclude it from the step chips.
+  const spacingEntries = Object.entries(spacing ?? {}).filter(([k]) => k !== 'unit');
   const radiusEntries = Object.entries(radius ?? {});
   const shadowEntries = Object.entries(shadows ?? {});
 

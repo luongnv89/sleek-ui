@@ -286,7 +286,7 @@ export function DesignDetail() {
 
           {designData && designData.tokens ? (
             <div className={cn('mt-4', showPreviewDark && 'dark')}>
-              <TokenTable tokens={designData.tokens} />
+              <TokenTable tokens={designData.tokens} previewDark={showPreviewDark} />
             </div>
           ) : (
             <div className="mt-6 rounded-lg border border-dashed border-border p-8 text-center">
