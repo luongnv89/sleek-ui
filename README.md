@@ -44,7 +44,9 @@ One prompt. The agent handles the rest — CSS custom properties, Google Fonts, 
 | AI products | Claude, Cohere, Mistral, Ollama, Replicate, Minimax, ElevenLabs, Runway |
 | SaaS | Stripe, Notion, Intercom, Resend, Webflow, Figma, Framer, Miro |
 | Enterprise | IBM, BMW, Coinbase, Kraken, Revolut, Wise, Uber, HashiCorp, MongoDB |
-| Original | Editorial Dark, Warm SaaS, Neo Brutalist, Swiss Clean, Deep Ocean |
+| Original | Editorial Dark, Warm SaaS, Neo Brutalist, Swiss Clean, Deep Ocean, Glassmorphic |
+
+Glassmorphic is an original design inspired by glassmorphism / frosted-glass directions from designdotmd.directory (adapted to Sleek UI's token schema and quality bar).
 
 ---
 
