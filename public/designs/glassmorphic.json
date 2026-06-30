@@ -1,0 +1,204 @@
+{
+  "$schema": "https://luongnv.com/sleek-ui/schema/design.v1.json",
+  "name": "glassmorphic",
+  "version": "1.0.0",
+  "description": "Frosted glassmorphism with translucent surfaces, subtle borders, soft blur-friendly backgrounds and gentle pastels. Modern sans-serif with soft rounded forms for layered depth. Inspired by design directions from designdotmd.directory",
+  "categories": ["minimal", "glassmorphism", "modern", "light"],
+  "defaultMode": "light",
+  "author": {
+    "name": "sleek-ui",
+    "email": "luongnv89@gmail.com",
+    "url": "https://luongnv.com/sleek-ui"
+  },
+  "tokens": {
+    "colors": {
+      "light": {
+        "background": "210 40% 98%",
+        "foreground": "210 20% 15%",
+        "primary": "217 91% 60%",
+        "primary-foreground": "0 0% 100%",
+        "secondary": "210 20% 95%",
+        "secondary-foreground": "210 20% 25%",
+        "muted": "210 15% 96%",
+        "muted-foreground": "210 10% 48%",
+        "accent": "210 25% 93%",
+        "accent-foreground": "210 20% 15%",
+        "destructive": "0 72% 51%",
+        "destructive-foreground": "0 0% 100%",
+        "border": "210 15% 88%",
+        "input": "210 15% 88%",
+        "ring": "217 91% 60%",
+        "card": "210 30% 99%",
+        "card-foreground": "210 20% 15%",
+        "success": "160 60% 45%",
+        "success-foreground": "0 0% 100%",
+        "warning": "40 90% 55%",
+        "warning-foreground": "0 0% 15%",
+        "info": "200 85% 50%",
+        "info-foreground": "0 0% 100%"
+      },
+      "dark": {
+        "background": "220 30% 6%",
+        "foreground": "210 15% 92%",
+        "primary": "217 85% 65%",
+        "primary-foreground": "220 30% 8%",
+        "secondary": "220 20% 11%",
+        "secondary-foreground": "210 15% 82%",
+        "muted": "220 20% 13%",
+        "muted-foreground": "210 10% 62%",
+        "accent": "220 20% 16%",
+        "accent-foreground": "210 15% 85%",
+        "destructive": "0 65% 48%",
+        "destructive-foreground": "0 0% 100%",
+        "border": "220 15% 20%",
+        "input": "220 15% 20%",
+        "ring": "217 85% 65%",
+        "card": "220 25% 11%",
+        "card-foreground": "210 15% 90%",
+        "success": "160 55% 48%",
+        "success-foreground": "0 0% 15%",
+        "warning": "40 85% 58%",
+        "warning-foreground": "0 0% 10%",
+        "info": "200 80% 55%",
+        "info-foreground": "0 0% 10%"
+      }
+    },
+    "typography": {
+      "fontFamily": {
+        "sans": "Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+        "serif": "Georgia, 'Times New Roman', serif",
+        "mono": "'JetBrains Mono', 'Fira Code', monospace"
+      },
+      "fontSize": {
+        "xs": "0.75rem",
+        "sm": "0.875rem",
+        "base": "1rem",
+        "lg": "1.125rem",
+        "xl": "1.25rem",
+        "2xl": "1.5rem",
+        "3xl": "1.875rem",
+        "4xl": "2.25rem"
+      },
+      "fontWeight": {
+        "normal": 400,
+        "medium": 500,
+        "semibold": 600,
+        "bold": 700
+      },
+      "lineHeight": {
+        "tight": "1.25",
+        "normal": "1.5",
+        "relaxed": "1.7"
+      },
+      "letterSpacing": {
+        "tight": "-0.025em",
+        "normal": "0",
+        "wide": "0.025em"
+      }
+    },
+    "spacing": {
+      "unit": "4px",
+      "xs": "4px",
+      "sm": "8px",
+      "md": "16px",
+      "lg": "24px",
+      "xl": "32px",
+      "2xl": "48px"
+    },
+    "radius": {
+      "sm": "0.375rem",
+      "default": "0.625rem",
+      "lg": "0.875rem",
+      "full": "9999px"
+    },
+    "shadows": {
+      "sm": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+      "default": "0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.06)",
+      "lg": "0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.06)"
+    }
+  },
+  "fonts": {
+    "google": [
+      {
+        "family": "Inter",
+        "weights": [400, 500, 600, 700]
+      }
+    ],
+    "urls": [
+      {
+        "url": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
+        "format": "css2",
+        "family": "Inter"
+      }
+    ]
+  },
+  "accessibility": {
+    "contrastTarget": 4.5,
+    "focusRing": {
+      "width": "2px",
+      "color": "currentColor",
+      "offset": "2px"
+    },
+    "reducedMotion": true
+  },
+  "components": {
+    "button": {
+      "primary": {
+        "background": "primary",
+        "color": "primary-foreground",
+        "borderRadius": "radius.default",
+        "padding": "spacing.sm spacing.md",
+        "fontWeight": "semibold"
+      },
+      "secondary": {
+        "background": "secondary",
+        "color": "secondary-foreground",
+        "borderRadius": "radius.default",
+        "padding": "spacing.sm spacing.md",
+        "fontWeight": "medium"
+      },
+      "ghost": {
+        "background": "transparent",
+        "color": "foreground",
+        "borderRadius": "radius.default",
+        "padding": "spacing.sm spacing.md",
+        "fontWeight": "medium"
+      }
+    },
+    "card": {
+      "background": "card",
+      "color": "card-foreground",
+      "borderRadius": "radius.lg",
+      "padding": "spacing.lg",
+      "shadow": "shadows.default",
+      "border": "1px solid border"
+    },
+    "input": {
+      "background": "background",
+      "color": "foreground",
+      "borderRadius": "radius.default",
+      "padding": "spacing.sm spacing.md",
+      "border": "1px solid input",
+      "focusRing": "focusRing",
+      "placeholderColor": "muted-foreground"
+    }
+  },
+  "agentInstructions": {
+    "steps": [
+      "Set CSS custom properties from tokens.colors on :root (light) and .dark (dark mode)",
+      "Set --radius from tokens.radius.default",
+      "Load fonts by adding the Google Fonts URL from fonts.urls as a <link> tag",
+      "Set font-family from tokens.typography.fontFamily",
+      "Apply component styles from the components field (Tailwind class names for shadcn projects)",
+      "Ensure focus states match accessibility.focusRing specification",
+      "Test both light and dark modes"
+    ]
+  },
+  "preview": {
+    "thumbnail": "/previews/glassmorphic-thumb.svg",
+    "screenshots": {
+      "light": ["/previews/glassmorphic-light.svg"],
+      "dark": ["/previews/glassmorphic-dark.svg"]
+    }
+  }
+}
