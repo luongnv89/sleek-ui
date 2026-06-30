@@ -133,17 +133,17 @@ function ColorSwatch({
           {name}
         </code>
       </div>
-      <div className="flex flex-col">
+      <div className="flex flex-col gap-0.5">
         {lightValue && (
           <button
             type="button"
             onClick={() => copy(lightValue, 'l')}
-            className="group flex items-center justify-between gap-1 rounded px-1 py-0.5 transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="group flex min-h-[24px] items-center justify-between gap-1 rounded px-1 py-1 transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             aria-label={`Copy light value for ${name}: ${lightValue}`}
             title={`Copy light "${lightValue}"`}
           >
             <span className="flex min-w-0 items-center gap-1">
-              <span className="text-[9px] font-semibold uppercase text-muted-foreground/70">L</span>
+              <span className="text-[9px] font-semibold uppercase text-muted-foreground">L</span>
               <span className="truncate font-mono text-[10px] text-muted-foreground">{lightValue}</span>
             </span>
             {copied === 'l' ? (
@@ -157,12 +157,12 @@ function ColorSwatch({
           <button
             type="button"
             onClick={() => copy(darkValue, 'd')}
-            className="group flex items-center justify-between gap-1 rounded px-1 py-0.5 transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="group flex min-h-[24px] items-center justify-between gap-1 rounded px-1 py-1 transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             aria-label={`Copy dark value for ${name}: ${darkValue}`}
             title={`Copy dark "${darkValue}"`}
           >
             <span className="flex min-w-0 items-center gap-1">
-              <span className="text-[9px] font-semibold uppercase text-muted-foreground/70">D</span>
+              <span className="text-[9px] font-semibold uppercase text-muted-foreground">D</span>
               <span className="truncate font-mono text-[10px] text-muted-foreground">{darkValue}</span>
             </span>
             {copied === 'd' ? (
