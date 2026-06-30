@@ -275,15 +275,17 @@ export function DesignDetail() {
 
         {/* Token Table */}
         <section className="mb-12">
-          <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-            Design Tokens
-          </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
-            Full token table with light and dark mode values
-          </p>
+          <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b pb-2">
+            <h2 className="scroll-m-20 text-2xl font-semibold tracking-tight first:mt-0">
+              Design Tokens
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              All token values — click any value to copy
+            </p>
+          </div>
 
           {designData && designData.tokens ? (
-            <div className={cn('mt-6', showPreviewDark && 'dark')}>
+            <div className={cn('mt-4', showPreviewDark && 'dark')}>
               <TokenTable tokens={designData.tokens} />
             </div>
           ) : (

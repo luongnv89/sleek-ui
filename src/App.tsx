@@ -10,6 +10,7 @@ import { CategoryFilter } from '@/components/ui/CategoryFilter';
 import { DesignDetail } from '@/components/DesignDetail';
 import { DesignCard } from '@/components/catalog/DesignCard';
 import { AppliedDesignBanner } from '@/components/AppliedDesignBanner';
+import { ScrollToTop } from '@/components/ScrollToTop';
 import designs from '@/data/designs';
 
 const AGENT_PROMPT_TEMPLATE = (designUrl: string) => `Fetch the design system at: ${designUrl}
@@ -292,6 +293,7 @@ function App() {
     <ThemeProvider>
       <DesignProvider>
         <HashRouter>
+          <ScrollToTop />
           <Routes>
             <Route element={<Layout />}>
               <Route path="/" element={<HomePageInner />} />
