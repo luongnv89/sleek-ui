@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+  <!-- Soft off-white glassmorphic light background -->
+  <rect width="400" height="300" fill="#f0f4f8"/>
+  
+  <!-- Title -->
+  <text x="200" y="42" text-anchor="middle" fill="#1e2937" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="600">Glassmorphic</text>
+  
+  <!-- Frosted glass card layer 1 (main surface) -->
+  <rect x="30" y="60" width="340" height="180" rx="14" fill="#ffffff" fill-opacity="0.85" stroke="#cbd5e1" stroke-width="1"/>
+  
+  <!-- Subtle inner layer to evoke translucency/frost -->
+  <rect x="50" y="78" width="140" height="70" rx="10" fill="#e0f0ff" fill-opacity="0.6" stroke="#bae6fd" stroke-width="1"/>
+  
+  <!-- Secondary glass card -->
+  <rect x="210" y="78" width="140" height="70" rx="10" fill="#f8fafc" fill-opacity="0.75" stroke="#e2e8f0" stroke-width="1"/>
+  
+  <!-- Small accent pills / buttons to show palette -->
+  <rect x="60" y="95" width="50" height="18" rx="999" fill="#3b82f6"/>
+  <rect x="120" y="95" width="50" height="18" rx="999" fill="#64748b"/>
+  <rect x="225" y="95" width="50" height="18" rx="999" fill="#0ea5e9"/>
+  <rect x="285" y="95" width="50" height="18" rx="999" fill="#64748b"/>
+  
+  <!-- Bottom frosted card section -->
+  <rect x="50" y="165" width="300" height="55" rx="10" fill="#ffffff" fill-opacity="0.7" stroke="#e2e8f0" stroke-width="1"/>
+  
+  <!-- Mini elements inside bottom -->
+  <rect x="65" y="178" width="40" height="28" rx="6" fill="#bae6fd"/>
+  <rect x="115" y="178" width="40" height="28" rx="6" fill="#bfdbfe"/>
+  <rect x="165" y="178" width="40" height="28" rx="6" fill="#e0f2fe"/>
+  <rect x="215" y="178" width="40" height="28" rx="6" fill="#bae6fd"/>
+  <rect x="265" y="178" width="70" height="28" rx="999" fill="#3b82f6"/>
+  
+  <!-- Subtle shadow hint for glass depth (using multiple) -->
+  <rect x="32" y="62" width="338" height="178" rx="14" fill="none" stroke="#94a3b8" stroke-width="0.5" stroke-opacity="0.3"/>
+  
+  <!-- Footer label -->
+  <text x="200" y="265" text-anchor="middle" fill="#64748b" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="400">Frosted • Translucent • Soft</text>
+</svg>
