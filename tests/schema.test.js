@@ -1,3 +1,4 @@
+/** @jest-environment node */
 const Ajv = require('ajv');
 const addFormats = require('ajv-formats');
 const schema = require('../public/schema/design.v1.json');
