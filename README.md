@@ -9,17 +9,19 @@
 [![GitHub Stars](https://img.shields.io/github/stars/luongnv89/sleek-ui?style=flat-square)](https://github.com/luongnv89/sleek-ui/stargazers)
 [![GitHub Pages](https://img.shields.io/website?url=https%3A%2F%2Fluongnv.com/sleek-ui&down_message=offline&style=flat-square)](https://luongnv.com/sleek-ui)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue?style=flat-square)](LICENSE)
-[![Designs](https://img.shields.io/badge/designs-55%2B-green?style=flat-square)](https://luongnv.com/sleek-ui)
+[![Designs](https://img.shields.io/badge/designs-60%2B-green?style=flat-square)](https://luongnv.com/sleek-ui)
 
-# Apply a professional design system in one AI agent prompt
+# Professional design systems for your AI agent
 
-55+ brand-quality UI design systems — Stripe, Linear, Vercel, Notion, and more — packaged as JSON. Point any AI coding agent at a URL and your app gets the design.
+60+ production-grade design systems — Stripe, Linear, Vercel, Notion and more — as clean JSON. Give your agent one URL and it applies colors, typography, spacing, and component styles.
+
+You build fast with AI. Now ship interfaces that don't look generic.
 
 [**Browse designs →**](https://luongnv.com/sleek-ui) · [**Quick Start →**](#quick-start)
 
 ---
 
-## How It Works
+## How It Works (Your 3-Step Plan)
 
 ```mermaid
 graph LR
@@ -30,13 +32,13 @@ graph LR
     C --> F[Styles Components]
 ```
 
-One prompt. The agent handles the rest — CSS custom properties, Google Fonts, Tailwind + shadcn/ui component styles.
+Browse. Copy the prompt. Paste it once. The agent applies tokens, fonts, radius, and shadcn component styles for you. No design tools required.
 
 ---
 
 ## Design Catalog
 
-55+ designs covering brand-faithful recreations and original systems:
+60+ designs covering brand-faithful recreations and original systems:
 
 | Category | Designs |
 |---|---|
