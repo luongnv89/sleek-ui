@@ -34,6 +34,7 @@ const DESIGN_LIST = [
   'editorial-dark',
   'swiss-clean',
   'deep-ocean',
+  'glassmorphic',
   'airbnb',
   'airtable',
   'apple',
