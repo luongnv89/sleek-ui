@@ -111,11 +111,16 @@ describe('TokenTable', () => {
     jest.useRealTimers();
   });
 
-  it('does not throw when unmounted with a pending copy-feedback timer', async () => {
+  it('clears the pending copy-feedback timer on unmount', async () => {
     jest.useFakeTimers();
     mockClipboard();
     const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     const warn = jest.spyOn(console, 'error').mockImplementation(() => {});
+    // Spy on clearTimeout so the test is *discriminating*: React 18 silently
+    // no-ops a setState-after-unmount, so asserting "no warning" alone would
+    // pass even without the cleanup. Asserting clearTimeout runs on unmount
+    // fails if the useCopyFeedback useEffect cleanup is removed.
+    const clearSpy = jest.spyOn(global, 'clearTimeout');
 
     const { unmount } = render(<TokenTable tokens={tokens} />);
 
@@ -129,13 +134,17 @@ describe('TokenTable', () => {
       expect(lightBtn.querySelector('.text-green-500')).not.toBeNull()
     );
 
+    const clearCallsBeforeUnmount = clearSpy.mock.calls.length;
+
     // Unmount before the 1500ms timer fires, then advance — the hook must have
-    // cleared its timer on unmount so no setState-after-unmount warning fires.
+    // cleared its timer on unmount (so clearTimeout fires) and no
+    // setState-after-unmount warning is logged.
     unmount();
     act(() => {
       jest.advanceTimersByTime(2000);
     });
 
+    expect(clearSpy.mock.calls.length).toBeGreaterThan(clearCallsBeforeUnmount);
     expect(warn).not.toHaveBeenCalled();
     warn.mockRestore();
     jest.useRealTimers();
