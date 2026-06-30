@@ -15,26 +15,26 @@
       "light": {
         "background": "210 40% 98%",
         "foreground": "210 20% 15%",
-        "primary": "217 91% 60%",
+        "primary": "217 80% 50%",
         "primary-foreground": "0 0% 100%",
         "secondary": "210 20% 95%",
         "secondary-foreground": "210 20% 25%",
         "muted": "210 15% 96%",
-        "muted-foreground": "210 10% 48%",
+        "muted-foreground": "210 14% 40%",
         "accent": "210 25% 93%",
         "accent-foreground": "210 20% 15%",
         "destructive": "0 72% 51%",
         "destructive-foreground": "0 0% 100%",
         "border": "210 15% 88%",
         "input": "210 15% 88%",
-        "ring": "217 91% 60%",
+        "ring": "217 80% 50%",
         "card": "210 30% 99%",
         "card-foreground": "210 20% 15%",
-        "success": "160 60% 45%",
+        "success": "162 68% 30%",
         "success-foreground": "0 0% 100%",
         "warning": "40 90% 55%",
         "warning-foreground": "0 0% 15%",
-        "info": "200 85% 50%",
+        "info": "200 78% 38%",
         "info-foreground": "0 0% 100%"
       },
       "dark": {
@@ -195,10 +195,6 @@
     ]
   },
   "preview": {
-    "thumbnail": "/previews/glassmorphic-thumb.svg",
-    "screenshots": {
-      "light": ["/previews/glassmorphic-light.svg"],
-      "dark": ["/previews/glassmorphic-dark.svg"]
-    }
+    "thumbnail": "/previews/glassmorphic-thumb.svg"
   }
 }
