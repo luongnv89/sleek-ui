@@ -68,3 +68,44 @@ describe('Hero section', () => {
     expect(screen.getByText(/Browse 1 Designs/)).toBeInTheDocument();
   });
 });
+
+describe('Pain/problem section position (issue #83)', () => {
+  it('renders the pain/problem section describing what AI-built apps look like', () => {
+    render(<App />);
+    expect(screen.getByText(/What most AI-built apps look like/)).toBeInTheDocument();
+  });
+
+  it('renders pain section items about mismatched styles and vibe coding', () => {
+    render(<App />);
+    expect(screen.getByText(/Default browser styles or random Tailwind values/)).toBeInTheDocument();
+    expect(screen.getByText(/Mismatched buttons, inputs, and cards/)).toBeInTheDocument();
+    expect(screen.getByText(/Users trust polished interfaces/)).toBeInTheDocument();
+  });
+
+  it('pain section appears before the demo video section in DOM order', () => {
+    const { container } = render(<App />);
+    const html = container.innerHTML;
+    const painIndex = html.indexOf('What most AI-built apps look like');
+    const videoIndex = html.indexOf('Watch it transform a real app');
+    expect(painIndex).toBeGreaterThan(0);
+    expect(videoIndex).toBeGreaterThan(0);
+    expect(painIndex).toBeLessThan(videoIndex);
+  });
+});
+
+describe('Success-recap card removal (issue #86)', () => {
+  it('does not render the redundant success-recap card "What changes for you"', () => {
+    render(<App />);
+    expect(screen.queryByText(/What changes for you/)).not.toBeInTheDocument();
+  });
+
+  it('does not render the SUCCESS label in a card section', () => {
+    render(<App />);
+    expect(screen.queryByText(/SUCCESS/)).not.toBeInTheDocument();
+  });
+
+  it('does not render the "Consistent spacing, type, and colors" success item', () => {
+    render(<App />);
+    expect(screen.queryByText(/Consistent spacing, type, and colors/)).not.toBeInTheDocument();
+  });
+});

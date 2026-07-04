@@ -147,6 +147,21 @@ function HomePageInner() {
         </div>
       </section>
 
+      {/* ── PAIN (moved before video per #83) ── */}
+      <section className="border-t border-border/60 px-4 py-12 sm:py-14 bg-background">
+        <div className="mx-auto max-w-4xl">
+          <div className="rounded-xl border border-border/60 bg-muted/10 p-6 text-muted-foreground/90">
+            <div className="text-xs tracking-[2px] font-mono mb-2 opacity-70">THE ALTERNATIVE</div>
+            <h3 className="font-semibold mb-3 text-foreground/80">What most AI-built apps look like</h3>
+            <ul className="space-y-2 text-sm">
+              <li className="flex gap-2"><span className="mt-1">•</span> <span>Default browser styles or random Tailwind values.</span></li>
+              <li className="flex gap-2"><span className="mt-1">•</span> <span>Mismatched buttons, inputs, and cards that scream &ldquo;vibe coded&rdquo;.</span></li>
+              <li className="flex gap-2"><span className="mt-1">•</span> <span>Users trust polished interfaces more than raw functionality.</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
       {/* ── VIDEO ── */}
       <section className="border-t border-border/60 px-4 py-14 sm:py-16 bg-muted/20">
         <div className="mx-auto max-w-4xl text-center space-y-5">
@@ -204,32 +219,6 @@ function HomePageInner() {
               />
             </div>
             <p className="mt-3 text-[11px] text-muted-foreground">The agent fetches the JSON and applies tokens, fonts, radius, and component classes automatically.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* ── SUCCESS / STAKES (StoryBrand close) ── */}
-      <section className="border-t border-border/60 px-4 py-12 sm:py-14 bg-background">
-        <div className="mx-auto max-w-4xl">
-          <div className="grid gap-6 sm:grid-cols-2">
-            <div className="rounded-xl border border-border bg-card p-6">
-              <div className="text-[#00FF41] text-xs tracking-[2px] font-mono mb-2">SUCCESS</div>
-              <h3 className="font-semibold mb-3">What changes for you</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li className="flex gap-2"><span className="mt-1">•</span> <span>Consistent spacing, type, and colors across light and dark.</span></li>
-                <li className="flex gap-2"><span className="mt-1">•</span> <span>Your app looks intentional — like a real product team shipped it.</span></li>
-                <li className="flex gap-2"><span className="mt-1">•</span> <span>Move on to the next feature instead of fighting CSS variables.</span></li>
-              </ul>
-            </div>
-            <div className="rounded-xl border border-border/60 bg-muted/10 p-6 text-muted-foreground/90">
-              <div className="text-xs tracking-[2px] font-mono mb-2 opacity-70">THE ALTERNATIVE</div>
-              <h3 className="font-semibold mb-3 text-foreground/80">What most AI-built apps look like</h3>
-              <ul className="space-y-2 text-sm">
-                <li className="flex gap-2"><span className="mt-1">•</span> <span>Default browser styles or random Tailwind values.</span></li>
-                <li className="flex gap-2"><span className="mt-1">•</span> <span>Mismatched buttons, inputs, and cards that scream "vibe coded".</span></li>
-                <li className="flex gap-2"><span className="mt-1">•</span> <span>Users trust polished interfaces more than raw functionality.</span></li>
-              </ul>
-            </div>
           </div>
         </div>
       </section>
