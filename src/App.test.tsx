@@ -63,8 +63,42 @@ describe('HomePage - Social Proof Section (#79)', () => {
   });
 
   it('links to GitHub repo', () => {
-    const link = screen.getByText('Star on GitHub');
-    expect(link.closest('a')).toHaveAttribute('href', 'https://github.com/luongnv89/sleek-ui');
+    const links = screen.getAllByText('Star on GitHub');
+    links.forEach(link => {
+      expect(link.closest('a')).toHaveAttribute('href', 'https://github.com/luongnv89/sleek-ui');
+    });
+  });
+});
+
+describe('Footer - Shareable Closing Line (#85)', () => {
+  beforeEach(() => {
+    render(<App />);
+  });
+
+  it('displays the bold quotable closing line', () => {
+    expect(screen.getByText(/Your app shouldn.*t look like it was built in a weekend/i)).toBeInTheDocument();
+  });
+
+  it('displays Star on GitHub CTA in the footer', () => {
+    const footer = document.querySelector('footer');
+    expect(footer).toBeInTheDocument();
+    const starLink = footer!.querySelector('a[href="https://github.com/luongnv89/sleek-ui"]');
+    expect(starLink).toBeInTheDocument();
+    expect(starLink!.textContent).toMatch(/Star on GitHub/);
+  });
+
+  it('preserves navigation links', () => {
+    const footer = document.querySelector('footer');
+    expect(footer).toBeInTheDocument();
+    expect(footer!.textContent).toMatch(/Catalog/);
+    expect(footer!.textContent).toMatch(/How it works/);
+    expect(footer!.textContent).toMatch(/Brand/);
+  });
+
+  it('displays the open source tagline', () => {
+    const footer = document.querySelector('footer');
+    expect(footer).toBeInTheDocument();
+    expect(footer!.textContent).toMatch(/Free.*Open source.*60.*designs/);
   });
 });
 
