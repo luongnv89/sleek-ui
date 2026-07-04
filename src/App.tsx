@@ -108,11 +108,11 @@ function HomePageInner() {
 
           <div className="space-y-4">
             <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-              Professional design systems{' '}
-              <span className="text-[#00FF41]">for your AI agent</span>
+              Give your AI agent{' '}
+              <span className="text-[#00FF41]">good taste</span>
             </h1>
             <p className="mx-auto max-w-2xl text-lg text-muted-foreground sm:text-xl">
-              You ship features fast. Now ship the polish too. <strong className="text-foreground">{designs.length}+ production-grade design systems</strong> as one URL. No Figma. No manual tokens.
+              <strong className="text-foreground">{designs.length}+ production-grade design systems</strong>, one URL, zero Figma.
             </p>
           </div>
 
@@ -128,7 +128,7 @@ function HomePageInner() {
             ))}
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+          <div className="flex flex-col items-center gap-2 pt-2">
             <button
               onClick={() => document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' })}
               className="inline-flex items-center justify-center rounded-md bg-[#00FF41] px-6 py-3 text-sm font-semibold text-black shadow hover:bg-[#00e639] active:bg-[#00cc33] transition-colors"
@@ -137,9 +137,9 @@ function HomePageInner() {
             </button>
             <button
               onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
-              className="inline-flex items-center justify-center rounded-md border border-border px-6 py-3 text-sm font-medium hover:bg-muted active:bg-muted/70 transition-colors"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              See the plan
+              See how it works ↓
             </button>
           </div>
 
