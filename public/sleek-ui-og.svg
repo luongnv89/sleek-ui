@@ -55,7 +55,7 @@
   </g>
 
   <!-- Glow -->
-  <circle cx="600" cy="315" r="280" fill="#00FF41" opacity="0.06" filter="url(#blur)"/>
+  <circle cx="600" cy="315" r="280" fill="#00FF41" opacity="0.06"/>
 
   <!-- Logo mark -->
   <g transform="translate(72, 72)">
