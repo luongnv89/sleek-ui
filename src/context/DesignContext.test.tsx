@@ -26,7 +26,11 @@ function makeDesign(overrides: Record<string, unknown>): DesignData {
   for (const [path, value] of Object.entries(overrides)) {
     const keys = path.split('.');
     let target: Record<string, unknown> = merged;
-    while (keys.length > 1) target = target[keys.shift() as string];
+    while (keys.length > 1) {
+      const key = keys.shift() as string;
+      if (!target[key] || typeof target[key] !== 'object') target[key] = {};
+      target = target[key] as Record<string, unknown>;
+    }
     target[keys[0]] = value;
   }
   return merged;
