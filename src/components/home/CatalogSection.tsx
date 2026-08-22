@@ -2,11 +2,12 @@ import { useMemo, useState } from 'react';
 import { SearchBar } from '@/components/ui/SearchBar';
 import { CategoryFilter } from '@/components/ui/CategoryFilter';
 import { DesignCard } from '@/components/catalog/DesignCard';
-import designs from '@/data/designs';
+import { useDesignCatalog } from '@/hooks/useDesignCatalog';
 
 export function CatalogSection() {
   const [searchValue, setSearchValue] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const { designs, loading } = useDesignCatalog();
 
   const categories = useMemo(
     () =>
@@ -16,7 +17,7 @@ export function CatalogSection() {
           return acc;
         }, {} as Record<string, number>)
       ).map(([id, count]) => ({ id, label: id, count })),
-    []
+    [designs]
   );
 
   const filteredDesigns = useMemo(
@@ -26,7 +27,7 @@ export function CatalogSection() {
         const matchesCategory = !selectedCategory || d.categories.includes(selectedCategory);
         return matchesSearch && matchesCategory;
       }),
-    [searchValue, selectedCategory]
+    [designs, searchValue, selectedCategory]
   );
 
   return (
@@ -56,7 +57,9 @@ export function CatalogSection() {
           onChange={setSelectedCategory}
         />
 
-        {filteredDesigns.length > 0 ? (
+        {loading ? (
+          <p className="py-20 text-center text-muted-foreground" role="status">Loading designs…</p>
+        ) : filteredDesigns.length > 0 ? (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filteredDesigns.map((design) => (
               <DesignCard key={design.slug} design={design} />

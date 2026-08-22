@@ -10,7 +10,7 @@ import { CopyButton } from '@/components/ui/CopyButton';
 import { TokenTable } from '@/components/TokenTable';
 import { AgentPromptPanel } from '@/components/AgentPromptPanel';
 import { PreviewSection } from '@/components/PreviewSection';
-import designs from '@/data/designs';
+import { loadDesignData, loadDesigns } from '@/data/designs';
 import type { TransformedDesign, DesignData } from '@/types/design';
 import { useDesign } from '@/context/DesignContext';
 
@@ -18,21 +18,31 @@ export function DesignDetail() {
   const { slug } = useParams<{ slug: string }>();
   const [design, setDesign] = useState<TransformedDesign | null>(null);
   const [designData, setDesignData] = useState<DesignData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [showPreviewDark, setShowPreviewDark] = useState(false);
   const { appliedDesign, applyDesign, resetDesign } = useDesign();
   const isApplied = appliedDesign?.slug === slug;
 
   useEffect(() => {
+    let alive = true;
+    setIsLoading(true);
     setDesign(null);
     setDesignData(null);
 
     if (!slug) return;
 
-    const foundDesign = designs.find((d) => d.slug === slug);
-    if (foundDesign) {
-      setDesign(foundDesign);
-      setDesignData(foundDesign.rawData);
-    }
+    loadDesignData(slug).then(data => {
+      if (alive) setDesignData(data);
+    });
+    loadDesigns().then(list => {
+      if (!alive) return;
+      setDesign(list.find(d => d.slug === slug) ?? null);
+      setIsLoading(false);
+    });
+
+    return () => {
+      alive = false;
+    };
   }, [slug]);
 
   useEffect(() => {
@@ -40,6 +50,18 @@ export function DesignDetail() {
       ? `${design.name} — sleek-ui`
       : 'sleek-ui — Professional design systems for AI agents';
   }, [design]);
+
+  if (isLoading) {
+    return (
+      <div
+        className="flex min-h-screen items-center justify-center bg-background"
+        role="status"
+        aria-live="polite"
+      >
+        <p className="text-muted-foreground">Loading design…</p>
+      </div>
+    );
+  }
 
   if (!design) {
     return (
@@ -94,7 +116,8 @@ export function DesignDetail() {
               </Button>
             ) : (
               <Button
-                onClick={() => applyDesign(design)}
+                onClick={() => designData && applyDesign(design, designData)}
+                disabled={!designData}
                 className="gap-2"
                 aria-label="Apply this design to the website"
               >

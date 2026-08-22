@@ -9,8 +9,7 @@ interface DesignCardProps {
 }
 
 function ColorSwatchPreview({ design }: { design: TransformedDesign }) {
-  const mode = design.defaultMode
-  const colors = design.rawData?.tokens?.colors?.[mode] ?? design.rawData?.tokens?.colors?.light ?? {}
+  const colors = design.palette ?? {}
   const hsl = (key: string, fallback: string) =>
     colors[key] ? `hsl(${colors[key]})` : fallback
 

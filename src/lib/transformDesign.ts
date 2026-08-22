@@ -24,6 +24,6 @@ export const transformDesign = (designJson: DesignData): TransformedDesign => {
     description: designJson.tokens?.typography?.fontFamily?.sans
       ? `A ${designJson.tokens.typography.fontFamily.sans} based design system`
       : 'A beautiful design system',
-    rawData: designJson,
+    palette: Object.keys(colors).length > 0 ? colors : undefined,
   };
 };

@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, within, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App, { getRandomPrompt } from './App';
 import { buildAgentPrompt } from '@/lib/agentPrompt';
@@ -19,16 +19,35 @@ beforeAll(() => {
   });
 });
 
-jest.mock('@/data/designs', () => [
-  {
-    slug: 'test-design',
-    name: 'Test Design',
-    description: 'A test design',
-    categories: ['minimal'],
-    jsonUrl: 'https://luongnv.com/sleek-ui/designs/test-design.json',
-    previewUrl: '/previews/test.jpg',
-  },
-]);
+jest.mock('@/data/designs', () => ({
+  __esModule: true,
+  loadDesigns: jest.fn(),
+  loadDesignData: jest.fn(),
+}));
+
+import type { TransformedDesign } from '@/types/design';
+
+const testCatalogEntry = {
+  slug: 'test-design',
+  name: 'Test Design',
+  description: 'A test design',
+  categories: ['minimal'],
+  colors: { primary: '245 90% 73%', secondary: '0 0% 100%' },
+  defaultMode: 'light' as const,
+  jsonUrl: 'https://luongnv.com/sleek-ui/designs/test-design.json',
+  thumbnailUrl: '/previews/test.jpg',
+  detailUrl: '/designs/test-design',
+};
+
+const designsModule = jest.requireMock('@/data/designs') as {
+  loadDesigns: jest.Mock;
+  loadDesignData: jest.Mock;
+};
+
+beforeEach(() => {
+  designsModule.loadDesigns.mockResolvedValue([testCatalogEntry]);
+  designsModule.loadDesignData.mockResolvedValue(null);
+});
 
 describe('HomePage - Social Proof Section (#79)', () => {
   beforeEach(() => {
@@ -168,29 +187,58 @@ describe('In-page anchor controls under HashRouter (#104)', () => {
 });
 
 describe('Deterministic agent prompt example (#124)', () => {
-  it('accepts an injected rng so the picked prompt is assertable', () => {
-    expect(getRandomPrompt(() => 0)).toBe(
+  it('accepts an injected rng so the picked prompt is assertable', async () => {
+    await expect(getRandomPrompt(() => 0)).resolves.toBe(
       buildAgentPrompt('https://luongnv.com/sleek-ui/designs/test-design.json')
     );
   });
 
-  it('renders the prompt example built from the catalog', () => {
+  it('renders the prompt example built from the catalog', async () => {
     render(<App />);
-    expect(screen.getByText(/designs\/test-design\.json/)).toBeInTheDocument();
+    expect(await screen.findByText(/designs\/test-design\.json/)).toBeInTheDocument();
+  });
+});
+
+describe('Route-level code splitting + compression (#136)', () => {
+  afterEach(() => {
+    window.location.hash = '#/';
+  });
+
+  it('shows the Suspense fallback while the detail route resolves on direct visit', async () => {
+    let resolveLoad!: (value: TransformedDesign[]) => void;
+    designsModule.loadDesigns.mockImplementationOnce(
+      () =>
+        new Promise<TransformedDesign[]>(resolve => {
+          resolveLoad = resolve;
+        })
+    );
+
+    window.location.hash = '#/designs/test-design';
+    render(<App />);
+
+    expect(screen.getByRole('status')).toBeInTheDocument();
+    await waitFor(() => expect(resolveLoad).toBeDefined());
+    expect(screen.getByRole('status')).toHaveTextContent(/Loading design/i);
+
+    resolveLoad([testCatalogEntry]);
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Test Design' })
+    ).toBeInTheDocument();
   });
 });
 
 describe('Error/edge-path guards (#123)', () => {
   it('recovers from an empty search via the Clear filters button', async () => {
     render(<App />);
+    expect(await screen.findByText('1 / 1 designs')).toBeInTheDocument();
     const search = screen.getByLabelText('Search by name, brand, or style...');
     await userEvent.type(search, 'zzz-no-such-design');
     expect(screen.getByText('No designs match your search.')).toBeInTheDocument();
     expect(screen.getByText('0 / 1 designs')).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: 'Clear filters' }));
+    expect(await screen.findByText('1 / 1 designs')).toBeInTheDocument();
     expect(screen.queryByText('No designs match your search.')).not.toBeInTheDocument();
-    expect(screen.getByText('1 / 1 designs')).toBeInTheDocument();
     expect(search).toHaveValue('');
   });
 

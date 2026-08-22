@@ -1,9 +1,11 @@
 import { LogoMark } from '@/components/ui/LogoMark';
-import designs from '@/data/designs';
+import { useDesignCatalog } from '@/hooks/useDesignCatalog';
 
 const AGENTS = ['Claude Code', 'Cursor', 'Codex CLI', 'Windsurf', 'Copilot', 'Gemini CLI'];
 
 export function HeroSection() {
+  const { designs, loading } = useDesignCatalog();
+  const count = loading ? null : designs.length;
   return (
     <section className="relative overflow-hidden px-4 py-16 sm:py-24 text-center">
       {/* Subtle grid background */}
@@ -28,7 +30,10 @@ export function HeroSection() {
             <span className="text-brand">good taste</span>
           </h1>
           <p className="mx-auto max-w-2xl text-lg text-muted-foreground sm:text-xl">
-            <strong className="text-foreground">{designs.length}+ production-grade design systems</strong>, one URL, zero Figma.
+            <strong className="text-foreground">
+              {count !== null ? `${count}+ production-grade design systems` : 'Production-grade design systems'}
+            </strong>
+            , one URL, zero Figma.
           </p>
         </div>
 
@@ -49,7 +54,7 @@ export function HeroSection() {
             onClick={() => document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' })}
             className="inline-flex items-center justify-center rounded-md bg-brand px-6 py-3 text-sm font-semibold text-black shadow hover:bg-brand-hover active:bg-brand-active transition-colors"
           >
-            Browse {designs.length} Designs
+            Browse {count !== null ? `${count} ` : ''}Designs
           </button>
           <button
             onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
