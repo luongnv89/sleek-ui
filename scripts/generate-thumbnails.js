@@ -20,13 +20,14 @@ const PREVIEWS_DIR = path.join(__dirname, '..', 'public', 'previews');
 const force = process.argv.includes('--force');
 
 const cssColor = (value, fallback) => {
+  const neutralize = (s) => s.replace(/["'<>&]/g, '');
   if (!value || typeof value !== 'string') return fallback;
   const v = value.trim();
   // Tailwind-style HSL triplet, e.g. "349 100% 61%"
   if (/^[\d.]+\s+[\d.]+%\s+[\d.]+%$/.test(v)) {
     return `hsl(${v.split(/\s+/).join(', ')})`;
   }
-  return v;
+  return neutralize(v);
 };
 
 const esc = (s) =>
