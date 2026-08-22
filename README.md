@@ -9,11 +9,11 @@
 [![GitHub Stars](https://img.shields.io/github/stars/luongnv89/sleek-ui?style=flat-square)](https://github.com/luongnv89/sleek-ui/stargazers)
 [![GitHub Pages](https://img.shields.io/website?url=https%3A%2F%2Fluongnv.com/sleek-ui&down_message=offline&style=flat-square)](https://luongnv.com/sleek-ui)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue?style=flat-square)](LICENSE)
-[![Designs](https://img.shields.io/badge/designs-60%2B-green?style=flat-square)](https://luongnv.com/sleek-ui)
+[![Designs](https://img.shields.io/badge/designs-60-green?style=flat-square)](https://luongnv.com/sleek-ui)
 
 # Professional design systems for your AI agent
 
-60+ production-grade design systems — Stripe, Linear, Vercel, Notion and more — as clean JSON. Give your agent one URL and it applies colors, typography, spacing, and component styles.
+60 production-grade design systems — Stripe, Linear, Vercel, Notion and more — as clean JSON. Give your agent one URL and it applies colors, typography, spacing, and component styles.
 
 You build fast with AI. Now ship interfaces that don't look generic.
 
@@ -38,7 +38,7 @@ Browse. Copy the prompt. Paste it once. The agent applies tokens, fonts, radius,
 
 ## Design Catalog
 
-60+ designs covering brand-faithful recreations and original systems:
+60 designs covering brand-faithful recreations and original systems:
 
 | Category | Designs |
 |---|---|
@@ -257,7 +257,7 @@ nonces. This relaxation is scoped to styles only — `script-src` stays exactly
 
 ```
 public/
-├── designs/       # JSON design files (55+)
+├── designs/       # JSON design files (60)
 ├── previews/      # Thumbnail images
 ├── schema/        # JSON Schema for validation
 └── logo/          # Brand assets

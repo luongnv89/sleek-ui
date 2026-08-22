@@ -19,7 +19,7 @@ npm run validate:designs  # Validate public/designs/*.json against schema
 ## Architecture Map
 
 ```
-├── public/designs/     # ~60 design JSON files, served by GitHub Pages
+├── public/designs/     # 60 design JSON files, served by GitHub Pages
 ├── public/previews/    # Preview images
 ├── public/schema/      # JSON Schema for design files (design.v1.json)
 ├── scripts/            # validate-designs.js, ingest-designs.js
