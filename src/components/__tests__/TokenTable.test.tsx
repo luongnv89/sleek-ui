@@ -77,14 +77,14 @@ describe('TokenTable', () => {
       name: /copy light value for primary/i,
     });
 
-    // Before copy: no check icon inside the button.
-    expect(lightBtn.querySelector('.text-green-500')).toBeNull();
+    // Before copy: tooltip offers to copy.
+    expect(lightBtn).toHaveAttribute('title', 'Copy light "245 90% 73%"');
 
     await user.click(lightBtn);
 
-    // After copy: the Check icon (green) appears.
+    // After copy: the tooltip confirms the copy succeeded.
     await waitFor(() =>
-      expect(lightBtn.querySelector('.text-green-500')).not.toBeNull()
+      expect(lightBtn).toHaveAttribute('title', 'Copied!')
     );
   });
 
@@ -100,14 +100,14 @@ describe('TokenTable', () => {
 
     await user.click(lightBtn);
     await waitFor(() =>
-      expect(lightBtn.querySelector('.text-green-500')).not.toBeNull()
+      expect(lightBtn).toHaveAttribute('title', 'Copied!')
     );
 
     act(() => {
       jest.advanceTimersByTime(1600);
     });
 
-    expect(lightBtn.querySelector('.text-green-500')).toBeNull();
+    expect(lightBtn).toHaveAttribute('title', 'Copy light "245 90% 73%"');
     jest.useRealTimers();
   });
 
@@ -131,7 +131,7 @@ describe('TokenTable', () => {
     // Flush the copied state so the 1500ms reset timer is genuinely pending at
     // unmount (this is the cleanup path the fix exercises).
     await waitFor(() =>
-      expect(lightBtn.querySelector('.text-green-500')).not.toBeNull()
+      expect(lightBtn).toHaveAttribute('title', 'Copied!')
     );
 
     const clearCallsBeforeUnmount = clearSpy.mock.calls.length;
