@@ -8,12 +8,12 @@
     "preview": "remotion preview"
   },
   "dependencies": {
-    "@remotion/cli": "^4.0.0",
-    "@remotion/google-fonts": "^4.0.0",
-    "@remotion/transitions": "^4.0.0",
+    "@remotion/cli": "4.0.515",
+    "@remotion/google-fonts": "4.0.515",
+    "@remotion/transitions": "4.0.515",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "remotion": "^4.0.0"
+    "remotion": "4.0.515"
   },
   "devDependencies": {
     "@types/react": "^18.3.1",
