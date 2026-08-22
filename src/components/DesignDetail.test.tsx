@@ -3,7 +3,7 @@ import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { DesignDetail } from './DesignDetail';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { DesignProvider } from '@/context/DesignContext';
-import type { TransformedDesign, DesignData } from '@/types/design';
+import type { TransformedDesign } from '@/types/design';
 
 jest.mock('@/data/designs', () => {
   const rawData = {
