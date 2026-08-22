@@ -165,3 +165,40 @@ describe('In-page anchor controls under HashRouter (#104)', () => {
     expect(document.querySelector('a[href="#catalog"]')).toBeNull();
   });
 });
+
+describe('Error/edge-path guards (#123)', () => {
+  it('recovers from an empty search via the Clear filters button', async () => {
+    render(<App />);
+    const search = screen.getByLabelText('Search by name, brand, or style...');
+    await userEvent.type(search, 'zzz-no-such-design');
+    expect(screen.getByText('No designs match your search.')).toBeInTheDocument();
+    expect(screen.getByText('0 / 1 designs')).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Clear filters' }));
+    expect(screen.queryByText('No designs match your search.')).not.toBeInTheDocument();
+    expect(screen.getByText('1 / 1 designs')).toBeInTheDocument();
+    expect(search).toHaveValue('');
+  });
+
+  it('renders and toggles the theme without uncaught errors when localStorage.setItem throws', async () => {
+    localStorage.clear();
+    localStorage.setItem('sleek-ui:theme', 'light');
+    const setItem = jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new DOMException('QuotaExceededError');
+    });
+
+    try {
+      render(<App />);
+      // mount effects (theme persistence, applied-design restore) must not throw
+      expect(screen.getByText(/Built solo by Luong/)).toBeInTheDocument();
+
+      await userEvent.click(screen.getByRole('button', { name: 'Toggle theme' }));
+      expect(document.documentElement.classList.contains('dark')).toBe(true);
+      await userEvent.click(screen.getByRole('button', { name: 'Toggle theme' }));
+      expect(document.documentElement.classList.contains('dark')).toBe(false);
+      expect(setItem).toHaveBeenCalled();
+    } finally {
+      setItem.mockRestore();
+    }
+  });
+});
