@@ -69,8 +69,8 @@ chore: update schema validation script
 1. Create `public/designs/{slug}.json` following the `design.v1.json` schema
 2. Create the matching `src/data/designs/{slug}.json` (same file, both locations)
 3. Run `npm run validate:designs` — must pass
-4. Add a thumbnail to `public/previews/{slug}.png` (optional but recommended)
-5. The design will appear automatically in the catalog
+4. Add a thumbnail to `public/previews/{slug}-thumb.svg` (optional but recommended)
+5. The design will appear automatically in the catalog — `src/data/designs.ts` picks up every JSON in `src/data/designs/`
 
 ### Design file checklist
 

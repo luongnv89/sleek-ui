@@ -1,9 +1,9 @@
 # Development Tasks: sleek-ui
 
-**Generated from:** `prd.md` v1.0.0  
-**Generated on:** 2026-03-26  
-**Total tasks:** 38  
-**Sprints:** 4  
+**Generated from:** `prd.md` v1.0.0
+**Generated on:** 2026-03-26
+**Total tasks:** 38
+**Sprints:** 4
 
 ---
 
@@ -11,17 +11,21 @@
 
 | Sprint | Phase | Focus | Tasks | Status |
 |--------|-------|-------|-------|--------|
-| Sprint 1 | POC | Agent loop proof — schema + 1 design + ugly demo app | 9 | ☐ |
-| Sprint 2 | MVP Foundation | 3 designs + CI/CD + CORS verification | 10 | ☐ |
-| Sprint 3 | MVP Completion | Catalog website (home + detail) + verified loop | 11 | ☐ |
-| Sprint 4 | Full Features | 2 more designs + before/after + launch | 8 | ☐ |
+| Sprint 1 | POC | Agent loop proof — schema + 1 design + ugly demo app | 9 | ✅ |
+| Sprint 2 | MVP Foundation | 3 designs + CI/CD + CORS verification | 10 | ✅ |
+| Sprint 3 | MVP Completion | Catalog website (home + detail) + verified loop | 11 | ✅ |
+| Sprint 4 | Full Features | 2 more designs + before/after + launch | 8 | ✅ |
+
+> All four sprints are complete: the catalog is live at luongnv.com/sleek-ui,
+> deploys via GitHub Actions on every push to `main`, and the catalog holds
+> 60 schema-valid designs (`npm run validate:designs`).
 
 ---
 
 ## Sprint 1 — POC: Prove the Loop Works
 
-**Goal:** A single AI agent successfully re-skins the demo app using a design JSON URL. Validates the core hypothesis.  
-**Duration:** ~5 days  
+**Goal:** A single AI agent successfully re-skins the demo app using a design JSON URL. Validates the core hypothesis.
+**Duration:** ~5 days
 **Exit criteria:** Agent loop verified end-to-end with Editorial Dark.
 
 ---
@@ -199,8 +203,8 @@
 
 ## Sprint 2 — MVP Foundation: All 3 Designs + Infrastructure
 
-**Goal:** All three Phase 1 designs are live, validated, and fetchable. CI/CD hardened. Agent quirks documented.  
-**Duration:** ~4 days  
+**Goal:** All three Phase 1 designs are live, validated, and fetchable. CI/CD hardened. Agent quirks documented.
+**Duration:** ~4 days
 **Exit criteria:** 3 designs pass schema validation and are accessible via stable URLs.
 
 ---
@@ -386,8 +390,8 @@
 
 ## Sprint 3 — MVP Completion: Catalog Website Live
 
-**Goal:** The browsable catalog is live on GitHub Pages with working home + detail pages and verified copy actions.  
-**Duration:** ~5 days  
+**Goal:** The browsable catalog is live on GitHub Pages with working home + detail pages and verified copy actions.
+**Duration:** ~5 days
 **Exit criteria:** Someone can browse, filter, search, and copy a design URL from the live catalog.
 
 ---
@@ -608,8 +612,8 @@
 
 ## Sprint 4 — Full Features: 5 Designs + Launch
 
-**Goal:** Launch publicly with 5 designs, demo video, and social sharing.  
-**Duration:** ~4 days  
+**Goal:** Launch publicly with 5 designs, demo video, and social sharing.
+**Duration:** ~4 days
 **Exit criteria:** Demo video published and first social post sent.
 
 ---
