@@ -2,7 +2,13 @@ import { useCallback } from 'react';
 import { Check, Copy, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useClipboard } from '@/hooks/useClipboard';
-import { CopyButtonProps } from '@/types/components';
+
+export interface CopyButtonProps {
+  text: string;
+  onCopy?: (success: boolean) => void;
+  className?: string;
+  iconClassName?: string;
+}
 
 export const CopyButton = ({
   text,

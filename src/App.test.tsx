@@ -36,11 +36,11 @@ describe('HomePage - Social Proof Section (#79)', () => {
   });
 
   it('displays GitHub stars count', () => {
-    expect(screen.getByText('126')).toBeInTheDocument();
+    expect(screen.getByText('~126')).toBeInTheDocument();
   });
 
   it('displays forks count', () => {
-    expect(screen.getByText('11')).toBeInTheDocument();
+    expect(screen.getByText('~11')).toBeInTheDocument();
   });
 
   it('displays design systems count', () => {

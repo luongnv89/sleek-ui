@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Check, Copy, Moon, Sun } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useClipboard } from '../hooks/useClipboard';
@@ -8,11 +8,13 @@ interface TokenTableProps {
   tokens: DesignTokens;
   className?: string;
   /**
-   * When the parent (DesignDetail) flips its page-level light/dark preview, keep
-   * the swatch preview in sync so the two toggles don't read as independent
-   * controls. The local toggle button can still override afterwards.
+   * Controlled dark-preview state. When provided (DesignDetail passes its
+   * page-level light/dark toggle), the internal toggle button reports through
+   * `onPreviewDarkChange` instead of local state, so the two toggles can't
+   * drift apart. Omit both props for plain uncontrolled behavior.
    */
   previewDark?: boolean;
+  onPreviewDarkChange?: (dark: boolean) => void;
 }
 
 /**
@@ -152,13 +154,18 @@ function ColorSwatch({
   );
 }
 
-export function TokenTable({ tokens, className, previewDark: previewDarkProp }: TokenTableProps) {
-  const [previewDark, setPreviewDark] = useState(previewDarkProp ?? false);
+export function TokenTable({ tokens, className, previewDark, onPreviewDarkChange }: TokenTableProps) {
+  const [internalDark, setInternalDark] = useState(false);
+  const isControlled = previewDark !== undefined && onPreviewDarkChange !== undefined;
+  const previewDarkValue = isControlled ? (previewDark as boolean) : internalDark;
 
-  // Follow the parent's page-level preview toggle when it changes.
-  useEffect(() => {
-    if (previewDarkProp !== undefined) setPreviewDark(previewDarkProp);
-  }, [previewDarkProp]);
+  const togglePreviewDark = () => {
+    if (isControlled) {
+      onPreviewDarkChange(!(previewDark as boolean));
+    } else {
+      setInternalDark((prev) => !prev);
+    }
+  };
 
   const lightColors = tokens.colors?.light ?? {};
   const darkColors = tokens.colors?.dark ?? {};
@@ -189,12 +196,12 @@ export function TokenTable({ tokens, className, previewDark: previewDarkProp }: 
           </h3>
           <button
             type="button"
-            onClick={() => setPreviewDark((prev) => !prev)}
+            onClick={() => togglePreviewDark()}
             className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-2.5 py-1 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-            aria-pressed={previewDark}
+            aria-pressed={previewDarkValue}
             aria-label="Toggle swatch preview between light and dark mode"
           >
-            {previewDark ? (
+            {previewDarkValue ? (
               <>
                 <Moon className="h-3.5 w-3.5" aria-hidden="true" />
                 Dark preview
@@ -218,7 +225,7 @@ export function TokenTable({ tokens, className, previewDark: previewDarkProp }: 
               name={key}
               lightValue={lightColors[key]}
               darkValue={darkColors[key]}
-              previewDark={previewDark}
+              previewDark={previewDarkValue}
             />
           ))}
         </div>
