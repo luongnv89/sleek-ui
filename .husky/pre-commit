@@ -1,0 +1,3 @@
+# sleek-ui pre-commit hooks: secret scan + lint checks (local-first, no network).
+"$(git rev-parse --show-toplevel)/scripts/hooks/check-secrets.sh"
+"$(git rev-parse --show-toplevel)/scripts/hooks/check-whitespace.sh"
