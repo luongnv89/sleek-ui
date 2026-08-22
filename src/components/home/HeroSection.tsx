@@ -54,7 +54,7 @@ export function HeroSection() {
             onClick={() => document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' })}
             className="inline-flex items-center justify-center rounded-md bg-brand px-6 py-3 text-sm font-semibold text-black shadow hover:bg-brand-hover active:bg-brand-active transition-colors"
           >
-            Browse {count !== null ? `${count} ` : ''}Designs
+            Browse {count !== null ? `${count} ` : ''}Design{count === 1 ? '' : 's'}
           </button>
           <button
             onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}

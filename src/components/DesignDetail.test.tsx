@@ -127,7 +127,7 @@ describe('DesignDetail characterization (#117)', () => {
     expect(screen.getByRole('button', { name: 'Copied!' })).toBeInTheDocument();
   });
 
-  it('applies the design then resets it back through the provider', async () => {
+  it('applies the design only after confirmation, then resets it back (#140)', async () => {
     renderDetail('test-design');
     await screen.findByRole('heading', { level: 1, name: 'Test Design' });
     // Apply stays disabled until the design data has been fetched on navigation (#135)
@@ -135,9 +135,16 @@ describe('DesignDetail characterization (#117)', () => {
       expect(screen.getByRole('button', { name: 'Apply this design to the website' })).toBeEnabled()
     );
     fireEvent.click(screen.getByRole('button', { name: 'Apply this design to the website' }));
+
+    // Nothing is applied until the confirm dialog is confirmed
+    expect(screen.getByRole('dialog', { name: 'Confirm apply design' })).toBeInTheDocument();
+    expect(document.getElementById('sleek-applied-design')).toBeNull();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Confirm apply this design to the website' }));
     const style = document.getElementById('sleek-applied-design');
     expect(style?.textContent).toContain('--background: 0 0% 100%;');
     expect(localStorage.getItem('sleek-ui:applied-design')).not.toBeNull();
+    expect(screen.queryByTestId('apply-confirm-dialog')).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Reset design' }));
     expect(document.getElementById('sleek-applied-design')).toBeNull();
@@ -145,6 +152,31 @@ describe('DesignDetail characterization (#117)', () => {
     expect(
       screen.getByRole('button', { name: 'Apply this design to the website' }),
     ).toBeInTheDocument();
+  });
+
+  it('cancelling the apply confirmation leaves the site untouched (#140)', async () => {
+    renderDetail('test-design');
+    await screen.findByRole('heading', { level: 1, name: 'Test Design' });
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Apply this design to the website' })).toBeEnabled()
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Apply this design to the website' }));
+    expect(screen.getByRole('dialog', { name: 'Confirm apply design' })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    expect(screen.queryByTestId('apply-confirm-dialog')).not.toBeInTheDocument();
+    expect(document.getElementById('sleek-applied-design')).toBeNull();
+    expect(localStorage.getItem('sleek-ui:applied-design')).toBeNull();
+  });
+
+  it('renders the unavailable state when token data cannot load, not a spinner (#140)', async () => {
+    designsModule.loadDesignData.mockResolvedValueOnce(null);
+    renderDetail('test-design');
+    await screen.findByRole('heading', { level: 1, name: 'Test Design' });
+
+    expect(await screen.findByText('Design tokens are unavailable for this design.')).toBeInTheDocument();
+    expect(screen.queryByText('Loading design tokens...')).not.toBeInTheDocument();
   });
 
   it('fetches design data on navigation and renders tokens once loaded (#135)', async () => {

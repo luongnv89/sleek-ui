@@ -60,7 +60,7 @@ describe('HomePage hero section', () => {
   it('renders the primary CTA as a button labelled with the design count', async () => {
     render(<App />);
     await waitForCatalogLoaded();
-    const button = screen.getByRole('button', { name: /Browse.*Designs/ });
+    const button = screen.getByRole('button', { name: /Browse.*Design/ });
     expect(button.tagName).toBe('BUTTON');
   });
 
@@ -70,10 +70,10 @@ describe('HomePage hero section', () => {
     expect(link.tagName).toBe('BUTTON');
   });
 
-  it('primary CTA label includes design count from mock', async () => {
+  it('primary CTA label includes design count from mock and pluralizes correctly (#141)', async () => {
     render(<App />);
     await waitForCatalogLoaded();
-    expect(screen.getByText(/Browse 1 Designs/)).toBeInTheDocument();
+    expect(screen.getByText(/Browse 1 Design\b/)).toBeInTheDocument();
   });
 });
 

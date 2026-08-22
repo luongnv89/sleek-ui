@@ -75,6 +75,30 @@ describe('useClipboard (#132)', () => {
     process.off('unhandledRejection', onUnhandled);
   });
 
+  it('auto-clears error feedback after COPY_FEEDBACK_MS (#140)', async () => {
+    jest.useFakeTimers();
+    mockClipboard(() => Promise.reject(new DOMException('denied', 'NotAllowedError')));
+    render(<Harness value="hello" />);
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button'));
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    expect(screen.getByTestId('error')).toHaveTextContent('denied');
+
+    act(() => {
+      jest.advanceTimersByTime(COPY_FEEDBACK_MS - 1);
+    });
+    expect(screen.getByTestId('error')).toHaveTextContent('denied');
+
+    act(() => {
+      jest.advanceTimersByTime(1);
+    });
+    expect(screen.getByTestId('error')).toBeEmptyDOMElement();
+  });
+
   it('does not setState after unmount mid-timeout', async () => {
     jest.useFakeTimers();
     mockClipboard();

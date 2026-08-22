@@ -1,3 +1,9 @@
+jest.mock('@/data/designs', () => ({
+  __esModule: true,
+  loadDesigns: jest.fn(async () => []),
+  loadDesignData: jest.fn(async () => null),
+}));
+
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from '@/context/ThemeContext';
@@ -40,6 +46,15 @@ describe('Layout (#120)', () => {
       'href',
       'https://github.com/luongnv89/sleek-ui',
     );
+  });
+
+  it('marks the static Brand page link as external so the SPA route survives (#141)', () => {
+    renderLayout();
+    const footer = screen.getByRole('contentinfo');
+    const brand = footer.querySelector('a[href="/sleek-ui/logo/brand-showcase.html"]');
+    expect(brand).toBeInTheDocument();
+    expect(brand).toHaveAttribute('target', '_blank');
+    expect(brand).toHaveAttribute('rel', 'noopener noreferrer');
   });
 
   it('exposes the How it works scroll control as a button', () => {
