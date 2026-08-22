@@ -21,11 +21,17 @@ const safeData: DesignData = {
       light: { background: '0 0% 100%', primary: '245 90% 73%' },
       dark: { background: '240 33% 14%', primary: '245 90% 73%' },
     },
-    typography: { fontFamily: { sans: 'Inter, sans-serif', mono: 'monospace' } },
+    typography: {
+      fontFamily: { sans: 'Inter, sans-serif', mono: 'monospace' },
+      fontSize: {},
+      fontWeight: {},
+      lineHeight: {},
+      letterSpacing: {},
+    },
     spacing: { unit: '0.25rem' },
     radius: { sm: '0.25rem', default: '0.5rem', lg: '1rem', full: '9999px' },
   },
-  fonts: {},
+  fonts: { urls: [] },
   agentInstructions: { steps: [] },
 };
 
@@ -63,7 +69,7 @@ describe('AppliedDesignBanner dismiss vs reset (#140)', () => {
       'sleek-ui:applied-design',
       JSON.stringify({ slug: 'test-design', name: 'Test Design', data: safeData })
     );
-    const { container } = renderBanner();
+    renderBanner();
 
     fireEvent.click(screen.getByRole('button', { name: /Reset/i }));
     await waitFor(() => {
