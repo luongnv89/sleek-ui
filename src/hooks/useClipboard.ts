@@ -43,6 +43,10 @@ export function useClipboard<T>(flag: T, reset: T) {
         return true;
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to copy text');
+        clearTimeout(timer.current);
+        // Errors auto-clear on the same window as success so stale feedback
+        // never sticks around permanently (#140).
+        timer.current = setTimeout(() => setError(null), COPY_FEEDBACK_MS);
         return false;
       }
     },

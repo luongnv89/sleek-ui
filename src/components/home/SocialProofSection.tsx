@@ -1,5 +1,10 @@
 import { GithubIcon } from '@/components/ui/GithubIcon';
+import { useDesignCatalog } from '@/hooks/useDesignCatalog';
+
 export function SocialProofSection() {
+  // Design-system stat is derived from the catalog, not hardcoded (#141)
+  const { designs, loading } = useDesignCatalog();
+  const designCount = loading ? null : designs.length;
   return (
     <section className="border-t border-border/60 bg-background px-4 py-10 sm:py-12">
       <div className="mx-auto max-w-4xl">
@@ -13,7 +18,7 @@ export function SocialProofSection() {
             <div className="text-xs uppercase tracking-wider text-muted-foreground mt-1">Forks</div>
           </div>
           <div className="rounded-xl border border-border/60 bg-muted/10 p-5">
-            <div className="text-2xl font-bold text-brand tabular-nums">60+</div>
+            <div className="text-2xl font-bold text-brand tabular-nums">{designCount ?? '—'}</div>
             <div className="text-xs uppercase tracking-wider text-muted-foreground mt-1">Design Systems</div>
           </div>
         </div>

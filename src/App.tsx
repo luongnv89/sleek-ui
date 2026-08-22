@@ -6,6 +6,7 @@ import { Layout } from '@/components/layout/Layout';
 import { AppliedDesignBanner } from '@/components/AppliedDesignBanner';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import { HomePage } from '@/components/home/HomePage';
+import { NotFound } from '@/components/NotFound';
 
 const DesignDetail = lazy(() =>
   import('@/components/DesignDetail').then(m => ({ default: m.DesignDetail }))
@@ -42,6 +43,7 @@ function App() {
                   </Suspense>
                 }
               />
+              <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>
           <AppliedDesignBanner />

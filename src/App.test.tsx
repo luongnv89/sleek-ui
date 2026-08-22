@@ -62,8 +62,9 @@ describe('HomePage - Social Proof Section (#79)', () => {
     expect(screen.getByText('~11')).toBeInTheDocument();
   });
 
-  it('displays design systems count', () => {
-    expect(screen.getByText('60+')).toBeInTheDocument();
+  it('displays design systems count derived from the catalog (#141)', async () => {
+    const label = screen.getByText('Design Systems');
+    await waitFor(() => expect(label.previousElementSibling).toHaveTextContent('1'));
   });
 
   it('displays GitHub Stars label', () => {
@@ -115,10 +116,10 @@ describe('Footer - Shareable Closing Line (#85)', () => {
     expect(footer!.textContent).toMatch(/Brand/);
   });
 
-  it('displays the open source tagline', () => {
+  it('displays the open source tagline with the catalog-derived count (#141)', async () => {
     const footer = document.querySelector('footer');
     expect(footer).toBeInTheDocument();
-    expect(footer!.textContent).toMatch(/Free.*Open source.*60.*designs/);
+    await waitFor(() => expect(footer!.textContent).toMatch(/Free.*Open source.*1\+ designs?/));
   });
 });
 
@@ -186,6 +187,23 @@ describe('In-page anchor controls under HashRouter (#104)', () => {
   });
 });
 
+describe('Catch-all NotFound route (#141)', () => {
+  it('renders the NotFound branch for an unmatched path instead of a blank page', async () => {
+    window.location.hash = '#/definitely-not-a-route';
+    render(<App />);
+    expect(await screen.findByText('404')).toBeInTheDocument();
+    expect(screen.getByText('This page could not be found.')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Back to Catalog/i })).toBeInTheDocument();
+    window.location.hash = '#/';
+  });
+
+  it('still serves known routes when the catch-all exists', async () => {
+    window.location.hash = '#/';
+    render(<App />);
+    expect(await screen.findByText(/Built solo by Luong/)).toBeInTheDocument();
+  });
+});
+
 describe('Deterministic agent prompt example (#124)', () => {
   it('accepts an injected rng so the picked prompt is assertable', async () => {
     await expect(getRandomPrompt(() => 0)).resolves.toBe(
@@ -196,6 +214,11 @@ describe('Deterministic agent prompt example (#124)', () => {
   it('renders the prompt example built from the catalog', async () => {
     render(<App />);
     expect(await screen.findByText(/designs\/test-design\.json/)).toBeInTheDocument();
+  });
+
+  it('returns a fallback prompt for an empty catalog instead of throwing (#141)', async () => {
+    designsModule.loadDesigns.mockResolvedValueOnce([]);
+    await expect(getRandomPrompt(() => 0)).resolves.toBe(buildAgentPrompt(''));
   });
 });
 

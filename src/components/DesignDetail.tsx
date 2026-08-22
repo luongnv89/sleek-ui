@@ -20,6 +20,9 @@ export function DesignDetail() {
   const [designData, setDesignData] = useState<DesignData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showPreviewDark, setShowPreviewDark] = useState(false);
+  // Distinguishes "tokens still fetching" from "token data unavailable" (#140)
+  const [tokenStatus, setTokenStatus] = useState<'loading' | 'ready' | 'unavailable'>('loading');
+  const [confirmingApply, setConfirmingApply] = useState(false);
   const { appliedDesign, applyDesign, resetDesign } = useDesign();
   const isApplied = appliedDesign?.slug === slug;
 
@@ -28,11 +31,15 @@ export function DesignDetail() {
     setIsLoading(true);
     setDesign(null);
     setDesignData(null);
+    setTokenStatus('loading');
+    setConfirmingApply(false);
 
     if (!slug) return;
 
     loadDesignData(slug).then(data => {
-      if (alive) setDesignData(data);
+      if (!alive) return;
+      setDesignData(data);
+      setTokenStatus(data ? 'ready' : 'unavailable');
     });
     loadDesigns().then(list => {
       if (!alive) return;
@@ -115,8 +122,9 @@ export function DesignDetail() {
                 Reset
               </Button>
             ) : (
+              // Applying reskins the whole site — require an explicit confirm (#140)
               <Button
-                onClick={() => designData && applyDesign(design, designData)}
+                onClick={() => setConfirmingApply(true)}
                 disabled={!designData}
                 className="gap-2"
                 aria-label="Apply this design to the website"
@@ -127,6 +135,58 @@ export function DesignDetail() {
             )}
           </div>
         </div>
+
+        {/* Apply confirmation — applying reskins the whole site (#140) */}
+        {confirmingApply && design && (
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Confirm apply design"
+            data-testid="apply-confirm-dialog"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          >
+            <div className="w-full max-w-md rounded-xl border border-border bg-background p-6 shadow-lg">
+              <h2 className="text-xl font-bold tracking-tight">
+                Apply &ldquo;{design.name}&rdquo;?
+              </h2>
+              <p className="mt-2 text-sm text-muted-foreground">
+                This restyles the entire site with this design&rsquo;s tokens. You can reset it
+                afterwards.
+              </p>
+              {designData?.tokens?.colors && (
+                <div className="mt-4 flex items-center gap-3" aria-hidden="true">
+                  <span
+                    className="h-10 w-10 rounded-lg border border-border"
+                    style={{
+                      backgroundColor: `hsl(${designData.tokens.colors.light?.primary ?? '0 0% 50%'})`,
+                    }}
+                  />
+                  <span
+                    className="h-10 w-10 rounded-full border border-border"
+                    style={{
+                      backgroundColor: `hsl(${designData.tokens.colors.light?.background ?? '0 0% 100%'})`,
+                    }}
+                  />
+                </div>
+              )}
+              <div className="mt-6 flex justify-end gap-2">
+                <Button variant="outline" onClick={() => setConfirmingApply(false)}>
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (designData) applyDesign(design, designData);
+                    setConfirmingApply(false);
+                  }}
+                  aria-label="Confirm apply this design to the website"
+                >
+                  <Paintbrush className="mr-1 h-4 w-4" />
+                  Apply design
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Agent Prompt — primary action */}
         <AgentPromptPanel designUrl={design.jsonUrl} />
@@ -177,17 +237,21 @@ export function DesignDetail() {
             </p>
           </div>
 
-          {designData && designData.tokens ? (
+          {tokenStatus === 'loading' ? (
+            <div className="mt-6 rounded-lg border border-dashed border-border p-8 text-center">
+              <p className="text-muted-foreground">Loading design tokens...</p>
+            </div>
+          ) : tokenStatus === 'unavailable' || !designData || !designData.tokens ? (
+            <div className="mt-6 rounded-lg border border-dashed border-border p-8 text-center">
+              <p className="text-muted-foreground">Design tokens are unavailable for this design.</p>
+            </div>
+          ) : (
             <div className={cn('mt-4', showPreviewDark && 'dark')}>
               <TokenTable
                 tokens={designData.tokens}
                 previewDark={showPreviewDark}
                 onPreviewDarkChange={setShowPreviewDark}
               />
-            </div>
-          ) : (
-            <div className="mt-6 rounded-lg border border-dashed border-border p-8 text-center">
-              <p className="text-muted-foreground">Loading design tokens...</p>
             </div>
           )}
         </section>

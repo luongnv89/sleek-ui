@@ -20,6 +20,8 @@ interface DesignContextValue {
   appliedDesign: AppliedDesign | null;
   applyDesign: (design: TransformedDesign, data: DesignData) => void;
   resetDesign: () => void;
+  canUndo: boolean;
+  undoReset: () => void;
 }
 
 const DesignContext = createContext<DesignContextValue | null>(null);
@@ -155,6 +157,9 @@ export function DesignProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  // Last reset design, kept so a destructive reset can be undone (#140)
+  const [undoEntry, setUndoEntry] = useState<StoredDesignEntry | null>(null);
+
   const applyDesign = useCallback((design: TransformedDesign, data: DesignData) => {
     if (!isDesignSafe(data)) return;
     const css = buildCssVars(data);
@@ -163,11 +168,23 @@ export function DesignProvider({ children }: { children: ReactNode }) {
 
     const entry: AppliedDesign = { slug: design.slug, name: design.name };
     setAppliedDesign(entry);
+    setUndoEntry(null);
     safeSetItem(STORAGE_KEY, JSON.stringify({ ...entry, data }));
     safeSetItem(STORAGE_KEY + ':css', css);
   }, []);
 
+  function readStoredEntry(): StoredDesignEntry | null {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  }
+
   const resetDesign = useCallback(() => {
+    const entry = readStoredEntry();
+    setUndoEntry(entry && isDesignSafe(entry.data) ? entry : null);
     removeStyle('sleek-applied-design');
     removeFonts();
     setAppliedDesign(null);
@@ -175,9 +192,23 @@ export function DesignProvider({ children }: { children: ReactNode }) {
     safeRemoveItem(STORAGE_KEY + ':css');
   }, []);
 
+  const undoReset = useCallback(() => {
+    if (!undoEntry || !isDesignSafe(undoEntry.data)) {
+      setUndoEntry(null);
+      return;
+    }
+    const css = buildCssVars(undoEntry.data);
+    upsertStyle('sleek-applied-design', css);
+    loadFonts(undoEntry.data);
+    setAppliedDesign({ slug: undoEntry.slug, name: undoEntry.name });
+    safeSetItem(STORAGE_KEY, JSON.stringify({ ...undoEntry }));
+    safeSetItem(STORAGE_KEY + ':css', css);
+    setUndoEntry(null);
+  }, [undoEntry]);
+
   const value = useMemo(
-    () => ({ appliedDesign, applyDesign, resetDesign }),
-    [appliedDesign, applyDesign, resetDesign]
+    () => ({ appliedDesign, applyDesign, resetDesign, canUndo: undoEntry !== null, undoReset }),
+    [appliedDesign, applyDesign, resetDesign, undoEntry, undoReset]
   );
 
   return (
