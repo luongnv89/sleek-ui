@@ -23,7 +23,7 @@ function Harness() {
   );
 }
 
-describe('ScrollToTop', () => {
+describe('ScrollToTop regression (#77): instant jump on mount and route change', () => {
   beforeEach(() => {
     window.scrollTo = jest.fn();
   });
