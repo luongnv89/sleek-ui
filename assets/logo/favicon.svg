@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none">
-  <!-- Simplified mark: only outer and inner curves, no accent dot at this size -->
-
-  <!-- Outer curve (stroke) -->
-  <path d="M3 8 C 3 3 5 3 7 4 C 9 5 10 2 13 2 C 15 2 14 8 10 8 C 6 8 7 12 7 12" fill="none" stroke="#FAFAFA" stroke-width="1.5" stroke-linecap="round"/>
-
-  <!-- Inner curve (fill) -->
-  <path d="M5 8 C 5 5 6 5 8 5.5 C 10 6 11 4 12 4 C 14 4 13 7 10 7 C 7 7 8 10 8 10" fill="#FAFAFA" fill-opacity="0.8"/>
-</svg>

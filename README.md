@@ -223,6 +223,14 @@ Validate design JSON files:
 npm run validate:designs
 ```
 
+Re-ingest design JSON files from the upstream source into
+`public/designs/` and `src/data/designs/` (run `npm run validate:designs`
+afterwards):
+
+```bash
+npm run ingest:designs
+```
+
 ### Pre-Commit Hooks
 
 Secret scanning and whitespace lint run automatically on every commit via

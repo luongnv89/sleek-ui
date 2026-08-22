@@ -65,5 +65,3 @@ export const CategoryFilter = ({
 };
 
 CategoryFilter.displayName = 'CategoryFilter';
-
-export default CategoryFilter;

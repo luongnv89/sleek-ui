@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback, useRef, type ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
 import type { DesignData, TransformedDesign } from '@/types/design';
 import { safeSetItem, safeRemoveItem } from '@/lib/safeStorage';
 
@@ -140,19 +140,6 @@ export function DesignProvider({ children }: { children: ReactNode }) {
       return null;
     }
   });
-
-  const originalCssRef = useRef<string | null>(null);
-  useEffect(() => {
-    if (originalCssRef.current === null) {
-      originalCssRef.current = document.getElementById('sleek-applied-design')?.textContent ?? '';
-    }
-  }, []);
-
-  useEffect(() => {
-    if (originalCssRef.current === null) {
-      originalCssRef.current = document.getElementById('sleek-applied-design')?.textContent ?? '';
-    }
-  }, []);
 
   useEffect(() => {
     if (!appliedDesign) return;

@@ -2,7 +2,6 @@
   "name": "sleek-ui",
   "version": "1.0.0",
   "description": "The Unsplash of Design Systems for AI Agents — curated, accessible UI design systems ready to be applied by any AI coding agent.",
-  "main": "index.js",
   "engines": {
     "node": ">=22 <23"
   },
@@ -46,6 +45,7 @@
     "preview": "vite preview",
     "test": "jest",
     "validate:designs": "node scripts/validate-designs.js",
+    "ingest:designs": "node scripts/ingest-designs.js",
     "prepare": "husky",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"

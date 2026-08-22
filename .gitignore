@@ -13,6 +13,9 @@ node_modules/
 dist/
 build/
 
+# Remotion render artifacts (public/promotional-video.mp4 is the referenced copy)
+video/out/
+
 # Logs
 *.log
 npm-debug.log*

@@ -104,5 +104,3 @@ export function PreviewSection({ previewDark }: PreviewSectionProps) {
     </section>
   );
 }
-
-export default PreviewSection;
