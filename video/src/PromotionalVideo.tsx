@@ -191,7 +191,7 @@ const Scene3_Prompt = () => {
   const card = fadeIn(frame, fps, 20);
 
   // Typewriter: reveal characters one by one
-  const charsPerFrame = 4;
+  const charsPerFrame = 5;
   const typewriterStart = 30;
   const charsVisible = Math.floor(Math.max(0, frame - typewriterStart) * charsPerFrame);
   const visibleText = PROMPT.slice(0, charsVisible);
