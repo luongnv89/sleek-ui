@@ -49,15 +49,15 @@ const AGENT_STEPS = [
 
 const AGENTS = ['Claude Code', 'Cursor', 'Codex CLI', 'Windsurf', 'Copilot', 'Gemini CLI'];
 
-function getRandomPrompt() {
-  const pick = designs[Math.floor(Math.random() * designs.length)];
+export function getRandomPrompt(rng: () => number = Math.random) {
+  const pick = designs[Math.floor(rng() * designs.length)];
   return buildAgentPrompt(pick.jsonUrl);
 }
 
-const PROMPT_EXAMPLE = getRandomPrompt();
-
 function HomePageInner() {
   const [searchValue, setSearchValue] = useState('');
+  // Lazy initializer keeps randomness out of module scope so tests stay deterministic.
+  const [promptExample] = useState(() => getRandomPrompt());
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const categories = Object.entries(
@@ -232,9 +232,9 @@ function HomePageInner() {
               <span className="text-[10px] uppercase tracking-widest text-muted-foreground/70">One click</span>
             </div>
             <div className="flex items-start gap-3 rounded-lg bg-muted/60 p-3 sm:p-4">
-              <code className="flex-1 whitespace-pre-wrap break-all font-mono text-xs sm:text-sm text-foreground leading-snug">{PROMPT_EXAMPLE}</code>
+              <code className="flex-1 whitespace-pre-wrap break-all font-mono text-xs sm:text-sm text-foreground leading-snug">{promptExample}</code>
               <CopyButton
-                text={PROMPT_EXAMPLE}
+                text={promptExample}
                 onCopy={() => {}}
                 className="shrink-0 mt-0.5"
               />

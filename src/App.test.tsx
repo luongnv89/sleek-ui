@@ -1,6 +1,7 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import App from './App';
+import App, { getRandomPrompt } from './App';
+import { buildAgentPrompt } from '@/lib/agentPrompt';
 
 beforeAll(() => {
   Object.defineProperty(window, 'matchMedia', {
@@ -163,6 +164,19 @@ describe('In-page anchor controls under HashRouter (#104)', () => {
   it('renders no hash-anchor hrefs for in-page sections', () => {
     expect(document.querySelector('a[href="#how-it-works"]')).toBeNull();
     expect(document.querySelector('a[href="#catalog"]')).toBeNull();
+  });
+});
+
+describe('Deterministic agent prompt example (#124)', () => {
+  it('accepts an injected rng so the picked prompt is assertable', () => {
+    expect(getRandomPrompt(() => 0)).toBe(
+      buildAgentPrompt('https://luongnv.com/sleek-ui/designs/test-design.json')
+    );
+  });
+
+  it('renders the prompt example built from the catalog', () => {
+    render(<App />);
+    expect(screen.getByText(/designs\/test-design\.json/)).toBeInTheDocument();
   });
 });
 
