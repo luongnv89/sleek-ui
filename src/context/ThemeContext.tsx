@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { safeSetItem } from '@/lib/safeStorage';
 
 interface ThemeContextValue {
   theme: 'light' | 'dark';
@@ -29,7 +30,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       root.classList.remove('dark');
     }
 
-    localStorage.setItem(STORAGE_KEY, theme);
+    safeSetItem(STORAGE_KEY, theme);
   }, [theme]);
 
   const toggleTheme = () => {
