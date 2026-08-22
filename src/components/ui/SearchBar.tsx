@@ -63,5 +63,3 @@ export const SearchBar = ({
 };
 
 SearchBar.displayName = 'SearchBar';
-
-export default SearchBar;

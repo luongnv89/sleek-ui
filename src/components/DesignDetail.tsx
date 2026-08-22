@@ -169,5 +169,3 @@ export function DesignDetail() {
     </div>
   );
 }
-
-export default DesignDetail;

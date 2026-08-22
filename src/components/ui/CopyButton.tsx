@@ -59,5 +59,3 @@ export const CopyButton = ({
 };
 
 CopyButton.displayName = 'CopyButton';
-
-export default CopyButton;

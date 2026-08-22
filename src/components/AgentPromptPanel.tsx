@@ -35,5 +35,3 @@ export function AgentPromptPanel({ designUrl }: AgentPromptPanelProps) {
     </div>
   );
 }
-
-export default AgentPromptPanel;
