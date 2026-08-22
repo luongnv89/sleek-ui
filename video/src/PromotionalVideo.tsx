@@ -10,6 +10,7 @@ import {
 import { TransitionSeries, springTiming } from "@remotion/transitions";
 import { fade } from "@remotion/transitions/fade";
 import { slide } from "@remotion/transitions/slide";
+import { buildAgentPrompt } from "../../src/lib/agentPrompt";
 
 // ── Brand ──────────────────────────────────────────────────────────────────
 const FONT_SANS = "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
@@ -179,15 +180,8 @@ const Scene2_HowItWorks = () => {
 };
 
 // ── Scene 3: Prompt demo ──────────────────────────────────────────────────
-const PROMPT = `Fetch the design system at:
-https://luongnv.com/sleek-ui/designs/stripe.json
-
-Read the JSON, then follow agentInstructions.steps:
-1. Set CSS custom properties on :root and .dark
-2. Set --radius from tokens.radius.default
-3. Load fonts via Google Fonts <link> tag
-4. Apply component styles (Tailwind + shadcn/ui)
-5. Test both light and dark modes`;
+// Single source of truth: the same builder used by the web app (src/lib/agentPrompt.ts).
+const PROMPT = buildAgentPrompt("https://luongnv.com/sleek-ui/designs/stripe.json");
 
 const Scene3_Prompt = () => {
   const frame = useCurrentFrame();
@@ -197,7 +191,7 @@ const Scene3_Prompt = () => {
   const card = fadeIn(frame, fps, 20);
 
   // Typewriter: reveal characters one by one
-  const charsPerFrame = 2.5;
+  const charsPerFrame = 4;
   const typewriterStart = 30;
   const charsVisible = Math.floor(Math.max(0, frame - typewriterStart) * charsPerFrame);
   const visibleText = PROMPT.slice(0, charsVisible);
@@ -385,14 +379,21 @@ const Scene5_CTA = () => {
 
 // ── Root composition ──────────────────────────────────────────────────────
 // Scene durations (frames @ 30fps)
-const D = {
+export const SCENE_DURATIONS = {
   hero: 150,
   howItWorks: 180,
   prompt: 210,
   showcase: 180,
   cta: 150,
-  transition: 20,
 };
+
+export const TRANSITION_DURATION = 20;
+
+const D = SCENE_DURATIONS;
+
+export const TOTAL_FRAMES =
+  Object.values(SCENE_DURATIONS).reduce((a, b) => a + b, 0) -
+  4 * TRANSITION_DURATION;
 
 export const PromotionalVideo = () => {
   return (
@@ -403,7 +404,7 @@ export const PromotionalVideo = () => {
 
       <TransitionSeries.Transition
         presentation={fade()}
-        timing={springTiming({ config: { damping: 200 }, durationInFrames: D.transition })}
+        timing={springTiming({ config: { damping: 200 }, durationInFrames: TRANSITION_DURATION })}
       />
 
       <TransitionSeries.Sequence durationInFrames={D.howItWorks}>
@@ -412,7 +413,7 @@ export const PromotionalVideo = () => {
 
       <TransitionSeries.Transition
         presentation={slide({ direction: "from-right" })}
-        timing={springTiming({ config: { damping: 200 }, durationInFrames: D.transition })}
+        timing={springTiming({ config: { damping: 200 }, durationInFrames: TRANSITION_DURATION })}
       />
 
       <TransitionSeries.Sequence durationInFrames={D.prompt}>
@@ -421,7 +422,7 @@ export const PromotionalVideo = () => {
 
       <TransitionSeries.Transition
         presentation={slide({ direction: "from-right" })}
-        timing={springTiming({ config: { damping: 200 }, durationInFrames: D.transition })}
+        timing={springTiming({ config: { damping: 200 }, durationInFrames: TRANSITION_DURATION })}
       />
 
       <TransitionSeries.Sequence durationInFrames={D.showcase}>
@@ -430,7 +431,7 @@ export const PromotionalVideo = () => {
 
       <TransitionSeries.Transition
         presentation={fade()}
-        timing={springTiming({ config: { damping: 200 }, durationInFrames: D.transition })}
+        timing={springTiming({ config: { damping: 200 }, durationInFrames: TRANSITION_DURATION })}
       />
 
       <TransitionSeries.Sequence durationInFrames={D.cta}>
@@ -440,4 +441,4 @@ export const PromotionalVideo = () => {
   );
 };
 
-// Total frames: 150+180+210+180+150 - 4*20 = 790
+// Total frames: sum(SCENE_DURATIONS) - 4*TRANSITION_DURATION = TOTAL_FRAMES (790)
