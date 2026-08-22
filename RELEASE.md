@@ -1,17 +1,13 @@
-# Release v1.0.0
+# Release Notes
 
-## 2026-03-27
+Release notes for sleek-ui live in [docs/CHANGELOG.md](docs/CHANGELOG.md) — the
+single authoritative record for every version. This file is only a pointer and
+must not duplicate changelog entries.
 
-### Phase 2 Release - Full MVP Launch
+## Latest release
 
-This release marks the Phase 2 (Full MVP Launch) of sleek-ui.
+- **v1.0.0** — Phase 2, Full MVP Launch (2026-03-27). See
+  [docs/CHANGELOG.md](docs/CHANGELOG.md).
 
-### Changes
-
-- Version: 1.0.0
-- Git tag: v1.0.0 pushed
-- GitHub Release created
-
-### Design Files
-
-- Editorial Dark - https://luongnv.com/sleek-ui/designs/editorial-dark.json
+Ongoing changes are tracked under **[Unreleased]** in the changelog until the
+next version is tagged.

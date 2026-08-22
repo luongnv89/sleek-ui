@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="hsl(0, 0%, 100%)"/>
+  <text x="200" y="130" text-anchor="middle" fill="hsl(240, 10%, 3.9%)" font-family="Inter, sans-serif" font-size="18" font-weight="600">figma</text>
+  <text x="200" y="160" text-anchor="middle" fill="hsl(240, 3.8%, 46.1%)" font-family="Inter, sans-serif" font-size="12">Light Mode Preview</text>
+  <rect x="100" y="180" width="200" height="40" rx="6" fill="hsl(0, 0%, 0%)"/>
+  <text x="200" y="205" text-anchor="middle" fill="hsl(0, 0%, 100%)" font-family="Inter, sans-serif" font-size="14">Thumbnail</text>
+</svg>
