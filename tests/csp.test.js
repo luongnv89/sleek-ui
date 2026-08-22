@@ -19,9 +19,9 @@ function directive(csp, name) {
 describe.each(['index.html', 'public/404.html'])('CSP meta tag (%s)', (page) => {
   const csp = cspOf(page);
 
-  test(`style-src allows exactly ${ALLOWED_FONT_HOSTS[0]}`, () => {
+  test(`style-src allows exactly ${ALLOWED_FONT_HOSTS[0]} plus inline styles`, () => {
     expect(directive(csp, 'style-src')).toEqual(
-      expect.arrayContaining([`https://${ALLOWED_FONT_HOSTS[0]}`]),
+      expect.arrayContaining([`https://${ALLOWED_FONT_HOSTS[0]}`, "'unsafe-inline'"]),
     );
   });
 

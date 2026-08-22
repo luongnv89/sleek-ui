@@ -239,7 +239,11 @@ GitHub Pages cannot set custom HTTP headers, so `index.html` and
 `public/404.html` carry a restrictive meta CSP. Its style/font sources mirror
 the font-host whitelist in `src/context/DesignContext.tsx`
 (`fonts.googleapis.com`, `fonts.gstatic.com`); this invariant is enforced by
-`tests/csp.test.js`.
+`tests/csp.test.js`. `style-src` additionally allows `'unsafe-inline'` because
+applying a design injects a `<style>` element at runtime
+(`DesignContext.upsertStyle`), and static hosting cannot provide per-request
+nonces. This relaxation is scoped to styles only — `script-src` stays exactly
+`'self'` (also asserted by the tests).
 
 ### Project Structure
 
