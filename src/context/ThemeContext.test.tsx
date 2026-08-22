@@ -45,3 +45,76 @@ describe('ThemeContext blocked storage (#103)', () => {
     expect(localStorage.getItem('sleek-ui:theme')).toBe('dark');
   });
 });
+
+describe('ThemeContext characterization (#118)', () => {
+  it('restores the persisted theme across a reload simulation', () => {
+    localStorage.setItem('sleek-ui:theme', 'dark');
+    render(
+      <ThemeProvider>
+        <ToggleButton />
+      </ThemeProvider>,
+    );
+    expect(screen.getByText('dark')).toBeInTheDocument();
+    expect(document.documentElement.classList.contains('dark')).toBe(true);
+  });
+
+  it('defaults to the system color-scheme preference when nothing is stored', () => {
+    window.matchMedia = jest.fn().mockReturnValue({ matches: true }) as unknown as typeof window.matchMedia;
+    render(
+      <ThemeProvider>
+        <ToggleButton />
+      </ThemeProvider>,
+    );
+    expect(screen.getByText('dark')).toBeInTheDocument();
+    expect(document.documentElement.classList.contains('dark')).toBe(true);
+  });
+
+  it('defaults to light and writes no storage value when storage read throws', () => {
+    const getItemSpy = jest.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new DOMException('blocked', 'SecurityError');
+    });
+    try {
+      render(
+        <ThemeProvider>
+          <ToggleButton />
+        </ThemeProvider>,
+      );
+      expect(screen.getByText('light')).toBeInTheDocument();
+    } finally {
+      getItemSpy.mockRestore();
+    }
+    expect(localStorage.getItem('sleek-ui:theme')).toBe('light');
+  });
+
+  it('throws a descriptive error when useTheme runs outside a ThemeProvider', () => {
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+    try {
+      expect(() => render(<ToggleButton />)).toThrow(
+        'useTheme must be used within a ThemeProvider',
+      );
+    } finally {
+      consoleError.mockRestore();
+    }
+  });
+
+  it('round-trips toggle state through storage into a fresh provider mount', () => {
+    const first = render(
+      <ThemeProvider>
+        <ToggleButton />
+      </ThemeProvider>,
+    );
+    act(() => {
+      screen.getByText('light').click();
+    });
+    first.unmount();
+
+    document.documentElement.className = '';
+    render(
+      <ThemeProvider>
+        <ToggleButton />
+      </ThemeProvider>,
+    );
+    expect(screen.getByText('dark')).toBeInTheDocument();
+    expect(localStorage.getItem('sleek-ui:theme')).toBe('dark');
+  });
+});
