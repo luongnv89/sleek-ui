@@ -9,7 +9,13 @@ interface ThemeToggleProps {
 
 export function ThemeToggle({ theme, onToggle }: ThemeToggleProps) {
   return (
-    <Button variant="ghost" size="icon" onClick={onToggle} aria-label="Toggle theme">
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={onToggle}
+      aria-pressed={theme === 'dark'}
+      aria-label={theme === 'light' ? 'Switch to dark theme' : 'Switch to light theme'}
+    >
       {theme === 'light' ? (
         <Moon className="h-5 w-5" />
       ) : (

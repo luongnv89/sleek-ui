@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
 import { ThemeToggle } from './ThemeToggle'
@@ -8,8 +8,47 @@ import { useTheme } from '@/context/ThemeContext'
 export function Header() {
   const { theme, toggleTheme } = useTheme()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const menuButtonRef = useRef<HTMLButtonElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
 
   const closeMenu = () => setIsMenuOpen(false)
+
+  // Escape closes the menu and returns focus to the toggle; Tab is trapped
+  // between the toggle button and the open menu (#139).
+  useEffect(() => {
+    if (!isMenuOpen) return
+
+    const firstMenuItem = menuRef.current?.querySelector<HTMLElement>('a[href], button')
+    firstMenuItem?.focus()
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        setIsMenuOpen(false)
+        menuButtonRef.current?.focus()
+        return
+      }
+      if (e.key === 'Tab' && menuRef.current) {
+        const focusables = Array.from(
+          menuRef.current.querySelectorAll<HTMLElement>('a[href], button'),
+        )
+        if (focusables.length === 0) return
+        const first = focusables[0]
+        const last = focusables[focusables.length - 1]
+        const active = document.activeElement
+        if (e.shiftKey && (active === first || !menuRef.current.contains(active))) {
+          e.preventDefault()
+          menuButtonRef.current?.focus()
+        } else if (!e.shiftKey && active === last) {
+          e.preventDefault()
+          first.focus()
+        }
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [isMenuOpen])
 
   const navLinkClass = "text-sm font-medium text-foreground hover:text-brand transition-colors"
   const navLinkMutedClass = "text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
@@ -47,6 +86,7 @@ export function Header() {
 
           {/* Mobile Menu Button */}
           <button
+            ref={menuButtonRef}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-md border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
             aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
@@ -59,7 +99,7 @@ export function Header() {
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="md:hidden border-t bg-background/95 backdrop-blur">
+        <div ref={menuRef} className="md:hidden border-t bg-background/95 backdrop-blur">
           <nav className="container mx-auto flex flex-col px-4 py-4 gap-1">
             <Link
               to="/"

@@ -31,4 +31,10 @@ describe('SearchBar (#120)', () => {
     fireEvent.keyDown(screen.getByRole('textbox'), { key: 'Escape' });
     expect(onChange).toHaveBeenLastCalledWith('');
   });
+
+  it('clear button meets the 44px minimum hit area (#139)', () => {
+    render(<SearchBar value="dark" onChange={() => {}} />);
+    const clear = screen.getByRole('button', { name: 'Clear search' });
+    expect(clear).toHaveClass('h-11', 'w-11');
+  });
 });

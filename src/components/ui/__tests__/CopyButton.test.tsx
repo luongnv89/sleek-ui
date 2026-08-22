@@ -51,13 +51,16 @@ describe('CopyButton (#120)', () => {
     ).toBeInTheDocument();
   });
 
-  it('copies via keyboard Enter activation', async () => {
+  it('writes the clipboard exactly once for Enter-key activation (#139)', async () => {
     const writeText = mockClipboard(() => Promise.resolve());
     render(<CopyButton text="hello" />);
     const button = screen.getByRole('button', { name: 'Copy to clipboard' });
     fireEvent.keyDown(button, { key: 'Enter' });
-    await Promise.resolve();
-    expect(writeText).toHaveBeenCalledWith('hello');
+    expect(writeText).not.toHaveBeenCalled();
+    // Browsers fire a native click after Enter keydown on buttons — the copy
+    // must run exactly once across both events.
+    await clickAsync(button);
+    expect(writeText).toHaveBeenCalledTimes(1);
   });
 
   it('does not update state after unmount mid-feedback (#132)', async () => {

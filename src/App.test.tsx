@@ -206,9 +206,9 @@ describe('Error/edge-path guards (#123)', () => {
       // mount effects (theme persistence, applied-design restore) must not throw
       expect(screen.getByText(/Built solo by Luong/)).toBeInTheDocument();
 
-      await userEvent.click(screen.getByRole('button', { name: 'Toggle theme' }));
+      await userEvent.click(screen.getByRole('button', { name: /Switch to (dark|light) theme/ }));
       expect(document.documentElement.classList.contains('dark')).toBe(true);
-      await userEvent.click(screen.getByRole('button', { name: 'Toggle theme' }));
+      await userEvent.click(screen.getByRole('button', { name: /Switch to (dark|light) theme/ }));
       expect(document.documentElement.classList.contains('dark')).toBe(false);
       expect(setItem).toHaveBeenCalled();
     } finally {
