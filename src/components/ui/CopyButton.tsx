@@ -59,7 +59,7 @@ export const CopyButton = ({
       onClick={handleCopy}
       onKeyDown={handleKeyDown}
       className={cn(
-        'group relative inline-flex items-center justify-center rounded-md border border-input bg-transparent px-2 py-1.5 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+        'group relative inline-flex items-center justify-center rounded-md border border-input bg-transparent px-2 py-1.5 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
         className
       )}
       aria-label={getAriaLabel()}
