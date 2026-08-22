@@ -5,10 +5,10 @@ module.exports = {
   coveragePathIgnorePatterns: ['/node_modules/', '/video/'],
   coverageThreshold: {
     global: {
-      statements: 65,
-      branches: 50,
-      functions: 60,
-      lines: 68,
+      statements: 80,
+      branches: 75,
+      functions: 85,
+      lines: 80,
     },
   },
   setupFilesAfterEnv: ['<rootDir>/jest.setup.cjs'],
