@@ -1,16 +1,8 @@
-# sleek-ui
+# AGENTS.md
 
-Design system for AI agent-driven UI customization.
+Instructions for AI coding agents working in this repository.
 
-> The "Unsplash of Design Systems for AI Agents" — paste a URL, get a professional design.
-
-## Tech Stack
-
-- **Frontend Framework**: React 18.3.1
-- **Build Tool**: Vite 5.4.21
-- **Styling**: Tailwind CSS 3.4.19 + shadcn/ui
-- **Testing**: Jest 30 (jsdom)
-- **Design Format**: Custom JSON schema (design.v1.json)
+sleek-ui is the "Unsplash of Design Systems for AI Agents" — a catalog of pre-designed, accessible UI design systems (JSON files) that agents apply to any web project.
 
 ## Critical Commands
 
@@ -29,7 +21,7 @@ npm run validate:designs  # Validate public/designs/*.json against schema
 ```
 ├── public/designs/     # ~60 design JSON files, served by GitHub Pages
 ├── public/previews/    # Preview images
-├── public/schema/      # JSON Schema for design files
+├── public/schema/      # JSON Schema for design files (design.v1.json)
 ├── scripts/            # validate-designs.js, ingest-designs.js
 ├── src/data/designs/   # Mirrored catalog used by the React app
 ├── video/              # Separate Remotion package (own npm install)
@@ -51,7 +43,7 @@ npm run validate:designs  # Validate public/designs/*.json against schema
 
 ## Agent Prompt Template
 
-To apply a design system, tell your AI agent:
+To apply a design system to another project:
 
 ```
 Fetch https://luongnv.com/sleek-ui/designs/{slug}.json
