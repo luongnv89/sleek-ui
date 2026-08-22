@@ -66,6 +66,26 @@ const DESIGN_MD_LIST = [
 ];
 
 const FETCH_TIMEOUT_MS = 30000;
+const FETCH_CONCURRENCY = 8;
+
+// Runs `worker` over `items` with at most `limit` promises in flight.
+// Resolves with results in input order; rejections must be handled by the
+// worker so one failure never abandons its siblings (Promise.allSettled-style).
+function mapWithConcurrency(items, limit, worker) {
+  const results = new Array(items.length);
+  let next = 0;
+
+  async function runQueue() {
+    while (next < items.length) {
+      const index = next++;
+      results[index] = await worker(items[index], index);
+    }
+  }
+
+  return Promise.all(
+    Array.from({ length: Math.min(limit, items.length) }, () => runQueue())
+  ).then(() => results);
+}
 
 function fetchRawFile(url, httpsGet = https.get.bind(https)) {
   return new Promise((resolve, reject) => {
@@ -465,45 +485,57 @@ function convertToSleekUi(designMdContent, slug, name, category) {
   });
 }
 
-async function main() {
-  console.log(`Fetching ${DESIGN_MD_LIST.length} designs from VoltAgent/awesome-design-md...\n`);
+async function ingestDesigns({
+  designs = DESIGN_MD_LIST,
+  designsDir = DESIGNS_DIR,
+  transport = https.get.bind(https),
+  concurrency = FETCH_CONCURRENCY,
+  log = console.log
+} = {}) {
+  log(`Fetching ${designs.length} designs from VoltAgent/awesome-design-md...\n`);
 
-  if (!fs.existsSync(DESIGNS_DIR)) {
-    fs.mkdirSync(DESIGNS_DIR, { recursive: true });
+  if (!fs.existsSync(designsDir)) {
+    fs.mkdirSync(designsDir, { recursive: true });
   }
 
   let imported = 0;
   let failed = 0;
   const errors = [];
 
-  for (const design of DESIGN_MD_LIST) {
+  await mapWithConcurrency(designs, concurrency, async (design) => {
     const url = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/design-md/${design.slug}/DESIGN.md`;
 
     try {
-      const content = await fetchRawFile(url);
+      const content = await fetchRawFile(url, transport);
 
       const sleekDesign = convertToSleekUi(content, design.slug, design.name, design.category);
 
-      const outputPath = path.join(DESIGNS_DIR, `${design.slug}.json`);
+      const outputPath = path.join(designsDir, `${design.slug}.json`);
       fs.writeFileSync(outputPath, JSON.stringify(sleekDesign, null, 2));
 
-      console.log(`✓ ${design.name}`);
+      log(`✓ ${design.name}`);
       imported++;
     } catch (err) {
-      console.log(`✗ ${design.name}: ${err.message}`);
+      log(`✗ ${design.name}: ${err.message}`);
       errors.push({ name: design.name, error: err.message });
       failed++;
     }
-  }
+  });
 
-  console.log('\n---');
-  console.log(`Imported: ${imported}/${DESIGN_MD_LIST.length}`);
-  console.log(`Output: ${DESIGNS_DIR}`);
+  log('\n---');
+  log(`Imported: ${imported}/${designs.length}`);
+  log(`Output: ${designsDir}`);
 
   if (errors.length > 0) {
-    console.log('\nFailed:');
-    errors.forEach(e => console.log(`  - ${e.name}: ${e.error}`));
+    log('\nFailed:');
+    errors.forEach(e => log(`  - ${e.name}: ${e.error}`));
   }
+
+  return { imported, failed, errors };
+}
+
+async function main() {
+  return ingestDesigns();
 }
 
 if (require.main === module) {
@@ -512,7 +544,10 @@ if (require.main === module) {
 
 module.exports = {
   DESIGN_MD_LIST,
+  FETCH_CONCURRENCY,
   fetchRawFile,
+  mapWithConcurrency,
+  ingestDesigns,
   parseDesignMd,
   expandHexShorthand,
   hexToHsl,
