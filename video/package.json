@@ -2,10 +2,14 @@
   "name": "sleek-ui-video",
   "version": "1.0.0",
   "description": "Promotional video for sleek-ui",
+  "engines": {
+    "node": ">=22 <23"
+  },
   "scripts": {
     "start": "remotion studio",
     "build": "remotion render promotional-video out/video.mp4",
-    "preview": "remotion preview"
+    "preview": "remotion preview",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@remotion/cli": "4.0.515",
