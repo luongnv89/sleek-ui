@@ -1,5 +1,16 @@
 module.exports = {
   testEnvironment: 'jsdom',
+  collectCoverage: true,
+  coverageDirectory: 'coverage',
+  coveragePathIgnorePatterns: ['/node_modules/', '/video/'],
+  coverageThreshold: {
+    global: {
+      statements: 65,
+      branches: 50,
+      functions: 60,
+      lines: 68,
+    },
+  },
   setupFilesAfterEnv: ['<rootDir>/jest.setup.cjs'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
