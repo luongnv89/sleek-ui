@@ -18,17 +18,12 @@ export const CopyButton = ({
 }: CopyButtonProps) => {
   const { copied, error, copy } = useClipboard(true, false);
 
+  // Native button semantics already fire click for Enter/Space — a manual
+  // keydown handler here double-fires the copy on real keyboards (#139).
   const handleCopy = useCallback(async () => {
     const ok = await copy(text);
     onCopy?.(ok);
   }, [text, copy, onCopy]);
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      handleCopy();
-    }
-  };
 
   const getIcon = () => {
     if (error) return <AlertCircle className={cn('h-4 w-4 text-red-500', iconClassName)} />;
@@ -46,7 +41,6 @@ export const CopyButton = ({
     <button
       type="button"
       onClick={handleCopy}
-      onKeyDown={handleKeyDown}
       className={cn(
         'group relative inline-flex items-center justify-center rounded-md border border-input bg-transparent px-2 py-1.5 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
         className

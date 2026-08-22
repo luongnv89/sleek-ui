@@ -24,14 +24,13 @@ export const CategoryFilter = ({
   const isAllSelected = selected === null || selected === '';
 
   return (
-    <div className={cn('flex flex-wrap items-center gap-2', className)} role="tablist" aria-label="Filter by category">
+    <div className={cn('flex flex-wrap items-center gap-2', className)} role="group" aria-label="Filter by category">
       <button
         type="button"
-        role="tab"
-        aria-selected={isAllSelected}
+        aria-pressed={isAllSelected}
         onClick={() => handleCategoryClick(null)}
         className={cn(
-          'inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+          'inline-flex min-h-[44px] items-center rounded-full px-3 py-1 text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
           isAllSelected
             ? 'bg-primary text-primary-foreground hover:bg-primary/90'
             : 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
@@ -50,11 +49,10 @@ export const CategoryFilter = ({
           <button
             key={category.id}
             type="button"
-            role="tab"
-            aria-selected={isSelected}
+            aria-pressed={isSelected}
             onClick={() => handleCategoryClick(isSelected ? null : category.id)}
             className={cn(
-              'inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+              'inline-flex min-h-[44px] items-center rounded-full px-3 py-1 text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
               isSelected
                 ? 'bg-primary text-primary-foreground hover:bg-primary/90'
                 : 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
