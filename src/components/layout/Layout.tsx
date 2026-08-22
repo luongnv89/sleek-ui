@@ -26,7 +26,7 @@ export function Layout() {
           </div>
           <nav className="flex flex-wrap justify-center gap-x-5 gap-y-1 mt-6 text-sm text-muted-foreground">
             <Link to="/" className="hover:text-foreground transition-colors">Catalog</Link>
-            <a href="#how-it-works" className="hover:text-foreground transition-colors">How it works</a>
+            <button onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })} className="hover:text-foreground transition-colors">How it works</button>
             <a href="https://github.com/luongnv89/sleek-ui" className="hover:text-foreground transition-colors" target="_blank" rel="noopener noreferrer">GitHub</a>
             <a href="/sleek-ui/logo/brand-showcase.html" className="hover:text-foreground transition-colors">Brand</a>
           </nav>

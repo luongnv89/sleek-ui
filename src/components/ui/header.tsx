@@ -30,9 +30,12 @@ export function Header() {
           <Link to="/" className={navLinkClass}>
             Catalog
           </Link>
-          <a href="#how-it-works" className={navLinkMutedClass}>
+          <button
+            onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
+            className={navLinkMutedClass}
+          >
             How it works
-          </a>
+          </button>
           <a href="https://github.com/luongnv89/sleek-ui" target="_blank" rel="noopener noreferrer" className={navLinkMutedClass}>
             GitHub
           </a>
@@ -65,13 +68,15 @@ export function Header() {
             >
               Catalog
             </Link>
-            <a
-              href="#how-it-works"
-              className="block py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground"
-              onClick={closeMenu}
+            <button
+              className="block py-2.5 text-left text-sm font-medium text-muted-foreground hover:text-foreground"
+              onClick={() => {
+                document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })
+                closeMenu()
+              }}
             >
               How it works
-            </a>
+            </button>
             <a
               href="https://github.com/luongnv89/sleek-ui"
               target="_blank"
@@ -82,13 +87,15 @@ export function Header() {
               GitHub
             </a>
             <div className="pt-2 mt-1 border-t">
-              <a
-                href="#catalog"
+              <button
                 className="inline-flex w-full items-center justify-center rounded-md bg-[#00FF41] px-4 py-2 text-sm font-semibold text-black hover:bg-[#00e639] transition-colors"
-                onClick={closeMenu}
+                onClick={() => {
+                  document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' })
+                  closeMenu()
+                }}
               >
                 Browse Designs
-              </a>
+              </button>
             </div>
           </nav>
         </div>

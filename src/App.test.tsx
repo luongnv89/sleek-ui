@@ -1,4 +1,5 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { HashRouter } from 'react-router-dom';
 import App from './App';
 
@@ -118,5 +119,50 @@ describe('HomePage - Founder Section (#82)', () => {
   it('links to founder GitHub profile', () => {
     const link = screen.getByText('@luongnv89');
     expect(link.closest('a')).toHaveAttribute('href', 'https://github.com/luongnv89');
+  });
+});
+
+describe('In-page anchor controls under HashRouter (#104)', () => {
+  let scrollIntoView: jest.Mock;
+
+  beforeEach(() => {
+    scrollIntoView = jest.fn();
+    Element.prototype.scrollIntoView = scrollIntoView;
+    window.location.hash = '#/';
+    render(<App />);
+  });
+
+  afterEach(() => {
+    delete (Element.prototype as Partial<Element>).scrollIntoView;
+  });
+
+  const expectRouteKeptAndScrolled = () => {
+    expect(window.location.hash).toBe('#/');
+    expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth' });
+  };
+
+  it('header desktop How it works scrolls without breaking the route', async () => {
+    await userEvent.click(screen.getAllByRole('button', { name: 'How it works' })[0]);
+    expectRouteKeptAndScrolled();
+  });
+
+  it('footer How it works scrolls without breaking the route', async () => {
+    const footer = document.querySelector('footer')!;
+    await userEvent.click(
+      within(footer).getByRole('button', { name: 'How it works' })
+    );
+    expectRouteKeptAndScrolled();
+  });
+
+  it('mobile menu Browse Designs scrolls to catalog and closes the menu', async () => {
+    await userEvent.click(screen.getByRole('button', { name: /Open menu/i }));
+    await userEvent.click(screen.getByRole('button', { name: 'Browse Designs' }));
+    expectRouteKeptAndScrolled();
+    expect(screen.queryByRole('button', { name: /Close menu/i })).not.toBeInTheDocument();
+  });
+
+  it('renders no hash-anchor hrefs for in-page sections', () => {
+    expect(document.querySelector('a[href="#how-it-works"]')).toBeNull();
+    expect(document.querySelector('a[href="#catalog"]')).toBeNull();
   });
 });
