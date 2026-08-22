@@ -74,6 +74,7 @@ describe('DesignContext validation (#102)', () => {
     ['@import', makeDesign({ 'tokens.typography.fontFamily.sans': 'a;} @import url("https://evil.example");' })],
     ['javascript scheme', makeDesign({ 'tokens.radius.default': '0; background:url(javascript:alert(1))' })],
     ['non-string token', makeDesign({ 'tokens.colors.light.primary': { toString: () => 'evil' } as unknown as string })],
+    ['css escape via token key', makeDesign({ 'tokens.colors.light.a;} body{display:none}x{': 'red' })],
   ])('rejects hostile token value (%s) without mutating style or state', (_label, data) => {
     render(
       <DesignProvider>

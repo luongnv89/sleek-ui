@@ -4,6 +4,7 @@ import { safeSetItem, safeRemoveItem } from '@/lib/safeStorage';
 
 const STORAGE_KEY = 'sleek-ui:applied-design';
 const SAFE_TOKEN_VALUE = /^[A-Za-z0-9 _%.,'"#+/-]+$/;
+const SAFE_TOKEN_KEY = /^[A-Za-z0-9_-]+$/;
 const ALLOWED_FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 
 interface AppliedDesign {
@@ -41,15 +42,15 @@ function isSafeTokenValue(value: unknown): value is string {
   return typeof value === 'string' && value.length <= 256 && SAFE_TOKEN_VALUE.test(value);
 }
 
+function isSafeColorScale(scale?: Record<string, string>): boolean {
+  return Object.entries(scale ?? {}).every(([key, value]) => SAFE_TOKEN_KEY.test(key) && isSafeTokenValue(value));
+}
+
 export function isDesignSafe(data: unknown): data is DesignData {
   if (!data || typeof data !== 'object') return false;
   const tokens = (data as DesignData).tokens;
   if (!tokens || typeof tokens !== 'object') return false;
-  const colorValues = [
-    ...Object.values(tokens.colors?.light ?? {}),
-    ...Object.values(tokens.colors?.dark ?? {}),
-  ];
-  if (!colorValues.every(isSafeTokenValue)) return false;
+  if (!isSafeColorScale(tokens.colors?.light) || !isSafeColorScale(tokens.colors?.dark)) return false;
   if (tokens.radius?.default != null && !isSafeTokenValue(tokens.radius.default)) return false;
   const fontFamilies = [tokens.typography?.fontFamily?.sans, tokens.typography?.fontFamily?.mono];
   return fontFamilies.every(f => f == null || isSafeTokenValue(f));
