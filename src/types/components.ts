@@ -3,7 +3,6 @@ export interface CopyButtonProps {
   onCopy?: (success: boolean) => void;
   className?: string;
   iconClassName?: string;
-  copyTimeout?: number;
 }
 
 export interface SearchBarProps {
