@@ -12,11 +12,20 @@ jest.mock('@/data/designs', () => {
       description: 'A test design system',
     },
   ];
-  return { __esModule: true, default: designs };
+  return {
+    __esModule: true,
+    loadDesigns: jest.fn(async () => designs),
+    loadDesignData: jest.fn(async () => null),
+  };
 });
 
 import { render, screen } from '@testing-library/react';
 import App from '@/App';
+
+async function waitForCatalogLoaded() {
+  // Hero count only appears once the lazy catalog has resolved (#135)
+  await screen.findByText(/production-grade design systems/);
+}
 
 beforeAll(() => {
   Object.defineProperty(window, 'matchMedia', {
@@ -42,14 +51,15 @@ describe('HomePage hero section', () => {
     expect(headline).toHaveTextContent(/Give your AI agent good taste/);
   });
 
-  it('renders the subheading with design count, one URL, zero Figma', () => {
+  it('renders the subheading with design count, one URL, zero Figma', async () => {
     render(<App />);
+    expect(await screen.findByText(/production-grade design systems/)).toBeInTheDocument();
     expect(screen.getByText(/one URL, zero Figma/)).toBeInTheDocument();
-    expect(screen.getByText(/production-grade design systems/)).toBeInTheDocument();
   });
 
-  it('renders the primary CTA as a button labelled with the design count', () => {
+  it('renders the primary CTA as a button labelled with the design count', async () => {
     render(<App />);
+    await waitForCatalogLoaded();
     const button = screen.getByRole('button', { name: /Browse.*Designs/ });
     expect(button.tagName).toBe('BUTTON');
   });
@@ -60,8 +70,9 @@ describe('HomePage hero section', () => {
     expect(link.tagName).toBe('BUTTON');
   });
 
-  it('primary CTA label includes design count from mock', () => {
+  it('primary CTA label includes design count from mock', async () => {
     render(<App />);
+    await waitForCatalogLoaded();
     expect(screen.getByText(/Browse 1 Designs/)).toBeInTheDocument();
   });
 });

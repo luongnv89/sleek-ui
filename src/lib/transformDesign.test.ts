@@ -101,9 +101,12 @@ describe('transformDesign', () => {
     expect(result.colors).toEqual({ primary: '', secondary: '' });
   });
 
-  it('keeps a reference to the raw design data', () => {
+  it('keeps a compact light-mode swatch palette instead of raw data', () => {
     const design = makeDesign();
     const result = transformDesign(design);
-    expect(result.rawData).toBe(design);
+    expect(result.palette).toEqual(
+      (design.tokens?.colors?.light ?? {}) as Record<string, string>
+    );
+    expect(result).not.toHaveProperty('rawData');
   });
 });

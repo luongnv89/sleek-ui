@@ -142,5 +142,6 @@ export interface TransformedDesign {
   thumbnailUrl: string;
   detailUrl: string;
   description: string;
-  rawData: DesignData;
+  /** Light-mode token colors kept as a compact swatch fallback for catalog cards. */
+  palette?: Record<string, string>;
 }

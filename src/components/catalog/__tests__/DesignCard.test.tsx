@@ -23,7 +23,7 @@ const design: TransformedDesign = {
   thumbnailUrl: '/thumb.svg',
   detailUrl: '/designs/test-design',
   description: 'A test design',
-  rawData: {} as TransformedDesign['rawData'],
+  palette: { primary: '#000', secondary: '#111' },
 };
 
 function BumpParent() {

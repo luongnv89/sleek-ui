@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CopyButton } from '@/components/ui/CopyButton';
 import { getRandomPrompt } from '@/lib/randomPrompt';
 
@@ -36,8 +36,18 @@ const AGENT_STEPS = [
 ];
 
 export function PlanSection() {
-  // Lazy initializer keeps randomness out of module scope so tests stay deterministic.
-  const [promptExample] = useState(() => getRandomPrompt());
+  // Async initializer keeps randomness out of module scope so tests stay deterministic.
+  const [promptExample, setPromptExample] = useState('');
+
+  useEffect(() => {
+    let alive = true;
+    getRandomPrompt().then(prompt => {
+      if (alive) setPromptExample(prompt);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
 
   return (
     <section id="how-it-works" className="border-t border-border/60 bg-muted/30 px-4 py-16 sm:py-20">

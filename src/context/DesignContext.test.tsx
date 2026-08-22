@@ -37,7 +37,7 @@ function makeDesign(overrides: Record<string, unknown>): DesignData {
   return merged;
 }
 
-function toTransformed(data: DesignData): TransformedDesign {
+function toTransformed(): TransformedDesign {
   return {
     slug: 'test-slug',
     name: 'Test Design',
@@ -48,13 +48,12 @@ function toTransformed(data: DesignData): TransformedDesign {
     thumbnailUrl: '',
     detailUrl: '',
     description: '',
-    rawData: data,
   };
 }
 
 function ApplyButton({ data }: { data: DesignData }) {
   const { applyDesign } = useDesign();
-  return <button onClick={() => applyDesign(toTransformed(data))}>apply</button>;
+  return <button onClick={() => applyDesign(toTransformed(), data)}>apply</button>;
 }
 
 function ResetButton() {

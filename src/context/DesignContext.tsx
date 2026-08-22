@@ -18,7 +18,7 @@ interface StoredDesignEntry extends AppliedDesign {
 
 interface DesignContextValue {
   appliedDesign: AppliedDesign | null;
-  applyDesign: (design: TransformedDesign) => void;
+  applyDesign: (design: TransformedDesign, data: DesignData) => void;
   resetDesign: () => void;
 }
 
@@ -155,8 +155,7 @@ export function DesignProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const applyDesign = useCallback((design: TransformedDesign) => {
-    const data = design.rawData;
+  const applyDesign = useCallback((design: TransformedDesign, data: DesignData) => {
     if (!isDesignSafe(data)) return;
     const css = buildCssVars(data);
     upsertStyle('sleek-applied-design', css);

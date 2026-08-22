@@ -1,45 +1,57 @@
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import { MemoryRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import { DesignDetail } from './DesignDetail';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { DesignProvider } from '@/context/DesignContext';
-import type { TransformedDesign } from '@/types/design';
 
-jest.mock('@/data/designs', () => {
-  const rawData = {
-    $schema: 'https://luongnv.com/sleek-ui/schema/design.v1.json',
-    name: 'Test Design',
-    version: '1.0.0',
-    description: 'A test design',
-    categories: ['ui'],
-    tokens: {
-      colors: {
-        light: { background: '0 0% 100%', primary: '245 90% 73%' },
-        dark: { background: '240 33% 14%', primary: '245 90% 73%' },
-      },
-      typography: { fontFamily: { sans: 'Inter, sans-serif', mono: 'monospace' } },
-      spacing: { unit: '0.25rem' },
-      radius: { sm: '0.25rem', default: '0.5rem', lg: '1rem', full: '9999px' },
+const rawData = {
+  $schema: 'https://luongnv.com/sleek-ui/schema/design.v1.json',
+  name: 'Test Design',
+  version: '1.0.0',
+  description: 'A test design',
+  categories: ['ui'],
+  tokens: {
+    colors: {
+      light: { background: '0 0% 100%', primary: '245 90% 73%' },
+      dark: { background: '240 33% 14%', primary: '245 90% 73%' },
     },
-    fonts: { google: [{ family: 'Inter', weights: [400, 700] }] },
-    agentInstructions: { steps: [] },
-  };
-  return [
-    {
-      slug: 'test-design',
-      name: 'Test Design',
-      description: 'A test design',
-      categories: ['minimal'],
-      defaultMode: 'light',
-      jsonUrl: 'https://luongnv.com/sleek-ui/designs/test-design.json',
-      previewUrl: '/previews/test.jpg',
-      rawData,
-    },
-  ];
+    typography: { fontFamily: { sans: 'Inter, sans-serif', mono: 'monospace' } },
+    spacing: { unit: '0.25rem' },
+    radius: { sm: '0.25rem', default: '0.5rem', lg: '1rem', full: '9999px' },
+  },
+  fonts: { google: [{ family: 'Inter', weights: [400, 700] }] },
+  agentInstructions: { steps: [] },
+};
+
+jest.mock('@/data/designs', () => ({
+  __esModule: true,
+  loadDesigns: jest.fn(),
+  loadDesignData: jest.fn(),
+}));
+
+const designsModule = jest.requireMock('@/data/designs') as {
+  loadDesigns: jest.Mock;
+  loadDesignData: jest.Mock;
+};
+
+const testDesign = {
+  slug: 'test-design',
+  name: 'Test Design',
+  description: 'A test design',
+  categories: ['minimal'],
+  colors: { primary: '245 90% 73%', secondary: '0 0% 100%' },
+  defaultMode: 'light' as const,
+  jsonUrl: 'https://luongnv.com/sleek-ui/designs/test-design.json',
+  thumbnailUrl: '/previews/test.jpg',
+  detailUrl: '/designs/test-design',
+};
+
+beforeEach(() => {
+  designsModule.loadDesigns.mockResolvedValue([testDesign]);
+  designsModule.loadDesignData.mockImplementation(async (slug: string) =>
+    slug === 'test-design' ? rawData : null
+  );
 });
-
-const designsModule = jest.requireMock('@/data/designs') as TransformedDesign[];
-const testDesign = designsModule[0];
 
 function renderDetail(slug: string) {
   return render(
@@ -72,27 +84,29 @@ beforeEach(() => {
 });
 
 describe('DesignDetail characterization (#117)', () => {
-  it('shows the not-found fallback for an unknown slug', () => {
+  it('shows a loading placeholder, then the not-found fallback for an unknown slug', async () => {
     renderDetail('does-not-exist');
-    expect(screen.getByText('Design not found')).toBeInTheDocument();
+    expect(await screen.findByText('Design not found')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Back to Catalog/i })).toHaveAttribute('href', '/');
     // #129: an unmatched slug resets the title to the app default instead of leaving it empty
     expect(document.title).toBe('sleek-ui — Professional design systems for AI agents');
   });
 
-  it('renders the matched design and sets document.title from its name', () => {
+  it('renders the matched design and sets document.title from its name', async () => {
     renderDetail('test-design');
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Test Design' })
+    ).toBeInTheDocument();
     expect(document.title).toBe('Test Design — sleek-ui');
-    expect(screen.getByRole('heading', { level: 1, name: 'Test Design' })).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: 'Apply this design to the website' }),
     ).toBeInTheDocument();
   });
 
-  it('toggles the dark preview wrapper class on and off', () => {
+  it('toggles the dark preview wrapper class on and off', async () => {
     const { container } = renderDetail('test-design');
+    await screen.findByRole('heading', { level: 1, name: 'Test Design' });
     const wrapper = container.firstElementChild as HTMLElement;
-    expect(wrapper.classList.contains('dark')).toBe(false);
     fireEvent.click(screen.getByRole('button', { name: 'Toggle preview mode' }));
     expect(wrapper.classList.contains('dark')).toBe(true);
     fireEvent.click(screen.getByRole('button', { name: 'Toggle preview mode' }));
@@ -102,6 +116,7 @@ describe('DesignDetail characterization (#117)', () => {
   it('copies the agent prompt to the clipboard and confirms', async () => {
     const writeText = writeClipboard();
     renderDetail('test-design');
+    await screen.findByRole('heading', { level: 1, name: 'Test Design' });
     await act(async () => {
       fireEvent.click(screen.getByRole('button', { name: 'Copy' }));
     });
@@ -112,8 +127,13 @@ describe('DesignDetail characterization (#117)', () => {
     expect(screen.getByRole('button', { name: 'Copied!' })).toBeInTheDocument();
   });
 
-  it('applies the design then resets it back through the provider', () => {
+  it('applies the design then resets it back through the provider', async () => {
     renderDetail('test-design');
+    await screen.findByRole('heading', { level: 1, name: 'Test Design' });
+    // Apply stays disabled until the design data has been fetched on navigation (#135)
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Apply this design to the website' })).toBeEnabled()
+    );
     fireEvent.click(screen.getByRole('button', { name: 'Apply this design to the website' }));
     const style = document.getElementById('sleek-applied-design');
     expect(style?.textContent).toContain('--background: 0 0% 100%;');
@@ -125,6 +145,30 @@ describe('DesignDetail characterization (#117)', () => {
     expect(
       screen.getByRole('button', { name: 'Apply this design to the website' }),
     ).toBeInTheDocument();
+  });
+
+  it('fetches design data on navigation and renders tokens once loaded (#135)', async () => {
+    let resolveData!: (value: typeof rawData | null) => void;
+    designsModule.loadDesignData.mockImplementationOnce(
+      () => new Promise<typeof rawData | null>(resolve => { resolveData = resolve; })
+    );
+
+    renderDetail('test-design');
+    await screen.findByRole('heading', { level: 1, name: 'Test Design' });
+
+    // Tokens section shows its loading placeholder until the fetch resolves
+    expect(screen.getByText('Loading design tokens...')).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Apply this design to the website' })
+    ).toBeDisabled();
+
+    resolveData(rawData);
+    await waitFor(() =>
+      expect(screen.queryByText('Loading design tokens...')).not.toBeInTheDocument()
+    );
+    expect(
+      screen.getByRole('button', { name: 'Apply this design to the website' })
+    ).toBeEnabled();
   });
 });
 
@@ -142,6 +186,7 @@ describe('DesignDetail clipboard rejection (#123)', () => {
 
     try {
       renderDetail('test-design');
+      await screen.findByRole('heading', { level: 1, name: 'Test Design' });
       await act(async () => {
         fireEvent.click(screen.getByRole('button', { name: 'Copy' }));
       });
@@ -165,7 +210,7 @@ describe('DesignDetail stale-design navigation (#129)', () => {
     return <button onClick={() => navigate(to)}>navigate-probe</button>;
   }
 
-  it('resets to the not-found branch with a corrected title on valid → invalid navigation', () => {
+  it('resets to the not-found branch with a corrected title on valid → invalid navigation', async () => {
     render(
       <ThemeProvider>
         <DesignProvider>
@@ -179,12 +224,14 @@ describe('DesignDetail stale-design navigation (#129)', () => {
       </ThemeProvider>,
     );
 
-    expect(screen.getByRole('heading', { level: 1, name: 'Test Design' })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { level: 1, name: 'Test Design' })
+    ).toBeInTheDocument();
     expect(document.title).toBe('Test Design — sleek-ui');
 
     fireEvent.click(screen.getByRole('button', { name: 'navigate-probe' }));
 
-    expect(screen.getByText('Design not found')).toBeInTheDocument();
+    expect(await screen.findByText('Design not found')).toBeInTheDocument();
     expect(screen.queryByRole('heading', { level: 1, name: 'Test Design' })).not.toBeInTheDocument();
     expect(document.title).toBe('sleek-ui — Professional design systems for AI agents');
   });

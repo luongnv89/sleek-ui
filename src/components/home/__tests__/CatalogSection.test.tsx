@@ -34,10 +34,14 @@ jest.mock('@/data/designs', () => {
       description: 'A gamma design system',
     },
   ];
-  return { __esModule: true, default: designs };
+  return {
+    __esModule: true,
+    loadDesigns: jest.fn(async () => designs),
+    loadDesignData: jest.fn(async () => null),
+  };
 });
 
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { CatalogSection } from '../CatalogSection';
 
@@ -49,36 +53,63 @@ function renderCatalog() {
   );
 }
 
-function getCounterText(): string {
-  const counter = screen.getByText(/\d+ \/ \d+ designs/);
+async function getCounterText(): Promise<string> {
+  const counter = await screen.findByText(/\d+ \/ \d+ designs/);
   if (!counter.textContent) throw new Error('missing counter text');
   return counter.textContent;
 }
 
+async function waitForCatalog(): Promise<number> {
+  // The counter renders "0 / 0" while loading — wait until the lazy catalog resolves
+  await screen.findByRole('link', { name: /Alpha Design/ });
+  const text = await getCounterText();
+  return Number(text.match(/^(\d+)/)![1]);
+}
+
 describe('CatalogSection filtering (#137)', () => {
-  it('shows every design before any filter is applied', () => {
+  it('shows every design before any filter is applied', async () => {
     renderCatalog();
-    expect(getCounterText()).toMatch(/^(\d+) \/ \1 designs$/);
+    const total = await waitForCatalog();
+    expect(total).toBeGreaterThan(0);
+    expect(getCounterText()).resolves.toBe(`${total} / ${total} designs`);
     expect(screen.queryByText(/No designs match your search/)).not.toBeInTheDocument();
   });
 
-  it('narrows the visible cards to matching designs as the user types', () => {
+  it('shows a loading placeholder while the catalog is fetched lazily (#135)', async () => {
+    let resolveLoad!: (value: unknown) => void;
+    const { loadDesigns } = jest.requireMock('@/data/designs') as {
+      loadDesigns: jest.Mock;
+    };
+    loadDesigns.mockImplementationOnce(
+      () => new Promise(resolve => { resolveLoad = resolve; })
+    );
     renderCatalog();
-    const total = Number(getCounterText().match(/^(\d+)/)![1]);
-    expect(total).toBeGreaterThan(0);
+    expect(screen.getByRole('status')).toHaveTextContent('Loading designs…');
+    resolveLoad([]);
+    expect(await screen.findByText(/\/ \d+ designs/)).toBeInTheDocument();
+  });
+
+  it('narrows the visible cards to matching designs as the user types', async () => {
+    renderCatalog();
+    const total = await waitForCatalog();
 
     const input = screen.getByPlaceholderText('Search by name, brand, or style...');
     fireEvent.change(input, { target: { value: 'zzz-no-such-design-zzz' } });
-    expect(getCounterText()).toBe(`0 / ${total} designs`);
-    expect(screen.getByText(/No designs match your search/)).toBeInTheDocument();
+    expect(getCounterText()).resolves.toBe(`0 / ${total} designs`);
+    expect(await screen.findByText(/No designs match your search/)).toBeInTheDocument();
     expect(screen.queryByRole('link')).not.toBeInTheDocument();
 
     fireEvent.change(input, { target: { value: '' } });
-    expect(getCounterText()).toMatch(new RegExp(`^${total} / ${total} designs$`));
+    await waitFor(() =>
+      expect(screen.getByText(/\d+ \/ \d+ designs/).textContent).toBe(
+        `${total} / ${total} designs`
+      )
+    );
   });
 
-  it('keeps the category pills stable across search keystrokes', () => {
+  it('keeps the category pills stable across search keystrokes', async () => {
     renderCatalog();
+    await waitForCatalog();
     const filterGroup = screen.getByRole('group', { name: 'Filter by category' });
     const pills = filterGroup.querySelectorAll('button');
     expect(pills.length).toBeGreaterThan(1);
