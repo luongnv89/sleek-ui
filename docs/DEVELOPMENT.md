@@ -89,5 +89,5 @@ npm run build && npm run preview
 | TypeScript | 5 | Type safety |
 | Tailwind CSS | 3.4 | Utility-first styling |
 | shadcn/ui | latest | Accessible UI primitives |
-| react-router-dom | 6 | Client-side routing (HashRouter) |
+| react-router-dom | 7 | Client-side routing (HashRouter — see [ROUTER_DECISION.md](ROUTER_DECISION.md)) |
 | lucide-react | 0.441 | Icon library |
