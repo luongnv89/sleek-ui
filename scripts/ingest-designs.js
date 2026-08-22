@@ -176,6 +176,272 @@ function getHslLightness(hslStr) {
   return m ? parseFloat(m[1]) : 50;
 }
 
+// Pure: reads `colors` without mutating it; sorts operate on fresh copies.
+function pickThemeColors(colors) {
+  const values = Object.values(colors);
+  const darkest = [...values].sort((a, b) => getHslLightness(a) - getHslLightness(b))[0];
+  const lightest = [...values].sort((a, b) => getHslLightness(b) - getHslLightness(a))[0];
+
+  return {
+    primary:
+      pickColor(colors, 'brand', 'primary', 'accent', 'green', 'red', 'blue', 'purple', 'orange') ||
+      values[0] ||
+      '245 90% 73%',
+    darkBg:
+      pickColor(colors, 'black', 'near black', 'darkest', 'dark surface', 'background') ||
+      darkest ||
+      '240 10% 8%',
+    lightBg:
+      pickColor(colors, 'white', 'pure white', 'light surface', 'light background') ||
+      lightest ||
+      '0 0% 100%',
+    fg:
+      pickColor(colors, 'near black', 'heading', 'primary text', 'foreground', 'body') ||
+      '240 10% 3.9%'
+  };
+}
+
+function buildColorTokens({ primary, darkBg, lightBg, fg }) {
+  return {
+    light: {
+      background: lightBg,
+      foreground: fg,
+      muted: '240 4.8% 95.9%',
+      'muted-foreground': '240 3.8% 46.1%',
+      primary,
+      'primary-foreground': '0 0% 100%',
+      secondary: '240 4.8% 95.9%',
+      'secondary-foreground': '240 10% 3.9%',
+      accent: '240 4.8% 95.9%',
+      'accent-foreground': '240 10% 3.9%',
+      destructive: '0 84.2% 60.2%',
+      'destructive-foreground': '0 0% 100%',
+      border: '240 5.9% 90%',
+      input: '240 5.9% 90%',
+      ring: primary,
+      card: '0 0% 100%',
+      'card-foreground': '240 10% 3.9%'
+    },
+    dark: {
+      background: darkBg,
+      foreground: '0 0% 95%',
+      muted: '240 33% 19%',
+      'muted-foreground': '240 5% 64.9%',
+      primary,
+      'primary-foreground': '0 0% 100%',
+      secondary: '240 33% 19%',
+      'secondary-foreground': '0 0% 95%',
+      accent: '240 33% 19%',
+      'accent-foreground': '0 0% 95%',
+      destructive: '0 62.8% 30.6%',
+      'destructive-foreground': '0 0% 100%',
+      border: '240 33% 22%',
+      input: '240 33% 22%',
+      ring: primary,
+      card: '240 33% 17%',
+      'card-foreground': '0 0% 95%'
+    }
+  };
+}
+
+function buildTypographyTokens() {
+  return {
+    fontFamily: {
+      sans: 'Inter',
+      serif: 'Georgia',
+      mono: 'JetBrains Mono'
+    },
+    fontSize: {
+      xs: '0.75rem',
+      sm: '0.875rem',
+      base: '1rem',
+      lg: '1.125rem',
+      xl: '1.25rem',
+      '2xl': '1.5rem',
+      '3xl': '1.875rem',
+      '4xl': '2.25rem'
+    },
+    fontWeight: {
+      normal: 400,
+      medium: 500,
+      semibold: 600,
+      bold: 700
+    },
+    lineHeight: {
+      tight: '1.25',
+      normal: '1.5',
+      relaxed: '1.625'
+    },
+    letterSpacing: {
+      tight: '-0.025em',
+      normal: '0',
+      wide: '0.025em'
+    }
+  };
+}
+
+function buildSpaceTokens() {
+  return {
+    spacing: {
+      unit: '8px',
+      xs: '4px',
+      sm: '8px',
+      md: '16px',
+      lg: '24px',
+      xl: '32px',
+      '2xl': '48px'
+    },
+    radius: {
+      sm: '0.125rem',
+      default: '0.375rem',
+      lg: '0.5rem',
+      full: '9999px'
+    },
+    shadows: {
+      sm: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+      default: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+      lg: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)'
+    }
+  };
+}
+
+function buildTokens(themeColors) {
+  return {
+    colors: buildColorTokens(themeColors),
+    typography: buildTypographyTokens(),
+    ...buildSpaceTokens()
+  };
+}
+
+function buildFonts() {
+  return {
+    google: [
+      { family: 'Inter', weights: [400, 500, 600, 700] }
+    ],
+    urls: [
+      {
+        url: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap',
+        format: 'css2',
+        family: 'Inter'
+      }
+    ]
+  };
+}
+
+function buildAccessibility() {
+  return {
+    contrastTarget: 4.5,
+    focusRing: {
+      width: '2px',
+      color: 'currentColor',
+      offset: '2px'
+    },
+    reducedMotion: true
+  };
+}
+
+function buildComponentTokens() {
+  return {
+    button: {
+      primary: {
+        background: 'primary',
+        color: 'primary-foreground',
+        borderRadius: 'radius.default',
+        padding: 'spacing.sm spacing.md',
+        fontWeight: 'semibold'
+      },
+      secondary: {
+        background: 'secondary',
+        color: 'secondary-foreground',
+        borderRadius: 'radius.default',
+        padding: 'spacing.sm spacing.md',
+        fontWeight: 'medium'
+      },
+      ghost: {
+        background: 'transparent',
+        color: 'foreground',
+        borderRadius: 'radius.default',
+        padding: 'spacing.sm spacing.md',
+        fontWeight: 'medium'
+      }
+    },
+    card: {
+      background: 'card',
+      color: 'card-foreground',
+      borderRadius: 'radius.lg',
+      padding: 'spacing.lg',
+      shadow: 'shadows.default',
+      border: '1px solid border'
+    },
+    input: {
+      background: 'background',
+      color: 'foreground',
+      borderRadius: 'radius.default',
+      padding: 'spacing.sm spacing.md',
+      border: '1px solid input',
+      focusRing: 'focusRing',
+      placeholderColor: 'muted-foreground'
+    }
+  };
+}
+
+function buildAgentInstructions() {
+  return {
+    defaultMode: 'dark',
+    steps: [
+      `Set CSS custom properties from tokens.colors on :root (light) and .dark (dark mode)`,
+      'Set --radius from tokens.radius.default',
+      'Load fonts by adding the Google Fonts URL from fonts.urls as a <link> tag',
+      'Set font-family from tokens.typography.fontFamily',
+      'Apply component styles from the components field',
+      'Ensure focus states match accessibility.focusRing specification',
+      'Test both light and dark modes'
+    ]
+  };
+}
+
+function buildPreview(slug) {
+  return {
+    thumbnail: `/previews/${slug}-thumb.svg`,
+    screenshots: {
+      light: [`/previews/${slug}-light.svg`],
+      dark: [`/previews/${slug}-dark.svg`]
+    }
+  };
+}
+
+function buildSource(slug, importedAt) {
+  return {
+    repo: `https://github.com/${REPO_OWNER}/${REPO_NAME}`,
+    path: `design-md/${slug}/DESIGN.md`,
+    importedAt
+  };
+}
+
+// Pure template builder: assembles the design object from already-picked values.
+function buildSleekUiTemplate({ slug, name, category, theme, themeColors, importedAt }) {
+  const design = {
+    $schema: 'https://luongnv.com/sleek-ui/schema/design.v1.json',
+    name: slug,
+    version: '1.0.0',
+    description: theme.slice(0, 200) || `${name} design system for AI agents`,
+    categories: [category, 'dark'],
+    author: {
+      name: 'VoltAgent',
+      url: 'https://github.com/VoltAgent/awesome-design-md'
+    },
+    tokens: buildTokens(themeColors),
+    fonts: buildFonts(),
+    accessibility: buildAccessibility(),
+    components: buildComponentTokens(),
+    agentInstructions: buildAgentInstructions(),
+    preview: buildPreview(slug),
+    source: buildSource(slug, importedAt)
+  };
+
+  return design;
+}
+
 function convertToSleekUi(designMdContent, slug, name, category) {
   if (typeof designMdContent !== 'string' || !designMdContent.trim()) {
     throw new Error(`Malformed DESIGN.md for '${slug}': content is empty`);
@@ -187,227 +453,16 @@ function convertToSleekUi(designMdContent, slug, name, category) {
   const colorSection = sections['2. Color Palette & Roles'] || '';
   const colors = extractColorsFromSection(colorSection);
   const theme = sections['1. Visual Theme & Atmosphere'] || '';
+  const themeColors = pickThemeColors(colors);
 
-  const allValues = Object.values(colors);
-
-  // Pick primary: first color in the palette (usually the main brand color)
-  const primary =
-    pickColor(colors, 'brand', 'primary', 'accent', 'green', 'red', 'blue', 'purple', 'orange') ||
-    allValues[0] ||
-    '245 90% 73%';
-
-  // Pick dark bg: darkest color (lowest lightness)
-  const darkBg =
-    pickColor(colors, 'black', 'near black', 'darkest', 'dark surface', 'background') ||
-    allValues.sort((a, b) => getHslLightness(a) - getHslLightness(b))[0] ||
-    '240 10% 8%';
-
-  // Pick light bg: lightest color
-  const lightBg =
-    pickColor(colors, 'white', 'pure white', 'light surface', 'light background') ||
-    allValues.sort((a, b) => getHslLightness(b) - getHslLightness(a))[0] ||
-    '0 0% 100%';
-
-  // Pick foreground: darkest non-background color for light mode
-  const fg =
-    pickColor(colors, 'near black', 'heading', 'primary text', 'foreground', 'body') ||
-    '240 10% 3.9%';
-
-  const design = {
-    $schema: 'https://luongnv.com/sleek-ui/schema/design.v1.json',
-    name: slug,
-    version: '1.0.0',
-    description: theme.slice(0, 200) || `${name} design system for AI agents`,
-    categories: [category, 'dark'],
-    author: {
-      name: 'VoltAgent',
-      url: 'https://github.com/VoltAgent/awesome-design-md'
-    },
-    tokens: {
-      colors: {
-        light: {
-          background: lightBg,
-          foreground: fg,
-          muted: '240 4.8% 95.9%',
-          'muted-foreground': '240 3.8% 46.1%',
-          primary,
-          'primary-foreground': '0 0% 100%',
-          secondary: '240 4.8% 95.9%',
-          'secondary-foreground': '240 10% 3.9%',
-          accent: '240 4.8% 95.9%',
-          'accent-foreground': '240 10% 3.9%',
-          destructive: '0 84.2% 60.2%',
-          'destructive-foreground': '0 0% 100%',
-          border: '240 5.9% 90%',
-          input: '240 5.9% 90%',
-          ring: primary,
-          card: '0 0% 100%',
-          'card-foreground': '240 10% 3.9%'
-        },
-        dark: {
-          background: darkBg,
-          foreground: '0 0% 95%',
-          muted: '240 33% 19%',
-          'muted-foreground': '240 5% 64.9%',
-          primary,
-          'primary-foreground': '0 0% 100%',
-          secondary: '240 33% 19%',
-          'secondary-foreground': '0 0% 95%',
-          accent: '240 33% 19%',
-          'accent-foreground': '0 0% 95%',
-          destructive: '0 62.8% 30.6%',
-          'destructive-foreground': '0 0% 100%',
-          border: '240 33% 22%',
-          input: '240 33% 22%',
-          ring: primary,
-          card: '240 33% 17%',
-          'card-foreground': '0 0% 95%'
-        }
-      },
-      typography: {
-        fontFamily: {
-          sans: 'Inter',
-          serif: 'Georgia',
-          mono: 'JetBrains Mono'
-        },
-        fontSize: {
-          xs: '0.75rem',
-          sm: '0.875rem',
-          base: '1rem',
-          lg: '1.125rem',
-          xl: '1.25rem',
-          '2xl': '1.5rem',
-          '3xl': '1.875rem',
-          '4xl': '2.25rem'
-        },
-        fontWeight: {
-          normal: 400,
-          medium: 500,
-          semibold: 600,
-          bold: 700
-        },
-        lineHeight: {
-          tight: '1.25',
-          normal: '1.5',
-          relaxed: '1.625'
-        },
-        letterSpacing: {
-          tight: '-0.025em',
-          normal: '0',
-          wide: '0.025em'
-        }
-      },
-      spacing: {
-        unit: '8px',
-        xs: '4px',
-        sm: '8px',
-        md: '16px',
-        lg: '24px',
-        xl: '32px',
-        '2xl': '48px'
-      },
-      radius: {
-        sm: '0.125rem',
-        default: '0.375rem',
-        lg: '0.5rem',
-        full: '9999px'
-      },
-      shadows: {
-        sm: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
-        default: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
-        lg: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)'
-      }
-    },
-    fonts: {
-      google: [
-        { family: 'Inter', weights: [400, 500, 600, 700] }
-      ],
-      urls: [
-        {
-          url: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap',
-          format: 'css2',
-          family: 'Inter'
-        }
-      ]
-    },
-    accessibility: {
-      contrastTarget: 4.5,
-      focusRing: {
-        width: '2px',
-        color: 'currentColor',
-        offset: '2px'
-      },
-      reducedMotion: true
-    },
-    components: {
-      button: {
-        primary: {
-          background: 'primary',
-          color: 'primary-foreground',
-          borderRadius: 'radius.default',
-          padding: 'spacing.sm spacing.md',
-          fontWeight: 'semibold'
-        },
-        secondary: {
-          background: 'secondary',
-          color: 'secondary-foreground',
-          borderRadius: 'radius.default',
-          padding: 'spacing.sm spacing.md',
-          fontWeight: 'medium'
-        },
-        ghost: {
-          background: 'transparent',
-          color: 'foreground',
-          borderRadius: 'radius.default',
-          padding: 'spacing.sm spacing.md',
-          fontWeight: 'medium'
-        }
-      },
-      card: {
-        background: 'card',
-        color: 'card-foreground',
-        borderRadius: 'radius.lg',
-        padding: 'spacing.lg',
-        shadow: 'shadows.default',
-        border: '1px solid border'
-      },
-      input: {
-        background: 'background',
-        color: 'foreground',
-        borderRadius: 'radius.default',
-        padding: 'spacing.sm spacing.md',
-        border: '1px solid input',
-        focusRing: 'focusRing',
-        placeholderColor: 'muted-foreground'
-      }
-    },
-    agentInstructions: {
-      defaultMode: 'dark',
-      steps: [
-        `Set CSS custom properties from tokens.colors on :root (light) and .dark (dark mode)`,
-        'Set --radius from tokens.radius.default',
-        'Load fonts by adding the Google Fonts URL from fonts.urls as a <link> tag',
-        'Set font-family from tokens.typography.fontFamily',
-        'Apply component styles from the components field',
-        'Ensure focus states match accessibility.focusRing specification',
-        'Test both light and dark modes'
-      ]
-    },
-    preview: {
-      thumbnail: `/previews/${slug}-thumb.svg`,
-      screenshots: {
-        light: [`/previews/${slug}-light.svg`],
-        dark: [`/previews/${slug}-dark.svg`]
-      }
-    },
-    source: {
-      repo: `https://github.com/${REPO_OWNER}/${REPO_NAME}`,
-      path: `design-md/${slug}/DESIGN.md`,
-      importedAt: new Date().toISOString()
-    }
-  };
-
-  return design;
+  return buildSleekUiTemplate({
+    slug,
+    name,
+    category,
+    theme,
+    themeColors,
+    importedAt: new Date().toISOString()
+  });
 }
 
 async function main() {
@@ -464,5 +519,7 @@ module.exports = {
   extractColorsFromSection,
   pickColor,
   getHslLightness,
+  pickThemeColors,
+  buildColorTokens,
   convertToSleekUi
 };
