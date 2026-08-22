@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useMemo, type ReactNode } from 'react';
 import type { DesignData, TransformedDesign } from '@/types/design';
 import { safeSetItem, safeRemoveItem } from '@/lib/safeStorage';
 
@@ -176,8 +176,13 @@ export function DesignProvider({ children }: { children: ReactNode }) {
     safeRemoveItem(STORAGE_KEY + ':css');
   }, []);
 
+  const value = useMemo(
+    () => ({ appliedDesign, applyDesign, resetDesign }),
+    [appliedDesign, applyDesign, resetDesign]
+  );
+
   return (
-    <DesignContext.Provider value={{ appliedDesign, applyDesign, resetDesign }}>
+    <DesignContext.Provider value={value}>
       {children}
     </DesignContext.Provider>
   );

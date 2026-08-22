@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { useState } from 'react'
+import { memo, useState } from 'react'
 import { Badge } from '@/components/ui/Badge'
 import { Card, CardContent, CardHeader } from '@/components/ui/Card'
 import { TransformedDesign } from '@/types/design'
@@ -55,7 +55,7 @@ function ColorSwatchPreview({ design }: { design: TransformedDesign }) {
   )
 }
 
-export function DesignCard({ design }: DesignCardProps) {
+function DesignCardImpl({ design }: DesignCardProps) {
   const [imgFailed, setImgFailed] = useState(false)
 
   return (
@@ -96,3 +96,5 @@ export function DesignCard({ design }: DesignCardProps) {
     </Card>
   )
 }
+
+export const DesignCard = memo(DesignCardImpl)

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { SearchBar } from '@/components/ui/SearchBar';
 import { CategoryFilter } from '@/components/ui/CategoryFilter';
 import { DesignCard } from '@/components/catalog/DesignCard';
@@ -8,18 +8,26 @@ export function CatalogSection() {
   const [searchValue, setSearchValue] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  const categories = Object.entries(
-    designs.flatMap(d => d.categories).reduce((acc, cat) => {
-      acc[cat] = (acc[cat] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>)
-  ).map(([id, count]) => ({ id, label: id, count }));
+  const categories = useMemo(
+    () =>
+      Object.entries(
+        designs.flatMap(d => d.categories).reduce((acc, cat) => {
+          acc[cat] = (acc[cat] || 0) + 1;
+          return acc;
+        }, {} as Record<string, number>)
+      ).map(([id, count]) => ({ id, label: id, count })),
+    []
+  );
 
-  const filteredDesigns = designs.filter(d => {
-    const matchesSearch = !searchValue || d.name.toLowerCase().includes(searchValue.toLowerCase());
-    const matchesCategory = !selectedCategory || d.categories.includes(selectedCategory);
-    return matchesSearch && matchesCategory;
-  });
+  const filteredDesigns = useMemo(
+    () =>
+      designs.filter(d => {
+        const matchesSearch = !searchValue || d.name.toLowerCase().includes(searchValue.toLowerCase());
+        const matchesCategory = !selectedCategory || d.categories.includes(selectedCategory);
+        return matchesSearch && matchesCategory;
+      }),
+    [searchValue, selectedCategory]
+  );
 
   return (
     <section id="catalog" className="px-4 py-16 sm:py-20">
