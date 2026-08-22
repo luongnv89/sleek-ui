@@ -11,6 +11,7 @@ import { TokenTable } from '@/components/TokenTable';
 import designs from '@/data/designs';
 import type { TransformedDesign, DesignData } from '@/types/design';
 import { useDesign } from '@/context/DesignContext';
+import { useClipboard } from '@/hooks/useClipboard';
 
 const AGENT_PROMPT_TEMPLATE = (designUrl: string) => `Fetch the design system at: ${designUrl}
 
@@ -76,18 +77,12 @@ export function DesignDetail() {
   const [design, setDesign] = useState<TransformedDesign | null>(null);
   const [designData, setDesignData] = useState<DesignData | null>(null);
   const [showPreviewDark, setShowPreviewDark] = useState(false);
-  const [isCopied, setIsCopied] = useState<string | null>(null);
   const { appliedDesign, applyDesign, resetDesign } = useDesign();
   const isApplied = appliedDesign?.slug === slug;
-
-  const handleCopy = (text: string, type: string) => {
-    navigator.clipboard.writeText(text).then(() => {
-      setIsCopied(type);
-      setTimeout(() => setIsCopied(null), 2000);
-    }).catch(() => {
-      // clipboard may be blocked (permissions, insecure context); degrade silently
-    });
-  };
+  const { copied: isCopied, copy: handleCopy } = useClipboard<'agentPrompt' | null>(
+    'agentPrompt',
+    null
+  );
 
   useEffect(() => {
     if (!slug) return;
@@ -181,7 +176,7 @@ export function DesignDetail() {
             </div>
             <Button
               size="sm"
-              onClick={() => handleCopy(agentPrompt, 'agentPrompt')}
+              onClick={() => handleCopy(agentPrompt)}
               className="shrink-0 gap-2"
             >
               {isCopied === 'agentPrompt' ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}

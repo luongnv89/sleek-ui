@@ -59,4 +59,27 @@ describe('CopyButton (#120)', () => {
     await Promise.resolve();
     expect(writeText).toHaveBeenCalledWith('hello');
   });
+
+  it('does not update state after unmount mid-feedback (#132)', async () => {
+    jest.useFakeTimers();
+    mockClipboard(() => Promise.resolve());
+    const warn = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const clearSpy = jest.spyOn(global, 'clearTimeout');
+
+    const { unmount } = render(<CopyButton text="hello" />);
+    await clickAsync(screen.getByRole('button', { name: 'Copy to clipboard' }));
+    expect(
+      screen.getByRole('button', { name: 'Text copied to clipboard' })
+    ).toBeInTheDocument();
+
+    // Unmount while the copied-feedback reset timer is still pending.
+    unmount();
+
+    act(() => {
+      jest.advanceTimersByTime(5000);
+    });
+
+    expect(clearSpy).toHaveBeenCalled();
+    expect(warn.mock.calls.join('\n')).not.toMatch(/setState|not wrapped in act/i);
+  });
 });

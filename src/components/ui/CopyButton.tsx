@@ -1,6 +1,7 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { Check, Copy, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useClipboard } from '@/hooks/useClipboard';
 import { CopyButtonProps } from '@/types/components';
 
 export const CopyButton = ({
@@ -8,31 +9,13 @@ export const CopyButton = ({
   onCopy,
   className,
   iconClassName,
-  copyTimeout = 2000,
 }: CopyButtonProps) => {
-  const [copied, setCopied] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { copied, error, copy } = useClipboard(true, false);
+
   const handleCopy = useCallback(async () => {
-    if (!text) {
-      setError('Cannot copy empty text');
-      return;
-    }
-
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setError(null);
-      onCopy?.(true);
-
-      setTimeout(() => {
-        setCopied(false);
-      }, copyTimeout);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to copy text');
-      setCopied(false);
-      onCopy?.(false);
-    }
-  }, [text, copyTimeout, onCopy]);
+    const ok = await copy(text);
+    onCopy?.(ok);
+  }, [text, copy, onCopy]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {

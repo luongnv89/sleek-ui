@@ -1,6 +1,7 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Check, Copy, Moon, Sun } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { useClipboard } from '../hooks/useClipboard';
 import { DesignTokens } from '../types/design';
 
 interface TokenTableProps {
@@ -12,39 +13,6 @@ interface TokenTableProps {
    * controls. The local toggle button can still override afterwards.
    */
   previewDark?: boolean;
-}
-
-/**
- * Copy-to-clipboard with transient "copied" feedback that is cancelled on
- * unmount. `flag` is the value written to state while copied (a boolean for the
- * single-target pills, or `'l' | 'd'` for the two-target swatches); `reset` is
- * the value it returns to. The pending timer is tracked in a ref and cleared on
- * unmount so the timeout never fires `setState` on an unmounted component.
- */
-function useCopyFeedback<T>(flag: T, reset: T) {
-  const [copied, setCopied] = useState<T>(reset);
-  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-
-  useEffect(() => () => clearTimeout(timer.current), []);
-
-  const copy = useCallback(
-    (value?: string, copiedFlag: T = flag) => {
-      if (!value || !navigator.clipboard) return;
-      navigator.clipboard
-        .writeText(value)
-        .then(() => {
-          setCopied(copiedFlag);
-          clearTimeout(timer.current);
-          timer.current = setTimeout(() => setCopied(reset), 1500);
-        })
-        .catch(() => {
-          /* clipboard unavailable (insecure context / denied) — fail silently */
-        });
-    },
-    [flag, reset]
-  );
-
-  return [copied, copy] as const;
 }
 
 /**
@@ -63,7 +31,7 @@ function CopyPill({
   className?: string;
   swatch?: React.ReactNode;
 }) {
-  const [copied, copy] = useCopyFeedback(true, false);
+  const { copied, copy } = useClipboard(true, false);
 
   return (
     <button
@@ -126,7 +94,7 @@ function ColorSwatch({
   previewDark: boolean;
 }) {
   const previewValue = (previewDark ? darkValue : lightValue) || lightValue || darkValue || '';
-  const [copied, copy] = useCopyFeedback<'l' | 'd' | null>('l', null);
+  const { copied, copy } = useClipboard<'l' | 'd' | null>('l', null);
 
   return (
     <div className="flex flex-col gap-0.5 rounded-lg border border-border bg-card p-1.5">
