@@ -6,6 +6,7 @@ const {
   hexToHsl,
   extractColorsFromSection,
   getHslLightness,
+  pickThemeColors,
   convertToSleekUi
 } = require('../scripts/ingest-designs');
 
@@ -160,6 +161,47 @@ describe('ingest-designs helpers', () => {
       expect(design.tokens.colors.light.primary).toBe('245 90% 73%');
       expect(design.tokens.colors.dark.background).toBe('240 10% 8%');
       expect(design.tokens.colors.light.background).toBe('0 0% 100%');
+    });
+  });
+
+  describe('pickThemeColors purity', () => {
+    test('selects darkest/lightest via sorted copies without mutating its input', () => {
+      const colors = {
+        'sky blue': hexToHsl('#38bdf8'),
+        'near black': hexToHsl('#0a0a0a'),
+        'pure white': '0 0% 100%',
+        'brand green': hexToHsl('#22c55e')
+      };
+      const snapshot = JSON.stringify(colors);
+
+      const picked = pickThemeColors(colors);
+
+      expect(picked.primary).toBe(hexToHsl('#22c55e'));
+      expect(picked.darkBg).toBe(hexToHsl('#0a0a0a'));
+      expect(picked.lightBg).toBe('0 0% 100%');
+      expect(JSON.stringify(colors)).toBe(snapshot);
+    });
+
+    test('does not mutate a frozen colors object (no in-place sort)', () => {
+      const colors = Object.freeze({
+        'mid gray': '240 5% 65%',
+        'deep navy': '222 47% 11%',
+        'cream': '48 33% 97%'
+      });
+
+      expect(() => pickThemeColors(colors)).not.toThrow();
+      const picked = pickThemeColors(colors);
+      expect(picked.darkBg).toBe('222 47% 11%');
+      expect(picked.lightBg).toBe('48 33% 97%');
+      expect(Object.isFrozen(colors)).toBe(true);
+    });
+
+    test('falls back to defaults on an empty palette without throwing', () => {
+      const picked = pickThemeColors({});
+      expect(picked.primary).toBe('245 90% 73%');
+      expect(picked.darkBg).toBe('240 10% 8%');
+      expect(picked.lightBg).toBe('0 0% 100%');
+      expect(picked.fg).toBe('240 10% 3.9%');
     });
   });
 });
