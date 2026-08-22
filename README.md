@@ -223,6 +223,24 @@ Validate design JSON files:
 npm run validate:designs
 ```
 
+### Pre-Commit Hooks
+
+Secret scanning and whitespace lint run automatically on every commit via
+[Husky](https://typicode.github.io/husky/) (activated by the `prepare` script on
+`npm install` — no network or extra tooling required). The hooks live in
+`.husky/pre-commit` and call `scripts/hooks/check-secrets.sh` (blocks commits
+containing secret-bearing filenames or real API-key values) and
+`scripts/hooks/check-whitespace.sh` (blocks trailing whitespace / missing
+trailing newlines).
+
+### Content Security Policy
+
+GitHub Pages cannot set custom HTTP headers, so `index.html` and
+`public/404.html` carry a restrictive meta CSP. Its style/font sources mirror
+the font-host whitelist in `src/context/DesignContext.tsx`
+(`fonts.googleapis.com`, `fonts.gstatic.com`); this invariant is enforced by
+`tests/csp.test.js`.
+
 ### Project Structure
 
 ```

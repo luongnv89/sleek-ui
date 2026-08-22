@@ -5,7 +5,7 @@ import { safeSetItem, safeRemoveItem } from '@/lib/safeStorage';
 const STORAGE_KEY = 'sleek-ui:applied-design';
 const SAFE_TOKEN_VALUE = /^[A-Za-z0-9 _%.,'"#+/-]+$/;
 const SAFE_TOKEN_KEY = /^[A-Za-z0-9_-]+$/;
-const ALLOWED_FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
+export const ALLOWED_FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 
 interface AppliedDesign {
   slug: string;

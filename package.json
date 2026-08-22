@@ -19,13 +19,14 @@
     "@babel/preset-typescript": "^7.29.7",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
-    "@testing-library/user-event": "^14.6.1",
+    "@testing-library/user-event": "^14.6.6",
     "@vitejs/plugin-react": "^4.7.0",
-    "ajv": "^8.18.0",
+    "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
-    "autoprefixer": "^10.4.27",
+    "autoprefixer": "^10.5.4",
     "babel-jest": "^30.4.1",
-    "jest": "^30.3.0",
+    "husky": "^9.1.7",
+    "jest": "^30.4.2",
     "jest-environment-jsdom": "^30.4.1",
     "postcss": "^8.5.8",
     "tailwindcss": "^3.4.19",
@@ -36,7 +37,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "jest",
-    "validate:designs": "node scripts/validate-designs.js"
+    "validate:designs": "node scripts/validate-designs.js",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
