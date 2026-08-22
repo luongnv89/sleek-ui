@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import { DesignProvider, useDesign } from './DesignContext';
-import type { DesignData } from '@/types/design';
+import type { DesignData, TransformedDesign } from '@/types/design';
 
 const baseDesign: DesignData = {
   $schema: 'https://luongnv.com/sleek-ui/schema/design.v1.json',
@@ -36,9 +36,24 @@ function makeDesign(overrides: Record<string, unknown>): DesignData {
   return merged;
 }
 
+function toTransformed(data: DesignData): TransformedDesign {
+  return {
+    slug: 'test-slug',
+    name: 'Test Design',
+    categories: [],
+    colors: { primary: '', secondary: '' },
+    defaultMode: 'light',
+    jsonUrl: '',
+    thumbnailUrl: '',
+    detailUrl: '',
+    description: '',
+    rawData: data,
+  };
+}
+
 function ApplyButton({ data }: { data: DesignData }) {
   const { applyDesign } = useDesign();
-  return <button onClick={() => applyDesign('test-slug', 'Test Design', data)}>apply</button>;
+  return <button onClick={() => applyDesign(toTransformed(data))}>apply</button>;
 }
 
 function ResetButton() {

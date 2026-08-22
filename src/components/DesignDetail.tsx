@@ -1,76 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Check, Copy, Moon, Paintbrush, RotateCcw, Sun } from 'lucide-react';
+import { ArrowLeft, Moon, Paintbrush, RotateCcw, Sun } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CopyButton } from '@/components/ui/CopyButton';
 import { TokenTable } from '@/components/TokenTable';
+import { AgentPromptPanel } from '@/components/AgentPromptPanel';
+import { PreviewSection } from '@/components/PreviewSection';
 import designs from '@/data/designs';
 import type { TransformedDesign, DesignData } from '@/types/design';
 import { useDesign } from '@/context/DesignContext';
-import { useClipboard } from '@/hooks/useClipboard';
-
-const AGENT_PROMPT_TEMPLATE = (designUrl: string) => `Fetch the design system at: ${designUrl}
-
-Read the JSON, then follow the steps in agentInstructions.steps to apply this design system to my project:
-
-1. Set CSS custom properties from tokens.colors on :root (light) and .dark (dark mode)
-2. Set --radius from tokens.radius.default
-3. Load fonts by adding the Google Fonts URL from fonts.urls as a <link> tag
-4. Set font-family from tokens.typography.fontFamily
-5. Apply component styles from the components field (Tailwind class names for shadcn projects)
-6. Ensure focus states match accessibility.focusRing specification
-7. Test both light and dark modes
-
-Target framework: Tailwind CSS + shadcn/ui. For other frameworks, map token names to CSS custom properties semantically.`;
-
-function ButtonPreview() {
-  return (
-    <div className="flex items-center gap-2">
-      <Button>Default</Button>
-      <Button variant="secondary">Secondary</Button>
-      <Button variant="ghost">Ghost</Button>
-    </div>
-  );
-}
-
-function InputPreview() {
-  return (
-    <div className="max-w-md">
-      <Input placeholder="Text input..." />
-    </div>
-  );
-}
-
-function BadgePreview() {
-  return (
-    <div className="flex items-center gap-2">
-      <Badge variant="default">Default</Badge>
-      <Badge variant="secondary">Secondary</Badge>
-      <Badge variant="outline">Outline</Badge>
-      <Badge variant="accent">Accent</Badge>
-    </div>
-  );
-}
-
-function CardPreview() {
-  return (
-    <Card className="w-full max-w-md">
-      <CardHeader>
-        <CardTitle>Card Title</CardTitle>
-        <CardDescription>Card description text</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <p className="text-sm text-muted-foreground">
-          This is the card content area. It can contain text, images, or other components.
-        </p>
-      </CardContent>
-    </Card>
-  );
-}
 
 export function DesignDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -79,12 +21,11 @@ export function DesignDetail() {
   const [showPreviewDark, setShowPreviewDark] = useState(false);
   const { appliedDesign, applyDesign, resetDesign } = useDesign();
   const isApplied = appliedDesign?.slug === slug;
-  const { copied: isCopied, copy: handleCopy } = useClipboard<'agentPrompt' | null>(
-    'agentPrompt',
-    null
-  );
 
   useEffect(() => {
+    setDesign(null);
+    setDesignData(null);
+
     if (!slug) return;
 
     const foundDesign = designs.find((d) => d.slug === slug);
@@ -95,9 +36,9 @@ export function DesignDetail() {
   }, [slug]);
 
   useEffect(() => {
-    if (design) {
-      document.title = `${design.name} — sleek-ui`;
-    }
+    document.title = design
+      ? `${design.name} — sleek-ui`
+      : 'sleek-ui — Professional design systems for AI agents';
   }, [design]);
 
   if (!design) {
@@ -114,9 +55,6 @@ export function DesignDetail() {
       </div>
     );
   }
-
-  const designUrl = design.jsonUrl;
-  const agentPrompt = AGENT_PROMPT_TEMPLATE(designUrl);
 
   return (
     <div className={cn('min-h-screen bg-background', showPreviewDark && 'dark')}>
@@ -156,7 +94,7 @@ export function DesignDetail() {
               </Button>
             ) : (
               <Button
-                onClick={() => design && designData && applyDesign(design.slug, design.name, designData as unknown as DesignData)}
+                onClick={() => applyDesign(design)}
                 className="gap-2"
                 aria-label="Apply this design to the website"
               >
@@ -168,25 +106,7 @@ export function DesignDetail() {
         </div>
 
         {/* Agent Prompt — primary action */}
-        <div className="mb-10 rounded-xl border-2 border-primary/30 bg-primary/5 p-6">
-          <div className="mb-3 flex items-center justify-between gap-4">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-widest text-primary">Agent Prompt</p>
-              <p className="mt-0.5 text-sm text-muted-foreground">Copy and paste this into Claude Code, Cursor, or any AI agent</p>
-            </div>
-            <Button
-              size="sm"
-              onClick={() => handleCopy(agentPrompt)}
-              className="shrink-0 gap-2"
-            >
-              {isCopied === 'agentPrompt' ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-              {isCopied === 'agentPrompt' ? 'Copied!' : 'Copy'}
-            </Button>
-          </div>
-          <pre className="whitespace-pre-wrap rounded-lg bg-background/80 p-4 text-sm font-mono text-foreground/90 border border-border">
-            {agentPrompt}
-          </pre>
-        </div>
+        <AgentPromptPanel designUrl={design.jsonUrl} />
 
         {/* Design Info */}
         <div className="mb-8 grid gap-6 md:grid-cols-2">
@@ -221,54 +141,7 @@ export function DesignDetail() {
         </div>
 
         {/* Component Previews */}
-        <section className="mb-12">
-          <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">
-            Component Previews
-          </h2>
-
-          {/* Preview Container */}
-          <div className={cn('mt-6 space-y-6', showPreviewDark && 'dark')}>
-            <Card>
-              <CardHeader>
-                <CardTitle>Buttons</CardTitle>
-                <CardDescription>Default, Secondary, and Ghost variants</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ButtonPreview />
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Input</CardTitle>
-                <CardDescription>Text input field</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <InputPreview />
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Badges</CardTitle>
-                <CardDescription>Default, Secondary, Outline, and Accent variants</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <BadgePreview />
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Card</CardTitle>
-                <CardDescription>Card with title, description, and content</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <CardPreview />
-              </CardContent>
-            </Card>
-          </div>
-        </section>
+        <PreviewSection previewDark={showPreviewDark} />
 
         {/* Token Table */}
         <section className="mb-12">

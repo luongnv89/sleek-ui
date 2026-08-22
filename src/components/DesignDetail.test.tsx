@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
-import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { MemoryRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import { DesignDetail } from './DesignDetail';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { DesignProvider } from '@/context/DesignContext';
@@ -76,7 +76,8 @@ describe('DesignDetail characterization (#117)', () => {
     renderDetail('does-not-exist');
     expect(screen.getByText('Design not found')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Back to Catalog/i })).toHaveAttribute('href', '/');
-    expect(document.title).not.toContain('sleek-ui');
+    // #129: an unmatched slug resets the title to the app default instead of leaving it empty
+    expect(document.title).toBe('sleek-ui — Professional design systems for AI agents');
   });
 
   it('renders the matched design and sets document.title from its name', () => {
@@ -155,5 +156,36 @@ describe('DesignDetail clipboard rejection (#123)', () => {
       process.removeListener('unhandledRejection', onUnhandled);
     }
     expect(unhandled).toEqual([]);
+  });
+});
+
+describe('DesignDetail stale-design navigation (#129)', () => {
+  function NavigateProbe({ to }: { to: string }) {
+    const navigate = useNavigate();
+    return <button onClick={() => navigate(to)}>navigate-probe</button>;
+  }
+
+  it('resets to the not-found branch with a corrected title on valid → invalid navigation', () => {
+    render(
+      <ThemeProvider>
+        <DesignProvider>
+          <MemoryRouter initialEntries={['/designs/test-design']}>
+            <NavigateProbe to="/designs/does-not-exist" />
+            <Routes>
+              <Route path="/designs/:slug" element={<DesignDetail />} />
+            </Routes>
+          </MemoryRouter>
+        </DesignProvider>
+      </ThemeProvider>,
+    );
+
+    expect(screen.getByRole('heading', { level: 1, name: 'Test Design' })).toBeInTheDocument();
+    expect(document.title).toBe('Test Design — sleek-ui');
+
+    fireEvent.click(screen.getByRole('button', { name: 'navigate-probe' }));
+
+    expect(screen.getByText('Design not found')).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { level: 1, name: 'Test Design' })).not.toBeInTheDocument();
+    expect(document.title).toBe('sleek-ui — Professional design systems for AI agents');
   });
 });

@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback, useRef, type ReactNode } from 'react';
-import type { DesignData } from '@/types/design';
+import type { DesignData, TransformedDesign } from '@/types/design';
 import { safeSetItem, safeRemoveItem } from '@/lib/safeStorage';
 
 const STORAGE_KEY = 'sleek-ui:applied-design';
@@ -18,7 +18,7 @@ interface StoredDesignEntry extends AppliedDesign {
 
 interface DesignContextValue {
   appliedDesign: AppliedDesign | null;
-  applyDesign: (slug: string, name: string, data: DesignData) => void;
+  applyDesign: (design: TransformedDesign) => void;
   resetDesign: () => void;
 }
 
@@ -168,13 +168,14 @@ export function DesignProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const applyDesign = useCallback((slug: string, name: string, data: DesignData) => {
+  const applyDesign = useCallback((design: TransformedDesign) => {
+    const data = design.rawData;
     if (!isDesignSafe(data)) return;
     const css = buildCssVars(data);
     upsertStyle('sleek-applied-design', css);
     loadFonts(data);
 
-    const entry: AppliedDesign = { slug, name };
+    const entry: AppliedDesign = { slug: design.slug, name: design.name };
     setAppliedDesign(entry);
     safeSetItem(STORAGE_KEY, JSON.stringify({ ...entry, data }));
     safeSetItem(STORAGE_KEY + ':css', css);
