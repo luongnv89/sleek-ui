@@ -62,7 +62,7 @@ export function CatalogSection() {
             <p>No designs match your search.</p>
             <button
               onClick={() => { setSearchValue(''); setSelectedCategory(null); }}
-              className="text-sm text-[#00FF41] hover:underline"
+              className="text-sm text-brand hover:underline"
             >
               Clear filters
             </button>

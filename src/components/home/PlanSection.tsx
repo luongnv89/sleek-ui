@@ -51,7 +51,7 @@ export function PlanSection() {
           {AGENT_STEPS.map(step => (
             <div key={step.number} className="relative rounded-xl border border-border bg-background p-6 shadow-xs flex flex-col">
               <div className="mb-4 flex items-center gap-3">
-                <span className="text-xs font-mono font-bold text-[#00FF41]">{step.number}</span>
+                <span className="text-xs font-mono font-bold text-brand">{step.number}</span>
                 <div className="text-muted-foreground">{step.icon}</div>
               </div>
               <h3 className="font-semibold text-base">{step.title}</h3>

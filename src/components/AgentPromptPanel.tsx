@@ -1,5 +1,5 @@
 import { Check, Copy } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { useClipboard } from '@/hooks/useClipboard';
 import { buildAgentPrompt } from '@/lib/agentPrompt';
 

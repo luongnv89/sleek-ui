@@ -3,6 +3,11 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  /* Sleek-ui brand green — single source of truth for the accent color. */
+  --color-brand: #00FF41;
+  --color-brand-hover: #00e639;
+  --color-brand-active: #00cc33;
+
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));

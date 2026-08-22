@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { X, Paintbrush } from 'lucide-react';
 import { useDesign } from '@/context/DesignContext';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 
 export function AppliedDesignBanner() {
   const { appliedDesign, resetDesign } = useDesign();

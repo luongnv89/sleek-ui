@@ -1,6 +1,14 @@
 import { Search, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { SearchBarProps } from '@/types/components';
+
+export interface SearchBarProps {
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  className?: string;
+  inputClassName?: string;
+  clearButtonClassName?: string;
+}
 
 export const SearchBar = ({
   value,

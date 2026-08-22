@@ -15,7 +15,7 @@ export function HeroSection() {
         }}
       />
       {/* Glow */}
-      <div className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 h-72 w-72 rounded-full bg-[#00FF41]/10 blur-3xl" />
+      <div className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 h-72 w-72 rounded-full bg-brand/10 blur-3xl" />
 
       <div className="relative mx-auto max-w-4xl space-y-6 sm:space-y-8">
         <div className="flex justify-center">
@@ -25,7 +25,7 @@ export function HeroSection() {
         <div className="space-y-4">
           <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
             Give your AI agent{' '}
-            <span className="text-[#00FF41]">good taste</span>
+            <span className="text-brand">good taste</span>
           </h1>
           <p className="mx-auto max-w-2xl text-lg text-muted-foreground sm:text-xl">
             <strong className="text-foreground">{designs.length}+ production-grade design systems</strong>, one URL, zero Figma.
@@ -47,7 +47,7 @@ export function HeroSection() {
         <div className="flex flex-col items-center gap-2 pt-2">
           <button
             onClick={() => document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' })}
-            className="inline-flex items-center justify-center rounded-md bg-[#00FF41] px-6 py-3 text-sm font-semibold text-black shadow hover:bg-[#00e639] active:bg-[#00cc33] transition-colors"
+            className="inline-flex items-center justify-center rounded-md bg-brand px-6 py-3 text-sm font-semibold text-black shadow hover:bg-brand-hover active:bg-brand-active transition-colors"
           >
             Browse {designs.length} Designs
           </button>

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
-import { ThemeToggle } from './theme-toggle'
+import { ThemeToggle } from './ThemeToggle'
 import { LogoMark } from './LogoMark'
 import { useTheme } from '@/context/ThemeContext'
 
@@ -11,7 +11,7 @@ export function Header() {
 
   const closeMenu = () => setIsMenuOpen(false)
 
-  const navLinkClass = "text-sm font-medium text-foreground hover:text-[#00FF41] transition-colors"
+  const navLinkClass = "text-sm font-medium text-foreground hover:text-brand transition-colors"
   const navLinkMutedClass = "text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
 
   return (
@@ -21,7 +21,7 @@ export function Header() {
         <Link to="/" className="flex items-center gap-2 font-bold text-xl tracking-tight" onClick={closeMenu}>
           <LogoMark className="h-8 w-8 text-foreground" />
           <span className="bg-clip-text text-transparent bg-linear-to-r from-foreground to-muted-foreground">
-            sleek<span className="text-[#00FF41]">ui</span>
+            sleek<span className="text-brand">ui</span>
           </span>
         </Link>
 
@@ -63,7 +63,7 @@ export function Header() {
           <nav className="container mx-auto flex flex-col px-4 py-4 gap-1">
             <Link
               to="/"
-              className="block py-2.5 text-sm font-medium text-foreground hover:text-[#00FF41]"
+              className="block py-2.5 text-sm font-medium text-foreground hover:text-brand"
               onClick={closeMenu}
             >
               Catalog
@@ -88,7 +88,7 @@ export function Header() {
             </a>
             <div className="pt-2 mt-1 border-t">
               <button
-                className="inline-flex w-full items-center justify-center rounded-md bg-[#00FF41] px-4 py-2 text-sm font-semibold text-black hover:bg-[#00e639] transition-colors"
+                className="inline-flex w-full items-center justify-center rounded-md bg-brand px-4 py-2 text-sm font-semibold text-black hover:bg-brand-hover transition-colors"
                 onClick={() => {
                   document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' })
                   closeMenu()

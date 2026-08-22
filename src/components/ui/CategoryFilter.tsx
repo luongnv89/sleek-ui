@@ -1,5 +1,13 @@
 import { cn } from '@/lib/utils';
-import { CategoryFilterProps } from '@/types/components';
+
+export interface CategoryFilterProps {
+  categories: { id: string; label: string; count: number }[];
+  selected: string | null;
+  onChange: (id: string | null) => void;
+  className?: string;
+  pillClassName?: string;
+  badgeClassName?: string;
+}
 
 export const CategoryFilter = ({
   categories,

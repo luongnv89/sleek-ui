@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Moon, Paintbrush, RotateCcw, Sun } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Badge } from '@/components/ui/Badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { CopyButton } from '@/components/ui/CopyButton';
 import { TokenTable } from '@/components/TokenTable';
 import { AgentPromptPanel } from '@/components/AgentPromptPanel';
@@ -156,7 +156,11 @@ export function DesignDetail() {
 
           {designData && designData.tokens ? (
             <div className={cn('mt-4', showPreviewDark && 'dark')}>
-              <TokenTable tokens={designData.tokens} previewDark={showPreviewDark} />
+              <TokenTable
+                tokens={designData.tokens}
+                previewDark={showPreviewDark}
+                onPreviewDarkChange={setShowPreviewDark}
+              />
             </div>
           ) : (
             <div className="mt-6 rounded-lg border border-dashed border-border p-8 text-center">
