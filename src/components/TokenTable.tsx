@@ -70,7 +70,7 @@ function CopyPill({
       type="button"
       onClick={() => copy(value)}
       className={cn(
-        'group flex w-full items-center gap-2 rounded-md border border-border bg-card px-2 py-1.5 text-left transition-colors hover:border-ring/40 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
+        'group flex w-full items-center gap-2 rounded-md border border-border bg-card px-2 py-1.5 text-left transition-colors hover:border-ring/40 hover:bg-accent focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
         className
       )}
       aria-label={`Copy ${label ? `${label} ` : ''}value ${value}`}
@@ -132,7 +132,7 @@ function ColorSwatch({
     <div className="flex flex-col gap-0.5 rounded-lg border border-border bg-card p-1.5">
       <div className="flex items-center gap-1.5">
         <span
-          className="h-6 w-6 shrink-0 rounded-md border border-border shadow-sm"
+          className="h-6 w-6 shrink-0 rounded-md border border-border shadow-xs"
           style={{ backgroundColor: `hsl(${previewValue})` }}
           aria-hidden="true"
         />
@@ -145,7 +145,7 @@ function ColorSwatch({
           <button
             type="button"
             onClick={() => copy(lightValue, 'l')}
-            className="group flex min-h-[24px] items-center justify-between gap-1 rounded px-1 py-1 transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="group flex min-h-[24px] items-center justify-between gap-1 rounded px-1 py-1 transition-colors hover:bg-accent focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
             aria-label={`Copy light value for ${name}: ${lightValue}`}
             title={`Copy light "${lightValue}"`}
           >
@@ -164,7 +164,7 @@ function ColorSwatch({
           <button
             type="button"
             onClick={() => copy(darkValue, 'd')}
-            className="group flex min-h-[24px] items-center justify-between gap-1 rounded px-1 py-1 transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="group flex min-h-[24px] items-center justify-between gap-1 rounded px-1 py-1 transition-colors hover:bg-accent focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
             aria-label={`Copy dark value for ${name}: ${darkValue}`}
             title={`Copy dark "${darkValue}"`}
           >
@@ -222,7 +222,7 @@ export function TokenTable({ tokens, className, previewDark: previewDarkProp }: 
           <button
             type="button"
             onClick={() => setPreviewDark((prev) => !prev)}
-            className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-2.5 py-1 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            className="inline-flex items-center gap-1.5 rounded-md border border-border bg-background px-2.5 py-1 text-xs font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             aria-pressed={previewDark}
             aria-label="Toggle swatch preview between light and dark mode"
           >

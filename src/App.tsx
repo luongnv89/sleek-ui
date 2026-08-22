@@ -227,7 +227,7 @@ function HomePageInner() {
 
           <div className="grid gap-5 sm:gap-6 sm:grid-cols-3">
             {AGENT_STEPS.map(step => (
-              <div key={step.number} className="relative rounded-xl border border-border bg-background p-6 shadow-sm flex flex-col">
+              <div key={step.number} className="relative rounded-xl border border-border bg-background p-6 shadow-xs flex flex-col">
                 <div className="mb-4 flex items-center gap-3">
                   <span className="text-xs font-mono font-bold text-[#00FF41]">{step.number}</span>
                   <div className="text-muted-foreground">{step.icon}</div>
@@ -239,7 +239,7 @@ function HomePageInner() {
           </div>
 
           {/* Prompt example */}
-          <div className="mt-8 sm:mt-10 rounded-xl border border-border bg-background p-5 sm:p-6 shadow-sm">
+          <div className="mt-8 sm:mt-10 rounded-xl border border-border bg-background p-5 sm:p-6 shadow-xs">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
               <p className="text-sm font-medium text-muted-foreground">Copy this prompt. Paste into Claude, Cursor, or any agent.</p>
               <span className="text-[10px] uppercase tracking-widest text-muted-foreground/70">One click</span>

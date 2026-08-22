@@ -20,7 +20,7 @@ export function Header() {
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 font-bold text-xl tracking-tight" onClick={closeMenu}>
           <LogoMark className="h-8 w-8 text-foreground" />
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-foreground to-muted-foreground">
+          <span className="bg-clip-text text-transparent bg-linear-to-r from-foreground to-muted-foreground">
             sleek<span className="text-[#00FF41]">ui</span>
           </span>
         </Link>

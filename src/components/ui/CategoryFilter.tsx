@@ -23,7 +23,7 @@ export const CategoryFilter = ({
         aria-selected={isAllSelected}
         onClick={() => handleCategoryClick(null)}
         className={cn(
-          'inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+          'inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
           isAllSelected
             ? 'bg-primary text-primary-foreground hover:bg-primary/90'
             : 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
@@ -46,7 +46,7 @@ export const CategoryFilter = ({
             aria-selected={isSelected}
             onClick={() => handleCategoryClick(isSelected ? null : category.id)}
             className={cn(
-              'inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+              'inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
               isSelected
                 ? 'bg-primary text-primary-foreground hover:bg-primary/90'
                 : 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
