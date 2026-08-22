@@ -1,6 +1,13 @@
 const { EventEmitter } = require('events');
+const fs = require('fs');
+const os = require('os');
+const path = require('path');
 const {
+  DESIGN_MD_LIST,
+  FETCH_CONCURRENCY,
   fetchRawFile,
+  mapWithConcurrency,
+  ingestDesigns,
   parseDesignMd,
   expandHexShorthand,
   hexToHsl,
@@ -46,6 +53,32 @@ A clean, minimal theme for testing.
 - **Near Black** (\`#0a0a0a\`): heading text
 - **Pure White** (\`#fff\`): page background
 `;
+
+// Instrumented transport: records when each request starts and defers its
+// response until `gate` resolves, so tests can observe overlapping requests.
+function makeInstrumentedTransport(state, { gate = Promise.resolve(), body = FIXTURE_DESIGN_MD } = {}) {
+  return (url, onResponse) => {
+    state.started.push(url);
+    state.active = (state.active || 0) + 1;
+    state.maxConcurrent = Math.max(state.maxConcurrent || 0, state.active);
+    const req = new EventEmitter();
+    req.setTimeout = () => {};
+    process.nextTick(async () => {
+      await gate;
+      const res = new EventEmitter();
+      res.statusCode = 200;
+      res.resume = () => {};
+      res.setEncoding = () => {};
+      onResponse(res);
+      process.nextTick(() => {
+        res.emit('data', body);
+        state.active--;
+        res.emit('end');
+      });
+    });
+    return req;
+  };
+}
 
 describe('ingest-designs helpers', () => {
   describe('fetchRawFile', () => {
@@ -161,6 +194,127 @@ describe('ingest-designs helpers', () => {
       expect(design.tokens.colors.light.primary).toBe('245 90% 73%');
       expect(design.tokens.colors.dark.background).toBe('240 10% 8%');
       expect(design.tokens.colors.light.background).toBe('0 0% 100%');
+    });
+  });
+
+  describe('mapWithConcurrency', () => {
+    test('returns results in input order', async () => {
+      const results = await mapWithConcurrency([3, 1, 2], 2, async (n) => {
+        await new Promise((r) => setTimeout(r, 4 - n));
+        return n * 10;
+      });
+      expect(results).toEqual([30, 10, 20]);
+    });
+
+    test('never exceeds the concurrency cap', async () => {
+      let inFlight = 0;
+      let peak = 0;
+      const items = Array.from({ length: 20 }, (_, i) => i);
+
+      await mapWithConcurrency(items, FETCH_CONCURRENCY, async () => {
+        inFlight++;
+        peak = Math.max(peak, inFlight);
+        await new Promise((r) => setTimeout(r, 1));
+        inFlight--;
+      });
+
+      expect(peak).toBeLessThanOrEqual(FETCH_CONCURRENCY);
+    });
+
+    test('handles an empty list without spawning workers', async () => {
+      const worker = jest.fn();
+      await expect(mapWithConcurrency([], 8, worker)).resolves.toEqual([]);
+      expect(worker).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('ingestDesigns', () => {
+    function makeDesigns(n) {
+      return Array.from({ length: n }, (_, i) => ({
+        slug: `design-${i}`,
+        name: `Design ${i}`,
+        category: 'design'
+      }));
+    }
+
+    function makeTmpDir() {
+      return fs.mkdtempSync(path.join(os.tmpdir(), 'ingest-test-'));
+    }
+
+    test('fetches with overlapping requests capped at FETCH_CONCURRENCY', async () => {
+      const designs = makeDesigns(24);
+      const state = { started: [], startTimes: [] };
+      // Hold every response until all cap-many requests have been started,
+      // proving requests overlap rather than run serially.
+      let release;
+      const gate = new Promise((resolve) => { release = resolve; });
+      const transport = makeInstrumentedTransport(state, { gate });
+      const dir = makeTmpDir();
+
+      const done = ingestDesigns({ designs, designsDir: dir, transport, log: () => {} });
+      await new Promise((r) => setTimeout(r, 10));
+      expect(state.started).toHaveLength(FETCH_CONCURRENCY); // first wave in flight
+      release();
+      const result = await done;
+
+      expect(state.started).toHaveLength(designs.length);
+      expect(result.imported).toBe(designs.length);
+      expect(result.failed).toBe(0);
+      expect(state.maxConcurrent).toBe(FETCH_CONCURRENCY); // requests overlapped
+
+      for (const design of designs) {
+        expect(fs.existsSync(path.join(dir, `${design.slug}.json`))).toBe(true);
+      }
+    });
+
+    test('one failing file neither aborts siblings nor writes garbage', async () => {
+      const designs = [...makeDesigns(4), { slug: 'bad', name: 'Bad', category: 'design' }];
+      const state = { started: [], startTimes: [] };
+      const transport = (url, onResponse) => {
+        if (url.includes('/bad/')) {
+          const req = new EventEmitter();
+          req.setTimeout = () => {};
+          process.nextTick(() => {
+            const res = new EventEmitter();
+            res.statusCode = 404;
+            res.resume = () => {};
+            onResponse(res);
+          });
+          return req;
+        }
+        return makeInstrumentedTransport(state)(url, onResponse);
+      };
+      const dir = makeTmpDir();
+
+      const result = await ingestDesigns({ designs, designsDir: dir, transport, log: () => {} });
+
+      expect(result.failed).toBe(1);
+      expect(result.errors).toEqual([
+        { name: 'Bad', error: expect.stringContaining('status code 404') }
+      ]);
+      expect(result.imported).toBe(4);
+      for (const design of designs.filter((d) => d.slug !== 'bad')) {
+        const file = path.join(dir, `${design.slug}.json`);
+        expect(fs.existsSync(file)).toBe(true);
+        expect(JSON.parse(fs.readFileSync(file, 'utf8')).name).toBe(design.slug);
+      }
+      expect(fs.existsSync(path.join(dir, 'bad.json'))).toBe(false);
+    });
+
+    test('writes to a real directory without touching public/designs', async () => {
+      const state = { started: [], startTimes: [] };
+      const transport = makeInstrumentedTransport(state);
+      const dir = makeTmpDir();
+
+      const result = await ingestDesigns({
+        designs: makeDesigns(2),
+        designsDir: dir,
+        transport,
+        log: () => {}
+      });
+
+      expect(result.imported).toBe(2);
+      expect(fs.readdirSync(dir)).toEqual(['design-0.json', 'design-1.json']);
     });
   });
 
