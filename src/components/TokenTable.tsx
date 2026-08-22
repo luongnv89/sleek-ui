@@ -23,7 +23,7 @@ interface TokenTableProps {
  */
 function useCopyFeedback<T>(flag: T, reset: T) {
   const [copied, setCopied] = useState<T>(reset);
-  const timer = useRef<ReturnType<typeof setTimeout>>();
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => () => clearTimeout(timer.current), []);
 

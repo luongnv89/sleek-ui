@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { CopyButton } from '@/components/ui/CopyButton';
 import { TokenTable } from '@/components/TokenTable';
 import designs from '@/data/designs';
-import type { TransformedDesign } from '@/types/design';
+import type { TransformedDesign, DesignData } from '@/types/design';
 import { useDesign } from '@/context/DesignContext';
 
 const AGENT_PROMPT_TEMPLATE = (designUrl: string) => `Fetch the design system at: ${designUrl}
@@ -74,7 +74,7 @@ function CardPreview() {
 export function DesignDetail() {
   const { slug } = useParams<{ slug: string }>();
   const [design, setDesign] = useState<TransformedDesign | null>(null);
-  const [designData, setDesignData] = useState<Record<string, any> | null>(null);
+  const [designData, setDesignData] = useState<DesignData | null>(null);
   const [showPreviewDark, setShowPreviewDark] = useState(false);
   const [isCopied, setIsCopied] = useState<string | null>(null);
   const { appliedDesign, applyDesign, resetDesign } = useDesign();
@@ -159,7 +159,7 @@ export function DesignDetail() {
               </Button>
             ) : (
               <Button
-                onClick={() => design && designData && applyDesign(design.slug, design.name, designData as any)}
+                onClick={() => design && designData && applyDesign(design.slug, design.name, designData as unknown as DesignData)}
                 className="gap-2"
                 aria-label="Apply this design to the website"
               >

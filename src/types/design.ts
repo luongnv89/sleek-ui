@@ -115,6 +115,7 @@ export interface DesignData {
   version: string;
   description: string;
   categories: string[];
+  defaultMode?: 'light' | 'dark';
   author?: {
     name: string;
     email: string;
