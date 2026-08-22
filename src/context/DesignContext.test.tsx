@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import { DesignProvider, useDesign } from './DesignContext';
 import type { DesignData, TransformedDesign } from '@/types/design';
@@ -284,5 +285,32 @@ describe('DesignContext characterization (#119)', () => {
     } finally {
       consoleError.mockRestore();
     }
+  });
+});
+
+describe('Provider value stability (#137)', () => {
+  it('does not re-render memoized consumers when the provider re-renders with an unchanged applied design', () => {
+    let renders = 0;
+    const Probe = memo(function Probe() {
+      useDesign();
+      renders += 1;
+      return <span data-testid="probe" />;
+    });
+
+    const { rerender } = render(
+      <DesignProvider>
+        <span>unrelated sibling</span>
+        <Probe />
+      </DesignProvider>,
+    );
+    expect(renders).toBe(1);
+
+    rerender(
+      <DesignProvider>
+        <span>another unrelated sibling</span>
+        <Probe />
+      </DesignProvider>,
+    );
+    expect(renders).toBe(1);
   });
 });

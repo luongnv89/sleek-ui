@@ -9,8 +9,9 @@ export function VideoSection() {
         <div className="rounded-xl overflow-hidden border border-border shadow-lg">
           <video
             src="/sleek-ui/promotional-video.mp4"
+            poster="/sleek-ui/promotional-video-poster.svg"
+            preload="metadata"
             controls
-            autoPlay
             muted
             loop
             playsInline

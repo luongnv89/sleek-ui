@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { render, screen, act } from '@testing-library/react';
 import { ThemeProvider, useTheme } from './ThemeContext';
 
@@ -170,5 +171,60 @@ describe('Regression (#68): theme persistence', () => {
     expect(screen.getByText('dark')).toBeInTheDocument();
     expect(document.documentElement.classList.contains('dark')).toBe(true);
     expect(localStorage.getItem('sleek-ui:theme')).toBe('dark');
+  });
+});
+
+describe('Provider value stability (#137)', () => {
+  const Probe = memo(function Probe() {
+    const { toggleTheme } = useTheme();
+    return <span data-testid="probe" data-toggle={typeof toggleTheme} />;
+  });
+
+  it('does not re-render memoized consumers when the provider re-renders with an unchanged theme', () => {
+    let renders = 0;
+    const CountingProbe = memo(function CountingProbe() {
+      renders += 1;
+      return <Probe />;
+    });
+
+    const { rerender } = render(
+      <ThemeProvider>
+        <span>unrelated sibling</span>
+        <CountingProbe />
+      </ThemeProvider>
+    );
+    expect(renders).toBe(1);
+
+    rerender(
+      <ThemeProvider>
+        <span>another unrelated sibling</span>
+        <CountingProbe />
+      </ThemeProvider>
+    );
+    expect(renders).toBe(1);
+  });
+
+  it('keeps the toggleTheme callback identity stable across theme toggles', () => {
+    let firstToggle: unknown;
+    const Capture = memo(function Capture() {
+      const { toggleTheme } = useTheme();
+      if (firstToggle === undefined) firstToggle = toggleTheme;
+      else if (firstToggle !== toggleTheme) throw new Error('toggleTheme identity changed');
+      return <button onClick={toggleTheme}>capture</button>;
+    });
+
+    render(
+      <ThemeProvider>
+        <Capture />
+      </ThemeProvider>
+    );
+    const button = screen.getByRole('button');
+    act(() => {
+      button.click();
+    });
+    act(() => {
+      button.click();
+    });
+    expect(document.documentElement.classList.contains('dark')).toBe(false);
   });
 });
