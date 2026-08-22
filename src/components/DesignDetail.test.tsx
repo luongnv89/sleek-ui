@@ -126,3 +126,34 @@ describe('DesignDetail characterization (#117)', () => {
     ).toBeInTheDocument();
   });
 });
+
+describe('DesignDetail clipboard rejection (#123)', () => {
+  it('degrades silently when the agent-prompt copy is rejected, with no unhandled rejection', async () => {
+    const unhandled: unknown[] = [];
+    const onUnhandled = (reason: unknown) => unhandled.push(reason);
+    process.on('unhandledRejection', onUnhandled);
+
+    const writeText = jest.fn().mockRejectedValue(new Error('clipboard blocked'));
+    Object.defineProperty(navigator, 'clipboard', {
+      value: { writeText },
+      configurable: true,
+    });
+
+    try {
+      renderDetail('test-design');
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button', { name: 'Copy' }));
+      });
+      await Promise.resolve();
+      await Promise.resolve();
+
+      expect(writeText).toHaveBeenCalledTimes(1);
+      expect(screen.queryByRole('button', { name: 'Copied!' })).not.toBeInTheDocument();
+      // page stays interactive after the rejection
+      expect(screen.getByRole('button', { name: 'Copy' })).toBeInTheDocument();
+    } finally {
+      process.removeListener('unhandledRejection', onUnhandled);
+    }
+    expect(unhandled).toEqual([]);
+  });
+});

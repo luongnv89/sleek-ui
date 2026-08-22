@@ -84,6 +84,8 @@ export function DesignDetail() {
     navigator.clipboard.writeText(text).then(() => {
       setIsCopied(type);
       setTimeout(() => setIsCopied(null), 2000);
+    }).catch(() => {
+      // clipboard may be blocked (permissions, insecure context); degrade silently
     });
   };
 
