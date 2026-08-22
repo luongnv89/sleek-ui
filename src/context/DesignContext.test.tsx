@@ -196,3 +196,78 @@ describe('DesignContext blocked storage (#103)', () => {
     }
   });
 });
+
+function AppliedSlug() {
+  const { appliedDesign } = useDesign();
+  return <div>{appliedDesign ? appliedDesign.slug : 'none'}</div>;
+}
+
+describe('DesignContext characterization (#119)', () => {
+  it('removes injected font links together with the stylesheet on reset', () => {
+    render(
+      <DesignProvider>
+        <ApplyButton data={baseDesign} />
+        <ResetButton />
+      </DesignProvider>,
+    );
+    fireEvent.click(screen.getByText('apply'));
+    expect(document.querySelectorAll('link[data-sleek-font]').length).toBeGreaterThan(0);
+    fireEvent.click(screen.getByText('reset'));
+    expect(document.querySelectorAll('link[data-sleek-font]')).toHaveLength(0);
+    expect(getAppliedStyle()).toBeNull();
+  });
+
+  it('clears stored entries on reset so no design survives a reload simulation', () => {
+    const view = render(
+      <DesignProvider>
+        <ApplyButton data={baseDesign} />
+        <ResetButton />
+        <AppliedSlug />
+      </DesignProvider>,
+    );
+    fireEvent.click(screen.getByText('apply'));
+    expect(JSON.parse(localStorage.getItem('sleek-ui:applied-design')!)).toMatchObject({
+      slug: 'test-slug',
+    });
+    fireEvent.click(screen.getByText('reset'));
+    view.unmount();
+
+    render(
+      <DesignProvider>
+        <AppliedSlug />
+      </DesignProvider>,
+    );
+    expect(screen.getByText('none')).toBeInTheDocument();
+    expect(getAppliedStyle()).toBeNull();
+  });
+
+  it('keeps the applied slug visible after a reload simulation', () => {
+    const view = render(
+      <DesignProvider>
+        <ApplyButton data={baseDesign} />
+        <AppliedSlug />
+      </DesignProvider>,
+    );
+    fireEvent.click(screen.getByText('apply'));
+    expect(screen.getByText('test-slug')).toBeInTheDocument();
+    view.unmount();
+
+    render(
+      <DesignProvider>
+        <AppliedSlug />
+      </DesignProvider>,
+    );
+    expect(screen.getByText('test-slug')).toBeInTheDocument();
+  });
+
+  it('throws a descriptive error when useDesign runs outside a DesignProvider', () => {
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+    try {
+      expect(() => render(<AppliedSlug />)).toThrow(
+        'useDesign must be used within DesignProvider',
+      );
+    } finally {
+      consoleError.mockRestore();
+    }
+  });
+});
