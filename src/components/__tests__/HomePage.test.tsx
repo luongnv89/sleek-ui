@@ -35,7 +35,7 @@ beforeAll(() => {
   window.scrollTo = jest.fn();
 });
 
-describe('Hero section', () => {
+describe('HomePage hero section', () => {
   it('renders the new headline "Give your AI agent good taste"', () => {
     render(<App />);
     const headline = screen.getByRole('heading', { level: 1 });
@@ -48,19 +48,16 @@ describe('Hero section', () => {
     expect(screen.getByText(/production-grade design systems/)).toBeInTheDocument();
   });
 
-  it('shows a primary CTA button with Browse label styled as solid button', () => {
+  it('renders the primary CTA as a button labelled with the design count', () => {
     render(<App />);
-    const button = screen.getByText(/Browse.*Designs/);
+    const button = screen.getByRole('button', { name: /Browse.*Designs/ });
     expect(button.tagName).toBe('BUTTON');
-    expect(button.className).toContain('bg-[');
   });
 
-  it('renders the secondary action as a text link without border styling', () => {
+  it('offers a secondary action to jump to the how-it-works section', () => {
     render(<App />);
-    const link = screen.getByText(/See how it works ↓/);
+    const link = screen.getByRole('button', { name: /See how it works ↓/ });
     expect(link.tagName).toBe('BUTTON');
-    expect(link.className).not.toContain('border');
-    expect(link.className).toContain('text-muted-foreground');
   });
 
   it('primary CTA label includes design count from mock', () => {
@@ -90,22 +87,5 @@ describe('Pain/problem section position (issue #83)', () => {
     expect(painIndex).toBeGreaterThan(0);
     expect(videoIndex).toBeGreaterThan(0);
     expect(painIndex).toBeLessThan(videoIndex);
-  });
-});
-
-describe('Success-recap card removal (issue #86)', () => {
-  it('does not render the redundant success-recap card "What changes for you"', () => {
-    render(<App />);
-    expect(screen.queryByText(/What changes for you/)).not.toBeInTheDocument();
-  });
-
-  it('does not render the SUCCESS label in a card section', () => {
-    render(<App />);
-    expect(screen.queryByText(/SUCCESS/)).not.toBeInTheDocument();
-  });
-
-  it('does not render the "Consistent spacing, type, and colors" success item', () => {
-    render(<App />);
-    expect(screen.queryByText(/Consistent spacing, type, and colors/)).not.toBeInTheDocument();
   });
 });

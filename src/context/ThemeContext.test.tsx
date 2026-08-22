@@ -118,3 +118,57 @@ describe('ThemeContext characterization (#118)', () => {
     expect(localStorage.getItem('sleek-ui:theme')).toBe('dark');
   });
 });
+
+describe('Regression (#68): theme persistence', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    document.documentElement.className = '';
+    window.matchMedia = jest.fn().mockReturnValue({ matches: false }) as unknown as typeof window.matchMedia;
+  });
+
+  it('persists a toggled theme to storage under the sleek-ui key', () => {
+    render(
+      <ThemeProvider>
+        <ToggleButton />
+      </ThemeProvider>,
+    );
+    act(() => {
+      screen.getByText('light').click();
+    });
+    expect(localStorage.getItem('sleek-ui:theme')).toBe('dark');
+    expect(document.documentElement.classList.contains('dark')).toBe(true);
+  });
+
+  it('restores the persisted theme when the app remounts (reload simulation)', () => {
+    localStorage.setItem('sleek-ui:theme', 'dark');
+    render(
+      <ThemeProvider>
+        <ToggleButton />
+      </ThemeProvider>,
+    );
+    expect(screen.getByText('dark')).toBeInTheDocument();
+    expect(document.documentElement.classList.contains('dark')).toBe(true);
+  });
+
+  it('round-trips dark mode through storage across unmount/remount', () => {
+    const first = render(
+      <ThemeProvider>
+        <ToggleButton />
+      </ThemeProvider>,
+    );
+    act(() => {
+      screen.getByText('light').click();
+    });
+    first.unmount();
+
+    document.documentElement.className = '';
+    render(
+      <ThemeProvider>
+        <ToggleButton />
+      </ThemeProvider>,
+    );
+    expect(screen.getByText('dark')).toBeInTheDocument();
+    expect(document.documentElement.classList.contains('dark')).toBe(true);
+    expect(localStorage.getItem('sleek-ui:theme')).toBe('dark');
+  });
+});
