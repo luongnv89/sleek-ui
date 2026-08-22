@@ -65,14 +65,26 @@ const DESIGN_MD_LIST = [
   { slug: 'zapier', name: 'Zapier', category: 'developer-tools' },
 ];
 
-async function fetchRawFile(url) {
+const FETCH_TIMEOUT_MS = 30000;
+
+function fetchRawFile(url, httpsGet = https.get.bind(https)) {
   return new Promise((resolve, reject) => {
-    https.get(url, (res) => {
+    const req = httpsGet(url, (res) => {
+      if (res.statusCode !== 200) {
+        res.resume();
+        reject(new Error(`Request failed with status code ${res.statusCode}: ${url}`));
+        return;
+      }
       let data = '';
+      res.setEncoding('utf8');
       res.on('data', (chunk) => data += chunk);
       res.on('end', () => resolve(data));
       res.on('error', reject);
     });
+    req.setTimeout(FETCH_TIMEOUT_MS, () => {
+      req.destroy(new Error(`Request timed out after ${FETCH_TIMEOUT_MS}ms: ${url}`));
+    });
+    req.on('error', reject);
   });
 }
 
@@ -101,10 +113,18 @@ function parseDesignMd(content) {
   return sections;
 }
 
+function expandHexShorthand(hex) {
+  return hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i, (match, r, g, b) => {
+    const prefix = match.startsWith('#') ? '#' : '';
+    return `${prefix}${r}${r}${g}${g}${b}${b}`;
+  });
+}
+
 function hexToHsl(hex) {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  const expanded = expandHexShorthand(hex);
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(expanded);
   if (!result) return hex;
-  
+
   let r = parseInt(result[1], 16) / 255;
   let g = parseInt(result[2], 16) / 255;
   let b = parseInt(result[3], 16) / 255;
@@ -130,7 +150,7 @@ function hexToHsl(hex) {
 function extractColorsFromSection(section) {
   if (!section) return {};
   // Format: - **Color Name** (`#hexcode`): description
-  const colorRegex = /\*\*([^*]+)\*\*\s*\(`#([0-9a-fA-F]{6})`\)/g;
+  const colorRegex = /\*\*([^*]+)\*\*\s*\(`#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})`\)/g;
   const colors = {};
   let match;
 
@@ -152,12 +172,18 @@ function pickColor(colors, ...keywords) {
 }
 
 function getHslLightness(hslStr) {
-  const m = hslStr.match(/(\d+)%\s*$/);
-  return m ? parseInt(m[1]) : 50;
+  const m = hslStr.match(/(\d+(?:\.\d+)?)%\s*$/);
+  return m ? parseFloat(m[1]) : 50;
 }
 
 function convertToSleekUi(designMdContent, slug, name, category) {
+  if (typeof designMdContent !== 'string' || !designMdContent.trim()) {
+    throw new Error(`Malformed DESIGN.md for '${slug}': content is empty`);
+  }
   const sections = parseDesignMd(designMdContent);
+  if (Object.keys(sections).length === 0) {
+    throw new Error(`Malformed DESIGN.md for '${slug}': no '## ' sections found`);
+  }
   const colorSection = sections['2. Color Palette & Roles'] || '';
   const colors = extractColorsFromSection(colorSection);
   const theme = sections['1. Visual Theme & Atmosphere'] || '';
@@ -386,7 +412,7 @@ function convertToSleekUi(designMdContent, slug, name, category) {
 
 async function main() {
   console.log(`Fetching ${DESIGN_MD_LIST.length} designs from VoltAgent/awesome-design-md...\n`);
-  
+
   if (!fs.existsSync(DESIGNS_DIR)) {
     fs.mkdirSync(DESIGNS_DIR, { recursive: true });
   }
@@ -397,15 +423,15 @@ async function main() {
 
   for (const design of DESIGN_MD_LIST) {
     const url = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/design-md/${design.slug}/DESIGN.md`;
-    
+
     try {
       const content = await fetchRawFile(url);
-      
+
       const sleekDesign = convertToSleekUi(content, design.slug, design.name, design.category);
-      
+
       const outputPath = path.join(DESIGNS_DIR, `${design.slug}.json`);
       fs.writeFileSync(outputPath, JSON.stringify(sleekDesign, null, 2));
-      
+
       console.log(`✓ ${design.name}`);
       imported++;
     } catch (err) {
@@ -418,11 +444,25 @@ async function main() {
   console.log('\n---');
   console.log(`Imported: ${imported}/${DESIGN_MD_LIST.length}`);
   console.log(`Output: ${DESIGNS_DIR}`);
-  
+
   if (errors.length > 0) {
     console.log('\nFailed:');
     errors.forEach(e => console.log(`  - ${e.name}: ${e.error}`));
   }
 }
 
-main().catch(console.error);
+if (require.main === module) {
+  main().catch(console.error);
+}
+
+module.exports = {
+  DESIGN_MD_LIST,
+  fetchRawFile,
+  parseDesignMd,
+  expandHexShorthand,
+  hexToHsl,
+  extractColorsFromSection,
+  pickColor,
+  getHslLightness,
+  convertToSleekUi
+};
