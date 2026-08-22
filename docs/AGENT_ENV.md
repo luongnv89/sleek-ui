@@ -29,6 +29,8 @@ npm run dev               # Vite dev server
 - Test locations: `src/**/*.test.{ts,tsx}` and `tests/**/*.test.js`.
 - Setup file: `jest.setup.cjs`.
 
+Pass rate at baseline: 69/69 (8 suites, all passing — recorded 2026-08-22 on Node 20 CI pin and local Node 26; see issue #97). This is the documented baseline-green floor: later tasks must keep `npm test` at or above it.
+
 ### Design validation
 
 - Script: `scripts/validate-designs.js` (ajv + ajv-formats against `public/schema/design.v1.json`).
