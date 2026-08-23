@@ -69,6 +69,7 @@ describe('release records (#143)', () => {
   });
 
   it('documents post-v1.0.0 catalog growth', () => {
-    expect(changelog).toMatch(/## \[Unreleased\]/);
+    expect(changelog).toMatch(/## \[(?:Unreleased|\d+\.\d+\.\d+)\]/);
+    expect(changelog).toMatch(/## \[2\.0\.0\]/);
   });
 });

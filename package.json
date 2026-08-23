@@ -1,6 +1,6 @@
 {
   "name": "sleek-ui",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "The Unsplash of Design Systems for AI Agents — curated, accessible UI design systems ready to be applied by any AI coding agent.",
   "engines": {
     "node": ">=22 <23"

@@ -1,6 +1,6 @@
 {
   "name": "sleek-ui-video",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Promotional video for sleek-ui",
   "engines": {
     "node": ">=22 <23"

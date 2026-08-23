@@ -2,8 +2,8 @@
 
 ## Prerequisites
 
-- Node.js 18+
-- npm 9+
+- Node.js 22 (pinned via `.nvmrc`) — see `engines` in `package.json`
+- npm 10+ (lockfile v3 support)
 - Git
 
 ## Setup
@@ -84,10 +84,10 @@ npm run build && npm run preview
 
 | Technology | Version | Purpose |
 |-----------|---------|---------|
-| React | 18.3 | UI framework |
-| Vite | 5.4 | Build tool and dev server |
-| TypeScript | 5 | Type safety |
-| Tailwind CSS | 3.4 | Utility-first styling |
+| React | 19.2 | UI framework |
+| Vite | 8.2 | Build tool and dev server |
+| TypeScript | 6 | Type safety |
+| Tailwind CSS | 4.3 (Vite plugin) | Utility-first styling |
 | shadcn/ui | latest | Accessible UI primitives |
 | react-router-dom | 7 | Client-side routing (HashRouter — see [ROUTER_DECISION.md](ROUTER_DECISION.md)) |
-| lucide-react | 0.441 | Icon library |
+| lucide-react | 1.33 | Icon library |

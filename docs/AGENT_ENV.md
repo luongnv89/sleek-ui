@@ -6,7 +6,7 @@ What an executing agent needs to know to install, build, test, and validate this
 
 | Tool | Version |
 |------|---------|
-| Node.js | CI pins **20** (`.github/workflows/deploy.yml` — EOL since April 2026, upgrade pending); local dev is **unpinned** (v26.7.0 observed at time of writing). No `engines` field or `.nvmrc` exists. |
+| Node.js | Pinned to **22** via `.nvmrc`; `package.json` `engines` requires `>=22 <23`. CI reads the same pin (`node-version-file: .nvmrc` in `.github/workflows/deploy.yml`). |
 | npm | 11.x observed locally; any npm ≥ 10 with lockfile v3 support works. |
 
 Commands may fail on a fresh machine until Task 0.1 restores a green toolchain; the commands below are the record of intent.
@@ -29,9 +29,9 @@ npm run dev               # Vite dev server
 - Test locations: `src/**/*.test.{ts,tsx}` and `tests/**/*.test.js`.
 - Setup file: `jest.setup.cjs`.
 
-Pass rate at baseline: 69/69 (8 suites, all passing — recorded 2026-08-22 on Node 20 CI pin and local Node 26; see issue #97). This is the documented baseline-green floor: later tasks must keep `npm test` at or above it. Current rate: 78/78 (9 suites, all passing).
+Pass rate at baseline: 69/69 (8 suites — recorded 2026-08-22; see issue #97). This is the documented baseline-green floor: later tasks must keep `npm test` at or above it. Current rate: 275/275 (28 suites, all passing — verified 2026-08-23 on Node 22 after the v2.0.0 test campaign).
 
-Coverage (`npx jest --coverage`, measured 2026-08-22, see issue #116): global statements 71.05%, branches 56.43%, functions 66.66%, lines 73.29%. `coverageThreshold` in `jest.config.cjs` guards a permissive floor below these numbers (statements 65 / branches 50 / functions 60 / lines 68); ratchet upward as the test campaign lands.
+Coverage (`npx jest --coverage`, re-measured 2026-08-23 after the v2.0.0 test expansion): global statements 91.69%, branches 84.21%, functions 92.45%, lines 92.48%. `coverageThreshold` in `jest.config.cjs` guards a floor below these numbers; ratchet upward as coverage improves.
 
 ### Design validation
 

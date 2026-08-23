@@ -14,7 +14,7 @@ Thank you for your interest in contributing! sleek-ui is an open catalog of desi
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 22 (pinned via `.nvmrc`)
 - npm 9+
 
 ### Local dev

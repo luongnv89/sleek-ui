@@ -191,9 +191,9 @@ and apply this design system to my project.
 
 | Layer | Technology |
 |---|---|
-| Frontend | React 18.3 + TypeScript |
-| Build | Vite 5.4 |
-| Styling | Tailwind CSS 3.4 + shadcn/ui |
+| Frontend | React 19 + TypeScript |
+| Build | Vite 8 |
+| Styling | Tailwind CSS 4 + shadcn/ui |
 | Schema | JSON Schema (design.v1.json) |
 | Deploy | GitHub Pages + GitHub Actions |
 

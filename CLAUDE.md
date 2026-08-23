@@ -6,9 +6,9 @@ Design system for AI agent-driven UI customization.
 
 ## Tech Stack
 
-- **Frontend Framework**: React 18.3.1
-- **Build Tool**: Vite 5.4.21
-- **Styling**: Tailwind CSS 3.4.19 + shadcn/ui
+- **Frontend Framework**: React 19.2
+- **Build Tool**: Vite 8.2
+- **Styling**: Tailwind CSS 4.3 + shadcn/ui
 - **Testing**: Jest 30 (jsdom)
 - **Design Format**: Custom JSON schema (design.v1.json)
 
