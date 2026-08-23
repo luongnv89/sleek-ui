@@ -47,6 +47,11 @@ const designsModule = jest.requireMock('@/data/designs') as {
 beforeEach(() => {
   designsModule.loadDesigns.mockResolvedValue([testCatalogEntry]);
   designsModule.loadDesignData.mockResolvedValue(null);
+  global.fetch = jest.fn().mockResolvedValue({
+    ok: true,
+    status: 200,
+    json: async () => ({ stargazers_count: 126, forks_count: 11 }),
+  }) as unknown as typeof fetch;
 });
 
 describe('HomePage - Social Proof Section (#79)', () => {
@@ -88,6 +93,28 @@ describe('HomePage - Social Proof Section (#79)', () => {
     links.forEach(link => {
       expect(link.closest('a')).toHaveAttribute('href', 'https://github.com/luongnv89/sleek-ui');
     });
+  });
+});
+
+describe('HomePage - Live GitHub stats (#179)', () => {
+  it('displays live values fetched from the GitHub API at view time', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: async () => ({ stargazers_count: 250, forks_count: 30 }),
+    }) as unknown as typeof fetch;
+
+    render(<App />);
+    await waitFor(() => expect(screen.getByText('~250')).toBeInTheDocument());
+    expect(screen.getByText('~30')).toBeInTheDocument();
+  });
+
+  it('falls back to last-known values when the GitHub API is unavailable', async () => {
+    global.fetch = jest.fn().mockRejectedValue(new Error('rate limited')) as unknown as typeof fetch;
+
+    render(<App />);
+    expect(screen.getByText('~126')).toBeInTheDocument();
+    expect(screen.getByText('~11')).toBeInTheDocument();
   });
 });
 
