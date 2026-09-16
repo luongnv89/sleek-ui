@@ -14,7 +14,7 @@ export function CatalogSection() {
   const [searchValue, setSearchValue] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [activeCollection, setActiveCollection] = useState<CollectionFilter>('web');
-  const { designs, loading, counts } = useDesignCatalog(activeCollection);
+  const { designs, loading, counts, total } = useDesignCatalog(activeCollection);
 
   const categories = useMemo(
     () =>
@@ -48,21 +48,21 @@ export function CatalogSection() {
             </p>
           </div>
           <span className="text-sm text-muted-foreground tabular-nums">
-            {filteredDesigns.length} / {designs.length} designs
+            {filteredDesigns.length} / {total} designs
           </span>
         </div>
 
-        <div role="tablist" aria-label="Filter by collection" className="flex flex-wrap gap-2">
+        <div role="group" aria-label="Filter by collection" className="flex flex-wrap gap-2">
           {COLLECTION_TABS.map(tab => (
             <button
               key={tab.id}
-              role="tab"
-              aria-selected={activeCollection === tab.id}
-              onClick={() => setActiveCollection(tab.id)}
+              type="button"
+              aria-pressed={activeCollection === tab.id}
+              onClick={() => { setActiveCollection(tab.id); setSelectedCategory(null); setSearchValue(''); }}
               className={
                 activeCollection === tab.id
-                  ? 'rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground'
-                  : 'rounded-full border border-border bg-background px-4 py-1.5 text-sm text-muted-foreground hover:text-foreground'
+                  ? 'rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
+                  : 'rounded-full border border-border bg-background px-4 py-1.5 text-sm text-muted-foreground hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
               }
             >
               {tab.label} ({counts[tab.id as 'web' | 'terminal' | 'coding'] ?? 0})
@@ -97,6 +97,7 @@ export function CatalogSection() {
             </svg>
             <p>No designs match your search.</p>
             <button
+              type="button"
               onClick={() => { setSearchValue(''); setSelectedCategory(null); }}
               className="text-sm text-brand hover:underline"
             >

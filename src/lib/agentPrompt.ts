@@ -1,5 +1,6 @@
 import type { AppTarget, DesignData } from '../types/design';
 import { APP_TARGET_LABELS, APP_TARGET_INSTRUCTIONS } from './appTargets';
+import { COLLECTION_LABELS } from './collections';
 
 export interface AppThemePromptOptions {
   collection?: 'web' | 'terminal' | 'coding';
@@ -10,7 +11,7 @@ export interface AppThemePromptOptions {
 export function buildAgentPrompt(designUrl: string, options?: AppThemePromptOptions): string {
   const collection = options?.collection ?? 'web';
   const appTarget = options?.appTarget;
-  if (collection === 'web' || !appTarget) {
+  if (collection === 'web') {
     return `Fetch the design system at: ${designUrl}
 
 Read the JSON, then follow the steps in agentInstructions.steps to apply this design system to my project:
@@ -25,7 +26,38 @@ Read the JSON, then follow the steps in agentInstructions.steps to apply this de
 
 Target framework: Tailwind CSS + shadcn/ui. For other frameworks, map token names to CSS custom properties semantically.`;
   }
+  if (!appTarget) {
+    return buildGenericAppThemePrompt(designUrl, collection, options?.designData ?? null);
+  }
   return buildAppThemePrompt(designUrl, appTarget, options?.designData ?? null);
+}
+
+export function buildGenericAppThemePrompt(
+  designUrl: string,
+  collection: 'terminal' | 'coding',
+  designData?: DesignData | null,
+): string {
+  const label = COLLECTION_LABELS[collection];
+  const styleBlock = formatStyleBlock(designData);
+  const colorBlock = formatColorBlock(designData);
+  const tokenBlock = formatTokenColorBlock(designData);
+
+  return `Fetch the app theme at: ${designUrl}
+
+This is a ${label} application theme (collection: ${designData?.collection ?? collection}). Apply the full style, colors, and syntax token-colors below.
+
+NOTE: No specific app target is selected — apply the full theme below to your app, mapping token names to your app's theme format.
+
+STYLE
+${styleBlock}
+
+COLORS (tokens.colors light + dark)
+${colorBlock}
+
+TOKEN-COLORS (syntax highlighting)
+${tokenBlock}
+
+Also follow agentInstructions.steps from the JSON. Verify background/foreground contrast and test in both light and dark modes where supported.`;
 }
 
 export function buildAppThemePrompt(

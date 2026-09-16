@@ -53,5 +53,11 @@ export function useClipboard<T>(flag: T, reset: T) {
     [flag, reset]
   );
 
-  return { copied, error, copy } as const;
+  const resetCopy = useCallback(() => {
+    clearTimeout(timer.current);
+    setCopied(reset);
+    setError(null);
+  }, [reset]);
+
+  return { copied, error, copy, resetCopy } as const;
 }
