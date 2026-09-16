@@ -31,7 +31,6 @@ export function AgentPromptPanel({ designUrl, collection = 'web', appTargets = [
         ? (prev && appTargets.includes(prev) ? prev : appTargets[0])
         : null,
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [designUrl, collection, appTargetsKey]);
   const selectedTarget = isAppTheme && activeTarget && appTargets.includes(activeTarget)
     ? activeTarget

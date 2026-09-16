@@ -9,11 +9,11 @@
 [![GitHub Stars](https://img.shields.io/github/stars/luongnv89/sleek-ui?style=flat-square)](https://github.com/luongnv89/sleek-ui/stargazers)
 [![GitHub Pages](https://img.shields.io/website?url=https%3A%2F%2Fluongnv.com/sleek-ui&down_message=offline&style=flat-square)](https://luongnv.com/sleek-ui)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue?style=flat-square)](LICENSE)
-[![Designs](https://img.shields.io/badge/designs-60-green?style=flat-square)](https://luongnv.com/sleek-ui)
+[![Designs](https://img.shields.io/badge/designs-62-green?style=flat-square)](https://luongnv.com/sleek-ui)
 
 # Professional design systems for your AI agent
 
-60 production-grade design systems — Stripe, Linear, Vercel, Notion and more — as clean JSON. Give your agent one URL and it applies colors, typography, spacing, and component styles.
+62 production-grade design systems — Stripe, Linear, Vercel, Notion and more — as clean JSON. Give your agent one URL and it applies colors, typography, spacing, and component styles.
 
 You build fast with AI. Now ship interfaces that don't look generic.
 
@@ -38,7 +38,7 @@ Browse. Copy the prompt. Paste it once. The agent applies tokens, fonts, radius,
 
 ## Design Catalog
 
-60 designs covering brand-faithful recreations and original systems:
+62 designs covering brand-faithful recreations and original systems:
 
 | Category | Designs |
 |---|---|
@@ -47,6 +47,12 @@ Browse. Copy the prompt. Paste it once. The agent applies tokens, fonts, radius,
 | SaaS | Stripe, Notion, Intercom, Resend, Webflow, Figma, Framer, Miro |
 | Enterprise | IBM, BMW, Coinbase, Kraken, Revolut, Wise, Uber, HashiCorp, MongoDB |
 | Original | Editorial Dark, Warm SaaS, Neo Brutalist, Swiss Clean, Deep Ocean, Glassmorphic |
+
+Designs are grouped into **collections**: `web` (the default, above), `terminal`
+(Pi, Ghostty, iTerm2, Warp) and `coding` (OpenCode, VS Code). Terminal and coding
+themes carry syntax `tokenColors` and per-app apply instructions, and the detail
+page's Agent Prompt panel lets you pick an app target so the copied prompt tells
+your agent exactly how to install the theme there.
 
 Glassmorphic is an original design inspired by glassmorphism / frosted-glass directions from designdotmd.directory (adapted to Sleek UI's token schema and quality bar).
 
@@ -257,7 +263,7 @@ nonces. This relaxation is scoped to styles only — `script-src` stays exactly
 
 ```
 public/
-├── designs/       # JSON design files (60)
+├── designs/       # JSON design files (62)
 ├── previews/      # Thumbnail images
 ├── schema/        # JSON Schema for validation
 └── logo/          # Brand assets
