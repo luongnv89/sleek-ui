@@ -29,8 +29,38 @@ function validateDesignFile(filePath, validate) {
     return { valid: false, errors: [{ message: `invalid JSON: ${err.message}` }] };
   }
   const valid = validate(design);
-  const errors = valid ? [] : (validate.errors || [{ message: 'validation failed' }]);
-  return { valid, errors: [...errors] };
+  const errors = valid ? [] : [...(validate.errors || [{ message: 'validation failed' }])];
+  errors.push(...validateCollectionFields(design));
+  return { valid: errors.length === 0, errors };
+}
+
+const COLLECTIONS = ['web', 'terminal', 'coding'];
+const APP_TARGETS = ['pi', 'ghostty', 'iterm2', 'warp', 'opencode', 'vscode'];
+
+function validateCollectionFields(design) {
+  const errors = [];
+  const collection = design.collection ?? 'web';
+  if (design.collection !== undefined && !COLLECTIONS.includes(design.collection)) {
+    errors.push({ message: `invalid collection '${design.collection}': expected one of ${COLLECTIONS.join('|')}` });
+  }
+  if (design.appTargets !== undefined) {
+    if (!Array.isArray(design.appTargets)) {
+      errors.push({ message: 'appTargets must be an array' });
+    } else {
+      for (const target of design.appTargets) {
+        if (!APP_TARGETS.includes(target)) {
+          errors.push({ message: `invalid appTarget '${target}': expected one of ${APP_TARGETS.join('|')}` });
+        }
+      }
+      if (new Set(design.appTargets).size !== design.appTargets.length) {
+        errors.push({ message: 'appTargets must contain unique items' });
+      }
+    }
+  }
+  if ((collection === 'terminal' || collection === 'coding') && (!Array.isArray(design.appTargets) || design.appTargets.length === 0)) {
+    errors.push({ message: `collection '${collection}' requires a non-empty appTargets array` });
+  }
+  return errors;
 }
 
 function validateDesignsInDir(designsDir, validate, log = console.log) {
@@ -81,4 +111,4 @@ if (require.main === module) {
   }
 }
 
-module.exports = { createValidator, listDesignFiles, validateDesignFile, validateDesignsInDir };
+module.exports = { createValidator, listDesignFiles, validateDesignFile, validateDesignsInDir, validateCollectionFields, COLLECTIONS, APP_TARGETS };
