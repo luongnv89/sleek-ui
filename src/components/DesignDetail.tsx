@@ -99,6 +99,18 @@ export function DesignDetail() {
               Back to Catalog
             </Link>
             <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">{design.name}</h1>
+            <div className="flex flex-wrap items-center gap-2">
+              {(design.collection ?? designData?.collection) && (design.collection ?? designData?.collection) !== 'web' && (
+                <Badge variant="default" className="text-xs">
+                  {(design.collection ?? designData?.collection) as string}
+                </Badge>
+              )}
+              {((design.appTargets ?? designData?.appTargets) ?? []).map(target => (
+                <Badge key={target} variant="outline" className="text-xs">
+                  {target}
+                </Badge>
+              ))}
+            </div>
             <p className="text-xl text-muted-foreground">{design.description}</p>
           </div>
           <div className="flex items-center gap-2">
@@ -189,7 +201,12 @@ export function DesignDetail() {
         )}
 
         {/* Agent Prompt — primary action */}
-        <AgentPromptPanel designUrl={design.jsonUrl} />
+        <AgentPromptPanel
+          designUrl={design.jsonUrl}
+          collection={design.collection ?? designData?.collection ?? 'web'}
+          appTargets={design.appTargets ?? designData?.appTargets ?? []}
+          designData={designData}
+        />
 
         {/* Design Info */}
         <div className="mb-8 grid gap-6 md:grid-cols-2">
