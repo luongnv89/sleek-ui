@@ -2,12 +2,19 @@ import { useMemo, useState } from 'react';
 import { SearchBar } from '@/components/ui/SearchBar';
 import { CategoryFilter } from '@/components/ui/CategoryFilter';
 import { DesignCard } from '@/components/catalog/DesignCard';
-import { useDesignCatalog } from '@/hooks/useDesignCatalog';
+import { useDesignCatalog, type CollectionFilter } from '@/hooks/useDesignCatalog';
+
+const COLLECTION_TABS: Array<{ id: CollectionFilter; label: string }> = [
+  { id: 'web', label: 'Web' },
+  { id: 'terminal', label: 'Terminal' },
+  { id: 'coding', label: 'Coding' },
+];
 
 export function CatalogSection() {
   const [searchValue, setSearchValue] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const { designs, loading } = useDesignCatalog();
+  const [activeCollection, setActiveCollection] = useState<CollectionFilter>('web');
+  const { designs, loading, counts } = useDesignCatalog(activeCollection);
 
   const categories = useMemo(
     () =>
@@ -43,6 +50,24 @@ export function CatalogSection() {
           <span className="text-sm text-muted-foreground tabular-nums">
             {filteredDesigns.length} / {designs.length} designs
           </span>
+        </div>
+
+        <div role="tablist" aria-label="Filter by collection" className="flex flex-wrap gap-2">
+          {COLLECTION_TABS.map(tab => (
+            <button
+              key={tab.id}
+              role="tab"
+              aria-selected={activeCollection === tab.id}
+              onClick={() => setActiveCollection(tab.id)}
+              className={
+                activeCollection === tab.id
+                  ? 'rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground'
+                  : 'rounded-full border border-border bg-background px-4 py-1.5 text-sm text-muted-foreground hover:text-foreground'
+              }
+            >
+              {tab.label} ({counts[tab.id as 'web' | 'terminal' | 'coding'] ?? 0})
+            </button>
+          ))}
         </div>
 
         <SearchBar

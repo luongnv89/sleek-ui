@@ -77,6 +77,11 @@ function DesignCardImpl({ design }: DesignCardProps) {
         <CardHeader className="p-6">
           <div className="flex items-start justify-between gap-2">
             <h3 className="font-semibold text-lg tracking-tight">{design.name}</h3>
+            {design.collection && design.collection !== 'web' && (
+              <Badge variant="default" className="text-xs shrink-0">
+                {design.collection}
+              </Badge>
+            )}
           </div>
           <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
             {design.description}
