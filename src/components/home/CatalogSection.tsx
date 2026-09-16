@@ -61,8 +61,8 @@ export function CatalogSection() {
               onClick={() => { setActiveCollection(tab.id); setSelectedCategory(null); setSearchValue(''); }}
               className={
                 activeCollection === tab.id
-                  ? 'rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
-                  : 'rounded-full border border-border bg-background px-4 py-1.5 text-sm text-muted-foreground hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
+                  ? 'inline-flex min-h-[44px] items-center rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
+                  : 'inline-flex min-h-[44px] items-center rounded-full border border-border bg-background px-4 py-1.5 text-sm text-muted-foreground hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
               }
             >
               {tab.label} ({counts[tab.id as 'web' | 'terminal' | 'coding'] ?? 0})

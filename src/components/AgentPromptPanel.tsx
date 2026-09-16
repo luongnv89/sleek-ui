@@ -61,8 +61,8 @@ export function AgentPromptPanel({ designUrl, collection = 'web', appTargets = [
                   aria-pressed={selectedTarget === target}
                   className={
                     selectedTarget === target
-                      ? 'rounded-full bg-primary px-3 py-1 text-xs font-medium text-primary-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
-                      : 'rounded-full border border-border bg-background px-3 py-1 text-xs text-muted-foreground hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
+                      ? 'inline-flex min-h-[44px] items-center rounded-full bg-primary px-3 py-1 text-xs font-medium text-primary-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
+                      : 'inline-flex min-h-[44px] items-center rounded-full border border-border bg-background px-3 py-1 text-xs text-muted-foreground hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
                   }
                 >
                   {APP_TARGET_LABELS[target]}

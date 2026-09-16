@@ -86,12 +86,8 @@ function DesignCardImpl({ design }: DesignCardProps) {
             )}
           </div>
           {(design.appTargets?.length ?? 0) > 0 && (
-            <p
-              className="mt-1.5 text-xs text-muted-foreground truncate"
-              title={design.appTargets!.map(target => getAppTargetLabel(target)).join(', ')}
-            >
-              {getAppTargetLabel(design.appTargets![0])}
-              {design.appTargets!.length > 1 ? ` +${design.appTargets!.length - 1}` : ''}
+            <p className="mt-1.5 text-xs text-muted-foreground">
+              {design.appTargets!.map(target => getAppTargetLabel(target)).join(' · ')}
             </p>
           )}
           <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
