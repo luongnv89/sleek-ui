@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { CopyButton } from '@/components/ui/CopyButton';
 import { TokenTable } from '@/components/TokenTable';
 import { AgentPromptPanel } from '@/components/AgentPromptPanel';
+import { CodingThemeMappingPanel } from '@/components/CodingThemeMappingPanel';
 import { PreviewSection } from '@/components/PreviewSection';
 import { loadDesignData, loadDesigns } from '@/data/designs';
 import type { TransformedDesign, DesignData } from '@/types/design';
@@ -20,6 +21,7 @@ export function DesignDetail() {
   const { slug } = useParams<{ slug: string }>();
   const [design, setDesign] = useState<TransformedDesign | null>(null);
   const [designData, setDesignData] = useState<DesignData | null>(null);
+  const [allDesigns, setAllDesigns] = useState<TransformedDesign[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showPreviewDark, setShowPreviewDark] = useState(false);
   // Distinguishes "tokens still fetching" from "token data unavailable" (#140)
@@ -45,6 +47,7 @@ export function DesignDetail() {
     });
     loadDesigns().then(list => {
       if (!alive) return;
+      setAllDesigns(list);
       setDesign(list.find(d => d.slug === slug) ?? null);
       setIsLoading(false);
     });
@@ -220,6 +223,18 @@ export function DesignDetail() {
           appTargets={design.appTargets ?? designData?.appTargets ?? []}
           designData={designData}
         />
+
+        {/* Website → coding theme mapping with a backup theme (#187) */}
+        {(collection ?? 'web') === 'web' && (
+          <CodingThemeMappingPanel
+            key={`mapping-${design.slug}`}
+            websiteUrl={design.jsonUrl}
+            websiteName={design.name}
+            websiteData={designData}
+            backupThemes={allDesigns.filter(d => d.collection === 'coding' || d.collection === 'terminal')}
+            loadBackup={loadDesignData}
+          />
+        )}
 
         {/* Design Info */}
         <div className="mb-8 grid gap-6 md:grid-cols-2">
