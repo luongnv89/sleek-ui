@@ -31,6 +31,13 @@ describe.each(['index.html', 'public/404.html'])('CSP meta tag (%s)', (page) => 
     );
   });
 
+  test('allows live GitHub stats to refresh from the repository API', () => {
+    expect(directive(csp, 'connect-src')).toEqual([
+      "'self'",
+      'https://api.github.com',
+    ]);
+  });
+
   test('locks down scripts, objects, and framing vectors', () => {
     expect(directive(csp, 'default-src')).toContain("'self'");
     expect(directive(csp, 'script-src')).toEqual(["'self'"]);
