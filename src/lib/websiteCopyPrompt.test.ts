@@ -1,6 +1,21 @@
-import { buildWebsiteCopyPrompt } from './websiteCopyPrompt';
+import { buildWebsiteCopyPrompt, normalizeWebsiteUrl } from './websiteCopyPrompt';
 
 const PROMPT_HEADLINE = 'Copy the design of the website at:';
+
+describe('normalizeWebsiteUrl (#189)', () => {
+  it('returns the normalized URL for valid input', () => {
+    expect(normalizeWebsiteUrl('stripe.com')).toBe('https://stripe.com');
+    expect(normalizeWebsiteUrl('  https://linear.app/blog ')).toBe('https://linear.app/blog');
+    expect(normalizeWebsiteUrl('http://localhost:3000')).toBe('http://localhost:3000');
+  });
+
+  it('returns null for empty or malformed input', () => {
+    expect(normalizeWebsiteUrl('')).toBeNull();
+    expect(normalizeWebsiteUrl('   ')).toBeNull();
+    expect(normalizeWebsiteUrl('foo bar')).toBeNull();
+    expect(normalizeWebsiteUrl('https://')).toBeNull();
+  });
+});
 
 describe('buildWebsiteCopyPrompt (#189)', () => {
   it('embeds the entered URL in the prompt headline', () => {

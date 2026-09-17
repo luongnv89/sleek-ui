@@ -55,12 +55,55 @@ describe('CopySiteSection (#189)', () => {
     typeUrl('stripe.com');
     fireEvent.click(screen.getByRole('button', { name: 'Generate prompt' }));
 
-    // Screen readers announce the injected panel via the polite live region.
-    expect(screen.getByRole('status')).toBeInTheDocument();
+    // The polite live region carries only a short announcement — the prompt
+    // itself stays outside it so it is not read aloud or re-announced on Copy.
+    const status = screen.getByRole('status');
+    expect(status).toHaveTextContent('Prompt generated for https://stripe.com');
+    expect(status.textContent).not.toContain('PHASE 1');
     // The overflowing <pre> must be tabbable so keyboard users can scroll it.
     const output = screen.getByRole('region', { name: 'Generated prompt' });
     expect(output).toHaveAttribute('tabindex', '0');
     expect(output.textContent).toContain('https://stripe.com');
+  });
+
+  it('shows a validation error for a malformed URL and generates nothing', () => {
+    renderSection();
+    typeUrl('foo bar');
+    fireEvent.click(screen.getByRole('button', { name: 'Generate prompt' }));
+
+    expect(screen.getByRole('alert')).toHaveTextContent(/valid website URL/i);
+    const input = screen.getByLabelText('Website URL to copy');
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    expect(input).toHaveAttribute('aria-describedby', 'copy-site-url-error');
+    expect(screen.queryByText(/Copy the design of the website at:/)).not.toBeInTheDocument();
+  });
+
+  it('clears the validation error once a valid URL is submitted', () => {
+    renderSection();
+    typeUrl('foo bar');
+    fireEvent.click(screen.getByRole('button', { name: 'Generate prompt' }));
+    expect(screen.getByRole('alert')).toBeInTheDocument();
+
+    typeUrl('stripe.com');
+    fireEvent.click(screen.getByRole('button', { name: 'Generate prompt' }));
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(screen.getByLabelText('Website URL to copy')).not.toHaveAttribute('aria-invalid');
+    expect(screen.getByText(/Copy the design of the website at:/)).toBeInTheDocument();
+  });
+
+  it('surfaces clipboard failures on the Copy button', async () => {
+    mockClipboard(() => Promise.reject(new Error('denied')));
+    renderSection();
+    typeUrl('stripe.com');
+    fireEvent.click(screen.getByRole('button', { name: 'Generate prompt' }));
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Copy' }));
+    });
+
+    expect(
+      await screen.findByRole('button', { name: 'Error: denied. Click to try again' })
+    ).toBeInTheDocument();
   });
 
   it('copies the generated prompt to the clipboard with Copied! feedback', async () => {
