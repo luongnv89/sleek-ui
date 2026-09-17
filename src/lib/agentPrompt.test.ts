@@ -63,6 +63,7 @@ Read the JSON, then follow the steps in agentInstructions.steps to apply this de
 6. Reproduce animations when tokens.motion is present — map CSS-compatible easings to --ease-* theme keys, apply library-native easings through the relevant library API, and map keyframes to @keyframes + --animate-* (Tailwind v4); install packages listed in libraries
 7. Ensure focus states match accessibility.focusRing specification
 8. Test both light and dark modes
+9. Validate the applied result for conflicts — e.g. dark text on a dark background or other insufficient contrast — fix any inconsistencies found, and choose the best solution adapted to the current environment
 
 Target framework: Tailwind CSS + shadcn/ui. For other frameworks, map token names to CSS custom properties semantically.`,
     );
@@ -70,6 +71,31 @@ Target framework: Tailwind CSS + shadcn/ui. For other frameworks, map token name
 
   it('interpolates any design URL', () => {
     expect(buildAgentPrompt('https://example.com/x.json').startsWith('Fetch the design system at: https://example.com/x.json')).toBe(true);
+  });
+});
+
+describe('conflict-validation step (#188)', () => {
+  const CONFLICT_STEP =
+    'Validate the applied result for conflicts — e.g. dark text on a dark background or other insufficient contrast — fix any inconsistencies found, and choose the best solution adapted to the current environment';
+
+  it('is always present in every copyable prompt variant', () => {
+    const designData = makeDesignData();
+    const variants = [
+      buildAgentPrompt('https://example.com/x.json'),
+      buildAgentPrompt('https://example.com/x.json', { collection: 'terminal', designData }),
+      buildAgentPrompt('https://example.com/x.json', { collection: 'coding', appTarget: 'vscode', designData }),
+      buildGenericAppThemePrompt('https://example.com/x.json', 'terminal', designData),
+      buildAppThemePrompt('https://example.com/x.json', 'pi', designData),
+    ];
+    for (const prompt of variants) {
+      expect(prompt).toContain(CONFLICT_STEP);
+      expect(prompt).toContain('fix any inconsistencies');
+      expect(prompt).toContain('best solution adapted to the current environment');
+    }
+  });
+
+  it('appears as a numbered step in the web prompt', () => {
+    expect(buildAgentPrompt('https://example.com/x.json')).toContain(`9. ${CONFLICT_STEP}`);
   });
 });
 
