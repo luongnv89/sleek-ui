@@ -38,6 +38,8 @@ export interface MappedTheme {
 const MIN_TEXT_CONTRAST = 4.5;
 const MIN_ACCENT_CONTRAST = 3;
 const ACCENT_HUE_TOLERANCE = 30;
+// Below this saturation a hue is meaningless (grey/white), so no brand clash can be judged.
+const MIN_BRAND_SATURATION = 15;
 const TEXT_KEYS = new Set(['foreground', 'card-foreground', 'secondary-foreground']);
 const ACCENT_KEYS = new Set(['primary', 'accent', 'destructive', 'muted-foreground', 'ring']);
 
@@ -220,7 +222,7 @@ export function mapWebsiteToCodingTheme(
       return;
     }
     const color = parseHsl(entry.color);
-    if (entry.scope === 'keyword' && websitePrimary && color && hueDistance(websitePrimary, color) > ACCENT_HUE_TOLERANCE) {
+    if (entry.scope === 'keyword' && websitePrimary && websitePrimary.s >= MIN_BRAND_SATURATION && color && hueDistance(websitePrimary, color) > ACCENT_HUE_TOLERANCE) {
       const primaryValue = website.tokens.colors.dark.primary;
       const primaryRatio = contrastRatio(primaryValue, background);
       if (primaryRatio === null || primaryRatio < MIN_ACCENT_CONTRAST) return;

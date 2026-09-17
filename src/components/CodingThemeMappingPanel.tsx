@@ -34,7 +34,7 @@ export function CodingThemeMappingPanel({
   const [choices, setChoices] = useState<Record<string, ConflictChoice>>({});
   const [validated, setValidated] = useState(false);
   const [appTarget, setAppTarget] = useState<AppTarget | ''>('');
-  const { copied, copy, resetCopy } = useClipboard<'mappedPrompt' | null>('mappedPrompt', null);
+  const { copied, error: copyError, copy, resetCopy } = useClipboard<'mappedPrompt' | null>('mappedPrompt', null);
 
   const backup = backupThemes.find(t => t.slug === backupSlug) ?? null;
 
@@ -140,7 +140,7 @@ export function CodingThemeMappingPanel({
       </div>
 
       {backupSlug && !mapped && (
-        <p className="mt-4 text-sm text-muted-foreground" role="status">
+        <p className={`mt-4 text-sm ${backupFailed ? 'text-destructive' : 'text-muted-foreground'}`} role="status">
           {backupFailed ? 'Could not load the backup theme. Pick another one.' : 'Loading backup theme…'}
         </p>
       )}
@@ -192,10 +192,27 @@ export function CodingThemeMappingPanel({
           </div>
 
           <div className="mt-4 flex items-center justify-between gap-4">
-            <p className="text-sm text-muted-foreground">
-              {canCopy ? 'Prompt ready to copy.' : 'Validate the conflict choices to copy the prompt.'}
+            <p
+              id={`${selectId}-copy-status`}
+              className={`text-sm ${copyError ? 'text-destructive' : 'text-muted-foreground'}`}
+              aria-live="polite"
+            >
+              {copyError
+                ? `Could not copy the prompt: ${copyError}`
+                : copied === 'mappedPrompt'
+                  ? 'Prompt copied to clipboard.'
+                  : canCopy
+                    ? 'Prompt ready to copy.'
+                    : 'Validate the conflict choices to copy the prompt.'}
             </p>
-            <Button type="button" size="sm" onClick={() => copy(prompt)} disabled={!canCopy} className="shrink-0 gap-2">
+            <Button
+              type="button"
+              size="sm"
+              onClick={() => copy(prompt)}
+              disabled={!canCopy}
+              aria-describedby={`${selectId}-copy-status`}
+              className="shrink-0 gap-2"
+            >
               {copied === 'mappedPrompt' ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
               {copied === 'mappedPrompt' ? 'Copied!' : 'Copy'}
             </Button>

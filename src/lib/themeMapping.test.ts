@@ -93,6 +93,14 @@ describe('mapWebsiteToCodingTheme (#187)', () => {
     expect(brightMapped.tokenColorSources.keyword).toBe('website');
   });
 
+  it('skips the keyword clash check when the website primary is grey or white', () => {
+    for (const primary of ['0 0% 100%', '264 2% 40%']) {
+      const mapped = mapWebsiteToCodingTheme(withDark(website, { primary }), backup);
+      expect(mapped.conflicts.find(c => c.kind === 'accent-mismatch')).toBeUndefined();
+      expect(mapped.tokenColorSources.keyword).toBe('backup');
+    }
+  });
+
   it('uses website token colors when the website defines them', () => {
     const withSyntax = { ...website, tokenColors: [{ scope: 'keyword', color: '0 0% 90%' }, { scope: 'tag', color: '0 0% 80%' }] } as DesignData;
     const mapped = mapWebsiteToCodingTheme(withSyntax, backup);

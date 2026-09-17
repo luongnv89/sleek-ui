@@ -49,6 +49,7 @@ describe('CodingThemeMappingPanel (#187)', () => {
 
     const copyButton = screen.getByRole('button', { name: /Copy/ });
     expect(copyButton).toBeDisabled();
+    expect(copyButton).toHaveAccessibleDescription('Validate the conflict choices to copy the prompt.');
 
     const prompt = screen.getByTestId('mapped-theme-prompt');
     expect(prompt.textContent).toContain('Backup (coding theme): https://luongnv.com/sleek-ui/designs/aura.json');
@@ -75,5 +76,6 @@ describe('CodingThemeMappingPanel (#187)', () => {
       fireEvent.change(screen.getByLabelText('Backup theme'), { target: { value: 'aura' } });
     });
     expect(screen.getByRole('status')).toHaveTextContent('Could not load the backup theme');
+    expect(screen.getByRole('status')).toHaveClass('text-destructive');
   });
 });
