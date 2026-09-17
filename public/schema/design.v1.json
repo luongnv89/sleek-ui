@@ -353,13 +353,13 @@
       "description": "External libraries required to reproduce the design — animation libraries (gsap, framer-motion, ...), icon packs, renderers. Optional; omit when the design needs no external runtime dependencies.",
       "items": {
         "type": "object",
-        "required": ["name", "package", "installCommand", "purpose"],
+        "additionalProperties": false,
+        "required": ["name", "package", "purpose"],
         "properties": {
-          "name": { "type": "string", "description": "Display name, e.g. 'GSAP'" },
-          "package": { "type": "string", "description": "npm package name, e.g. 'gsap'" },
-          "version": { "type": "string", "description": "Version constraint observed or recommended, e.g. '^3.12.5'" },
-          "installCommand": { "type": "string", "description": "Shell command to install, e.g. 'npm install gsap'" },
-          "purpose": { "type": "string", "description": "What the library is needed for, e.g. 'scroll-driven entrance animations'" }
+          "name": { "type": "string", "minLength": 1, "pattern": "^[^\\r\\n]+$", "description": "Display name, e.g. 'GSAP'" },
+          "package": { "type": "string", "pattern": "^(?:@[a-z0-9][a-z0-9._-]*/)?[a-z0-9][a-z0-9._-]*$", "description": "npm package name, e.g. 'gsap'" },
+          "version": { "type": "string", "pattern": "^[~^]?[0-9]+(?:\\.[0-9]+){0,2}(?:-[0-9A-Za-z.-]+)?$", "description": "Semver version constraint observed or recommended, e.g. '^3.12.5'" },
+          "purpose": { "type": "string", "minLength": 1, "pattern": "^[^\\r\\n]+$", "description": "What the library is needed for, e.g. 'scroll-driven entrance animations'" }
         }
       }
     },

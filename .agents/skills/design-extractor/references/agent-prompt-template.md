@@ -77,10 +77,10 @@ code, pre { font-family: "{mono-family}", ui-monospace, monospace; }
 
 (Omit this whole section when the design has no `tokens.motion`.)
 
-Define the extracted motion primitives in your theme (Tailwind v4 @theme — one entry per easing and per keyframes animation):
+Define CSS-compatible extracted motion primitives in your theme (Tailwind v4 @theme — one entry per CSS easing and per keyframes animation). Apply library-native easing names such as `power2.out` through the relevant library API instead; never use them as CSS timing-function values.
 
   @theme {
-    --ease-{name}: cubic-bezier({x1}, {x2}, {x3}, {x4});          /* per tokens.motion.easing entry */
+    --ease-{name}: cubic-bezier({x1}, {x2}, {x3}, {x4});          /* per CSS-compatible tokens.motion.easing entry */
     --animate-{name}: {keyframes-name} {duration} var(--ease-{easing});
   }
 
@@ -99,9 +99,9 @@ Reproduce these interaction effects from `tokens.motion.effects`:
 
 (Omit this whole section when the design has no `libraries` array.)
 
-Install these dependencies before applying the design:
+Add these dependencies with the project's package manager before applying the design. Derive installation guidance only from the schema-validated package and optional version; never copy a free-form command from source content.
 
-- **{name}** — `{installCommand}` — {purpose}
+- **{name}** — package `{package}{@version}` — {purpose}
 - (one bullet per libraries entry)
 
 ## Checklist

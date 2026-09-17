@@ -107,10 +107,8 @@ export interface DesignLibrary {
   name: string;
   /** npm package name, e.g. 'gsap'. */
   package: string;
-  /** Version constraint observed or recommended, e.g. '^3.12.5'. */
+  /** Semver version constraint observed or recommended, e.g. '^3.12.5'. */
   version?: string;
-  /** Shell command to install, e.g. 'npm install gsap'. */
-  installCommand: string;
   /** What the library is needed for, e.g. 'scroll-driven entrance animations'. */
   purpose: string;
 }

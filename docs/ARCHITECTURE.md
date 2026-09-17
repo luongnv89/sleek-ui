@@ -54,7 +54,7 @@ Each design is a self-contained JSON file with:
 - `agentInstructions.steps` — ordered steps for AI agents to apply the design
 - `accessibility.focusRing` — focus state specification
 - `tokens.motion` (optional) — animation tokens: durations, easings, keyframes, interaction effects
-- `libraries` (optional) — external animation libraries with install commands
+- `libraries` (optional) — external animation libraries with validated package/version installation metadata
 
 See [`public/schema/design.v1.json`](../public/schema/design.v1.json) for the full schema.
 

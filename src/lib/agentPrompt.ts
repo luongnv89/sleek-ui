@@ -21,7 +21,7 @@ Read the JSON, then follow the steps in agentInstructions.steps to apply this de
 3. Load fonts by adding the Google Fonts URL from fonts.urls as a <link> tag
 4. Set font-family from tokens.typography.fontFamily
 5. Apply component styles from the components field (Tailwind class names for shadcn projects)
-6. Reproduce animations when tokens.motion is present — map easings to --ease-* theme keys and keyframes to @keyframes + --animate-* (Tailwind v4); install packages listed in libraries
+6. Reproduce animations when tokens.motion is present — map CSS-compatible easings to --ease-* theme keys, apply library-native easings through the relevant library API, and map keyframes to @keyframes + --animate-* (Tailwind v4); install packages listed in libraries
 7. Ensure focus states match accessibility.focusRing specification
 8. Test both light and dark modes
 
@@ -116,6 +116,20 @@ function formatEasingValue(value: MotionEasing): string {
   return Array.isArray(value) ? `cubic-bezier(${value.join(', ')})` : value;
 }
 
+const CSS_EASING_KEYWORDS = new Set([
+  'ease',
+  'linear',
+  'ease-in',
+  'ease-out',
+  'ease-in-out',
+  'step-start',
+  'step-end',
+]);
+
+function isCssEasing(value: MotionEasing): boolean {
+  return Array.isArray(value) || CSS_EASING_KEYWORDS.has(value.toLowerCase());
+}
+
 /**
  * Compact one-line motion summary for the STYLE block. Serializes toward
  * Tailwind v4 conventions (--ease-* theme keys, @keyframes + --animate-*)
@@ -132,8 +146,17 @@ function formatMotionSummary(motion: MotionTokens): string {
     parts.push(`delays {${entries.join(', ')}}`);
   }
   if (motion.easing) {
-    const entries = Object.entries(motion.easing).map(([k, v]) => `${k}: ${formatEasingValue(v)}`);
-    parts.push(`easings {${entries.join(', ')}} → --ease-* theme keys`);
+    const entries = Object.entries(motion.easing);
+    const cssEntries = entries
+      .filter(([, value]) => isCssEasing(value))
+      .map(([key, value]) => `${key}: ${formatEasingValue(value)}`);
+    const libraryEntries = entries
+      .filter(([, value]) => !isCssEasing(value))
+      .map(([key, value]) => `${key}: ${formatEasingValue(value)}`);
+    if (cssEntries.length) parts.push(`CSS easings {${cssEntries.join(', ')}} → --ease-* theme keys`);
+    if (libraryEntries.length) {
+      parts.push(`library-native easings {${libraryEntries.join(', ')}} → apply through the relevant library API (not CSS/Tailwind theme values)`);
+    }
   }
   if (motion.iteration) {
     const entries = Object.entries(motion.iteration).map(([k, v]) => `${k}: ${v}`);
@@ -151,13 +174,19 @@ function formatMotionSummary(motion: MotionTokens): string {
   return parts.join(' | ');
 }
 
-/** LIBRARIES block for the prompt — emitted only when the design declares external libraries. */
+const SAFE_PACKAGE_NAME = /^(?:@[a-z0-9][a-z0-9._-]*\/)?[a-z0-9][a-z0-9._-]*$/;
+const SAFE_PACKAGE_VERSION = /^[~^]?[0-9]+(?:\.[0-9]+){0,2}(?:-[0-9A-Za-z.-]+)?$/;
+
+/** LIBRARIES block for the prompt — emitted only for safe structured package metadata. */
 function formatLibrariesSection(designData?: DesignData | null): string {
   const libraries = designData?.libraries;
   if (!Array.isArray(libraries) || libraries.length === 0) return '';
-  const lines = libraries.map(
-    (lib) => `- ${lib.name} (${lib.package}${lib.version ? `@${lib.version}` : ''}): ${lib.installCommand} — ${lib.purpose}`,
-  );
+  const lines = libraries.flatMap((lib) => {
+    if (!SAFE_PACKAGE_NAME.test(lib.package) || (lib.version && !SAFE_PACKAGE_VERSION.test(lib.version))) return [];
+    const packageSpec = `${lib.package}${lib.version ? `@${lib.version}` : ''}`;
+    return [`- ${lib.name} (${packageSpec}): add package \`${packageSpec}\` with the project's package manager — ${lib.purpose}`];
+  });
+  if (lines.length === 0) return '';
   return `LIBRARIES (external dependencies — install before applying)\n${lines.join('\n')}\n\n`;
 }
 

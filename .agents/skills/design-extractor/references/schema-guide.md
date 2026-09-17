@@ -148,13 +148,12 @@ Top-level `libraries` lists external packages needed to reproduce the design —
     "name": "GSAP",
     "package": "gsap",
     "version": "^3.12.5",
-    "installCommand": "npm install gsap",
     "purpose": "scroll-driven entrance animations"
   }
 ]
 ```
 
-`name`, `package`, `installCommand`, and `purpose` are required per entry; `version` is optional.
+`name`, `package`, and `purpose` are required per entry; `version` is optional. `package` must be an npm package name and `version`, when present, must be a semver constraint. Do not store free-form installation commands; generated prompts derive package-manager guidance from these validated fields.
 
 ## Fonts Section
 
@@ -201,7 +200,7 @@ Use this block verbatim unless the design needs special handling:
     "Load fonts by adding the Google Fonts URL from fonts.urls as a <link> tag",
     "Set font-family from tokens.typography.fontFamily",
     "Apply component styles from the components field (Tailwind class names for shadcn projects)",
-    "Reproduce animations when tokens.motion is present — map easings to --ease-* theme keys and keyframes to @keyframes + --animate-* (Tailwind v4); install packages listed in libraries",
+    "Reproduce animations when tokens.motion is present — map CSS-compatible easings to --ease-* theme keys, apply library-native easings through the relevant library API, and map keyframes to @keyframes + --animate-* (Tailwind v4); add packages listed in libraries",
     "Ensure focus states match accessibility.focusRing specification",
     "Test both light and dark modes"
   ]

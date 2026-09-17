@@ -144,7 +144,7 @@ While the `/browse` session is open, enumerate the page for known libraries:
 3. **Window globals** — probe `window.gsap`, `window.anime`, `window.lottie`, `window.AOS`, `window.Motion`, `window.THREE`, `window.ScrollTrigger`.
 4. **Inline script markers** — search inline `<script>` text for the same names (bundled code often still mentions `gsap.registerPlugin`, `framer-motion`, etc.).
 
-For each detected library, fill a `libraries` entry: `name` (display name), `package` (npm package), `version` (if discoverable, e.g. `gsap.version`), `installCommand` (`npm install {package}`), `purpose` (what it animates — e.g. "scroll-driven entrance animations").
+For each detected library, fill a `libraries` entry: `name` (display name), `package` (npm package), `version` (if discoverable, e.g. `gsap.version`), and `purpose` (what it animates — e.g. "scroll-driven entrance animations"). Never capture a free-form installation command; prompts derive installation guidance from the schema-validated package and version.
 
 ### Capturing motion primitives
 

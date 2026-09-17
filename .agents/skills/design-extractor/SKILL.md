@@ -91,7 +91,7 @@ Write a JSON file that conforms to [`public/schema/design.v1.json`](../../../pub
   "fonts": { "google": [...], "urls": [...] },
   "accessibility": { "contrastTarget": 4.5, "focusRing": {...}, "reducedMotion": true },
   "components": { "button": {...}, "card": {...}, "input": {...} },
-  "libraries": [ { "name": "...", "package": "...", "installCommand": "...", "purpose": "..." } ],
+  "libraries": [ { "name": "...", "package": "...", "version": "^1.2.3", "purpose": "..." } ],
   "agentInstructions": { "defaultMode": "light|dark", "steps": [...] }
 }
 ```
@@ -110,7 +110,7 @@ The prompt must:
 - Load fonts via a `<link>` tag in `<head>`
 - Set `font-family` from the typography tokens
 - Apply component styles using Tailwind / shadcn classes (when applicable)
-- Reproduce extracted animations when `tokens.motion` is present — map easings to `--ease-*` theme keys and keyframes to `@keyframes` + `--animate-*` (Tailwind v4), and install any packages listed in `libraries`
+- Reproduce extracted animations when `tokens.motion` is present — map CSS-compatible easings to `--ease-*` theme keys, apply library-native easings through the relevant library API, map keyframes to `@keyframes` + `--animate-*` (Tailwind v4), and add any packages listed in `libraries`
 - Test both light and dark modes
 
 ### Step 5 — Detect Sleek-UI Context
