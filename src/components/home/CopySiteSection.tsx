@@ -27,7 +27,7 @@ export function CopySiteSection() {
     }
     setFormError(null);
     setGeneratedFor(targetUrl);
-    setPrompt(buildWebsiteCopyPrompt(url));
+    setPrompt(buildWebsiteCopyPrompt(targetUrl));
   };
 
   return (
@@ -47,35 +47,52 @@ export function CopySiteSection() {
           aria-label="Website-copy prompt generator"
           className="flex flex-col gap-3 sm:flex-row"
         >
-          <Input
-            type="text"
-            inputMode="url"
-            autoComplete="url"
-            spellCheck={false}
-            value={url}
-            onChange={event => setUrl(event.target.value)}
-            placeholder="https://example.com"
-            aria-label="Website URL to copy"
-            aria-invalid={formError ? true : undefined}
-            aria-describedby={formError ? 'copy-site-url-error' : undefined}
-            className="h-11 flex-1"
-          />
-          <Button type="submit" size="lg" disabled={!url.trim()} className="min-h-[44px] shrink-0">
+          <div className="flex-1">
+            <label htmlFor="copy-site-url" className="mb-1.5 block text-sm font-medium">
+              Website URL
+            </label>
+            <Input
+              id="copy-site-url"
+              type="text"
+              inputMode="url"
+              autoComplete="url"
+              spellCheck={false}
+              value={url}
+              onChange={event => {
+                setUrl(event.target.value);
+                setFormError(null);
+              }}
+              placeholder="https://example.com"
+              aria-invalid={formError ? true : undefined}
+              aria-describedby={formError ? 'copy-site-url-error' : undefined}
+              className="h-11"
+            />
+          </div>
+          <Button
+            type="submit"
+            size="lg"
+            disabled={!url.trim()}
+            className="min-h-[44px] shrink-0 sm:self-end"
+          >
             Generate prompt
           </Button>
         </form>
 
         {formError && (
-          <p id="copy-site-url-error" role="alert" className="mt-3 text-sm text-destructive">
+          <p id="copy-site-url-error" role="alert" className="mt-3 text-sm text-red-600 dark:text-red-400">
             {formError}
           </p>
         )}
 
         {prompt && (
           <div className="mt-8 rounded-xl border border-border bg-background p-5 sm:p-6 shadow-xs">
-            {/* Scoped live region: announce the result without reading the whole prompt aloud. */}
+            {/* Scoped live region: announce generation and copy feedback without reading the whole prompt aloud. */}
             <p role="status" aria-live="polite" className="sr-only">
-              Prompt generated for {generatedFor} — review it below.
+              {copyError
+                ? `Copy failed: ${copyError}. Activate Copy to try again.`
+                : copied === 'prompt'
+                  ? 'Prompt copied to clipboard.'
+                  : `Prompt generated for ${generatedFor} — review it below.`}
             </p>
             <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-sm font-medium text-muted-foreground">
@@ -84,7 +101,7 @@ export function CopySiteSection() {
               <Button
                 type="button"
                 onClick={() => copy(prompt)}
-                aria-label={copyError ? `Error: ${copyError}. Click to try again` : undefined}
+                aria-label={copyError ? `Copy failed: ${copyError}. Click to try again` : undefined}
                 title={copyError ?? undefined}
                 className="min-h-[44px] shrink-0 gap-2 self-start sm:self-auto"
               >

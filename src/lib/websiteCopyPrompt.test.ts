@@ -3,10 +3,15 @@ import { buildWebsiteCopyPrompt, normalizeWebsiteUrl } from './websiteCopyPrompt
 const PROMPT_HEADLINE = 'Copy the design of the website at:';
 
 describe('normalizeWebsiteUrl (#189)', () => {
-  it('returns the normalized URL for valid input', () => {
-    expect(normalizeWebsiteUrl('stripe.com')).toBe('https://stripe.com');
+  it('returns the serialized URL for valid input', () => {
+    expect(normalizeWebsiteUrl('stripe.com')).toBe('https://stripe.com/');
     expect(normalizeWebsiteUrl('  https://linear.app/blog ')).toBe('https://linear.app/blog');
-    expect(normalizeWebsiteUrl('http://localhost:3000')).toBe('http://localhost:3000');
+    expect(normalizeWebsiteUrl('http://localhost:3000')).toBe('http://localhost:3000/');
+  });
+
+  it('returns the URL exactly as parsed, without parser-stripped characters', () => {
+    expect(normalizeWebsiteUrl('https://exa\tmple.com')).toBe('https://example.com/');
+    expect(normalizeWebsiteUrl('https://example.com/\npath')).toBe('https://example.com/path');
   });
 
   it('returns null for empty or malformed input', () => {
@@ -15,43 +20,29 @@ describe('normalizeWebsiteUrl (#189)', () => {
     expect(normalizeWebsiteUrl('foo bar')).toBeNull();
     expect(normalizeWebsiteUrl('https://')).toBeNull();
   });
+
+  it('returns null for non-web schemes', () => {
+    expect(normalizeWebsiteUrl('ftp://example.com')).toBeNull();
+    expect(normalizeWebsiteUrl('javascript://alert(1)')).toBeNull();
+    expect(normalizeWebsiteUrl('file:///etc/passwd')).toBeNull();
+  });
 });
 
 describe('buildWebsiteCopyPrompt (#189)', () => {
-  it('embeds the entered URL in the prompt headline', () => {
-    const prompt = buildWebsiteCopyPrompt('https://stripe.com');
-    expect(prompt.split('\n')[0]).toBe(`${PROMPT_HEADLINE} https://stripe.com`);
-  });
-
-  it('prepends https:// to a bare hostname', () => {
-    const prompt = buildWebsiteCopyPrompt('stripe.com');
-    expect(prompt.split('\n')[0]).toBe(`${PROMPT_HEADLINE} https://stripe.com`);
-  });
-
-  it('keeps an existing https:// scheme unchanged', () => {
-    const prompt = buildWebsiteCopyPrompt('https://linear.app/blog');
-    expect(prompt.split('\n')[0]).toBe(`${PROMPT_HEADLINE} https://linear.app/blog`);
-  });
-
-  it('keeps an existing http:// scheme unchanged', () => {
-    const prompt = buildWebsiteCopyPrompt('http://localhost:3000');
-    expect(prompt.split('\n')[0]).toBe(`${PROMPT_HEADLINE} http://localhost:3000`);
-  });
-
-  it('trims surrounding whitespace before normalizing', () => {
-    const prompt = buildWebsiteCopyPrompt('  stripe.com  ');
-    expect(prompt.split('\n')[0]).toBe(`${PROMPT_HEADLINE} https://stripe.com`);
+  it('embeds the given URL verbatim in the prompt headline', () => {
+    const prompt = buildWebsiteCopyPrompt('https://stripe.com/');
+    expect(prompt.split('\n')[0]).toBe(`${PROMPT_HEADLINE} https://stripe.com/`);
   });
 
   it('covers gated research, planning, and implementation phases', () => {
-    const prompt = buildWebsiteCopyPrompt('example.com');
+    const prompt = buildWebsiteCopyPrompt('https://example.com/');
     expect(prompt).toContain('PHASE 1 — RESEARCH');
     expect(prompt).toContain('PHASE 2 — PLANNING');
     expect(prompt).toContain('PHASE 3 — IMPLEMENTATION');
   });
 
   it('gates every numbered step on a report and explicit approval', () => {
-    const prompt = buildWebsiteCopyPrompt('example.com');
+    const prompt = buildWebsiteCopyPrompt('https://example.com/');
     const steps = prompt.match(/^\d+\. /gm) ?? [];
     const gates = prompt.match(/report .+ wait for my approval/gi) ?? [];
     expect(steps.length).toBeGreaterThanOrEqual(3);
@@ -60,7 +51,7 @@ describe('buildWebsiteCopyPrompt (#189)', () => {
   });
 
   it('asks for theme, style, and design details to be extracted and applied', () => {
-    const prompt = buildWebsiteCopyPrompt('example.com');
+    const prompt = buildWebsiteCopyPrompt('https://example.com/');
     expect(prompt).toMatch(/theme/i);
     expect(prompt).toMatch(/style/i);
     expect(prompt).toMatch(/design details/i);
@@ -69,7 +60,7 @@ describe('buildWebsiteCopyPrompt (#189)', () => {
   });
 
   it('lists the extraction taxonomy: colors, typography, spacing, radius, shadows', () => {
-    const prompt = buildWebsiteCopyPrompt('example.com');
+    const prompt = buildWebsiteCopyPrompt('https://example.com/');
     for (const token of ['background', 'foreground', 'primary', 'muted', 'accent', 'destructive', 'border', 'ring', 'card']) {
       expect(prompt).toContain(token);
     }

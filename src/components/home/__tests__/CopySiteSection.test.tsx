@@ -15,14 +15,14 @@ function renderSection() {
 }
 
 function typeUrl(value: string) {
-  fireEvent.change(screen.getByLabelText('Website URL to copy'), { target: { value } });
+  fireEvent.change(screen.getByLabelText('Website URL'), { target: { value } });
 }
 
 describe('CopySiteSection (#189)', () => {
   it('renders a form that accepts the URL of the website to copy', () => {
     renderSection();
     expect(screen.getByRole('form', { name: 'Website-copy prompt generator' })).toBeInTheDocument();
-    expect(screen.getByLabelText('Website URL to copy')).toBeInTheDocument();
+    expect(screen.getByLabelText('Website URL')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Generate prompt' })).toBeInTheDocument();
   });
 
@@ -72,7 +72,7 @@ describe('CopySiteSection (#189)', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Generate prompt' }));
 
     expect(screen.getByRole('alert')).toHaveTextContent(/valid website URL/i);
-    const input = screen.getByLabelText('Website URL to copy');
+    const input = screen.getByLabelText('Website URL');
     expect(input).toHaveAttribute('aria-invalid', 'true');
     expect(input).toHaveAttribute('aria-describedby', 'copy-site-url-error');
     expect(screen.queryByText(/Copy the design of the website at:/)).not.toBeInTheDocument();
@@ -87,8 +87,19 @@ describe('CopySiteSection (#189)', () => {
     typeUrl('stripe.com');
     fireEvent.click(screen.getByRole('button', { name: 'Generate prompt' }));
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
-    expect(screen.getByLabelText('Website URL to copy')).not.toHaveAttribute('aria-invalid');
+    expect(screen.getByLabelText('Website URL')).not.toHaveAttribute('aria-invalid');
     expect(screen.getByText(/Copy the design of the website at:/)).toBeInTheDocument();
+  });
+
+  it('clears the validation error as soon as the URL is edited', () => {
+    renderSection();
+    typeUrl('foo bar');
+    fireEvent.click(screen.getByRole('button', { name: 'Generate prompt' }));
+    expect(screen.getByRole('alert')).toBeInTheDocument();
+
+    typeUrl('foo ba');
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(screen.getByLabelText('Website URL')).not.toHaveAttribute('aria-invalid');
   });
 
   it('surfaces clipboard failures on the Copy button', async () => {
@@ -101,9 +112,11 @@ describe('CopySiteSection (#189)', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Copy' }));
     });
 
+    // The accessible name must keep the visible "Copy" label (WCAG 2.5.3).
     expect(
-      await screen.findByRole('button', { name: 'Error: denied. Click to try again' })
+      await screen.findByRole('button', { name: 'Copy failed: denied. Click to try again' })
     ).toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveTextContent('Copy failed: denied');
   });
 
   it('copies the generated prompt to the clipboard with Copied! feedback', async () => {
@@ -120,6 +133,7 @@ describe('CopySiteSection (#189)', () => {
     expect(writeText).toHaveBeenCalledTimes(1);
     expect(writeText).toHaveBeenCalledWith(expect.stringContaining('https://linear.app'));
     expect(await screen.findByRole('button', { name: 'Copied!' })).toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveTextContent('Prompt copied to clipboard');
   });
 
   it('clears stale Copied! feedback when a new prompt is generated', async () => {
