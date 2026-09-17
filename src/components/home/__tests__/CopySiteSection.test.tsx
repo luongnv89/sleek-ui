@@ -19,11 +19,17 @@ function typeUrl(value: string) {
 }
 
 describe('CopySiteSection (#189)', () => {
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   it('renders a form that accepts the URL of the website to copy', () => {
     renderSection();
     expect(screen.getByRole('form', { name: 'Website-copy prompt generator' })).toBeInTheDocument();
     expect(screen.getByLabelText('Website URL')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Generate prompt' })).toBeInTheDocument();
+    // The live region must already exist so the first announcement lands.
+    expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
   it('keeps the submit disabled and renders no prompt while the URL is empty', () => {
@@ -117,6 +123,48 @@ describe('CopySiteSection (#189)', () => {
       await screen.findByRole('button', { name: 'Copy failed: denied. Click to try again' })
     ).toBeInTheDocument();
     expect(screen.getByRole('status')).toHaveTextContent('Copy failed: denied');
+  });
+
+  it('does not resurrect Copied! or drop the failure when a retry fails', async () => {
+    const writeText = mockClipboard(() => Promise.resolve());
+    renderSection();
+    typeUrl('https://linear.app');
+    fireEvent.click(screen.getByRole('button', { name: 'Generate prompt' }));
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Copy' }));
+    });
+    expect(screen.getByRole('button', { name: 'Copied!' })).toBeInTheDocument();
+
+    // A failed retry must clear the copied flag — never show AlertCircle
+    // alongside a stale "Copied!" label.
+    writeText.mockImplementation(() => Promise.reject(new Error('denied')));
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Copied!' }));
+    });
+    expect(
+      screen.getByRole('button', { name: 'Copy failed: denied. Click to try again' })
+    ).toBeInTheDocument();
+  });
+
+  it('keeps the last copy outcome announced after feedback flags auto-clear', async () => {
+    jest.useFakeTimers();
+    mockClipboard(() => Promise.reject(new Error('denied')));
+    renderSection();
+    typeUrl('stripe.com');
+    fireEvent.click(screen.getByRole('button', { name: 'Generate prompt' }));
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Copy' }));
+    });
+    expect(screen.getByRole('status')).toHaveTextContent('Copy failed: denied');
+
+    act(() => {
+      jest.advanceTimersByTime(2000);
+    });
+    // The announcement must not revert to "Prompt generated for…".
+    expect(screen.getByRole('status')).toHaveTextContent('Copy failed: denied');
+    expect(screen.getByRole('status')).not.toHaveTextContent('Prompt generated');
   });
 
   it('copies the generated prompt to the clipboard with Copied! feedback', async () => {

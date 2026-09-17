@@ -30,7 +30,15 @@ export function useClipboard<T>(flag: T, reset: T) {
 
   const copy = useCallback(
     async (value?: string, copiedFlag: T = flag): Promise<boolean> => {
-      if (!value || !navigator.clipboard) {
+      if (!navigator.clipboard) {
+        // Distinct from an empty payload: insecure contexts and old browsers
+        // simply lack the API, so "empty text" would be a wrong diagnosis.
+        setCopied(reset);
+        setError('Clipboard API is not available');
+        return false;
+      }
+      if (!value) {
+        setCopied(reset);
         setError('Cannot copy empty text');
         return false;
       }
@@ -42,6 +50,9 @@ export function useClipboard<T>(flag: T, reset: T) {
         timer.current = setTimeout(() => setCopied(reset), COPY_FEEDBACK_MS);
         return true;
       } catch (err) {
+        // A failure must clear any pending "copied" flag, not just the timer —
+        // otherwise a stale success survives next to the error.
+        setCopied(reset);
         setError(err instanceof Error ? err.message : 'Failed to copy text');
         clearTimeout(timer.current);
         // Errors auto-clear on the same window as success so stale feedback

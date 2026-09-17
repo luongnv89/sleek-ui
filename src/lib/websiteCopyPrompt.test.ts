@@ -26,6 +26,13 @@ describe('normalizeWebsiteUrl (#189)', () => {
     expect(normalizeWebsiteUrl('javascript://alert(1)')).toBeNull();
     expect(normalizeWebsiteUrl('file:///etc/passwd')).toBeNull();
   });
+
+  it('returns null for URLs embedding credentials', () => {
+    expect(normalizeWebsiteUrl('https://user:pass@example.com')).toBeNull();
+    // mailto:foo@bar.com has no //, so it would parse as https:// with
+    // userinfo "mailto:foo" retargeting bar.com — reject it too.
+    expect(normalizeWebsiteUrl('mailto:foo@bar.com')).toBeNull();
+  });
 });
 
 describe('buildWebsiteCopyPrompt (#189)', () => {

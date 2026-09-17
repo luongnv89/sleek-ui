@@ -133,4 +133,43 @@ describe('useClipboard (#132)', () => {
     expect(writeText).not.toHaveBeenCalled();
     expect(screen.getByTestId('error')).toHaveTextContent('Cannot copy empty text');
   });
+
+  it('reports an absent Clipboard API distinctly from empty text', async () => {
+    // Insecure contexts and old browsers expose no navigator.clipboard.
+    Object.defineProperty(navigator, 'clipboard', { value: undefined, configurable: true });
+    render(<Harness value="hello" />);
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button'));
+    });
+    expect(screen.getByTestId('error')).toHaveTextContent('Clipboard API is not available');
+    expect(screen.getByTestId('copied')).toHaveTextContent('idle');
+  });
+
+  it('clears a stale copied flag when a retry fails', async () => {
+    jest.useFakeTimers();
+    const writeText = mockClipboard(() => Promise.resolve());
+    render(<Harness value="hello" />);
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button'));
+      await Promise.resolve();
+    });
+    expect(screen.getByTestId('copied')).toHaveTextContent('copied');
+
+    // Fail inside the 1.5s success window: the copied flag must reset at once.
+    writeText.mockImplementation(() => Promise.reject(new Error('denied')));
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button'));
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    expect(screen.getByTestId('copied')).toHaveTextContent('idle');
+    expect(screen.getByTestId('error')).toHaveTextContent('denied');
+
+    // And no pending success-reset timer resurrects it later.
+    act(() => {
+      jest.advanceTimersByTime(COPY_FEEDBACK_MS + 1000);
+    });
+    expect(screen.getByTestId('copied')).toHaveTextContent('idle');
+  });
 });

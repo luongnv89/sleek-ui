@@ -17,8 +17,9 @@
  * `https://` when no scheme is present. Returns the serialized URL — the
  * exact string the URL parser accepted, so characters the parser strips
  * (tab, newline, carriage return) never leak into generated output. Only
- * http(s) URLs are accepted: any other scheme or malformed input returns
- * null so callers can reject it instead of generating a prompt for it.
+ * http(s) URLs are accepted, and embedded credentials (userinfo) are
+ * rejected so secrets never leak into the generated prompt: anything else
+ * returns null so callers can reject it instead of generating a prompt.
  */
 export function normalizeWebsiteUrl(url: string): string | null {
   const trimmed = url.trim();
@@ -27,6 +28,7 @@ export function normalizeWebsiteUrl(url: string): string | null {
   try {
     const parsed = new URL(targetUrl);
     if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return null;
+    if (parsed.username || parsed.password) return null;
     return parsed.href;
   } catch {
     return null;

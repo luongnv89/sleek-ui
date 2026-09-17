@@ -8,7 +8,7 @@ import { buildWebsiteCopyPrompt, normalizeWebsiteUrl } from '@/lib/websiteCopyPr
 export function CopySiteSection() {
   const [url, setUrl] = useState('');
   const [prompt, setPrompt] = useState('');
-  const [generatedFor, setGeneratedFor] = useState('');
+  const [statusMessage, setStatusMessage] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
   const { copied, error: copyError, copy, resetCopy } = useClipboard<'prompt' | null>('prompt', null);
 
@@ -17,17 +17,28 @@ export function CopySiteSection() {
     resetCopy();
   }, [prompt, resetCopy]);
 
+  // Copy outcomes are recorded as the last announcement so the status never
+  // reverts to a stale "Prompt generated" message once the flags auto-clear.
+  useEffect(() => {
+    if (copyError) {
+      setStatusMessage(`Copy failed: ${copyError}. Activate Copy to try again.`);
+    } else if (copied === 'prompt') {
+      setStatusMessage('Prompt copied to clipboard.');
+    }
+  }, [copied, copyError]);
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const targetUrl = normalizeWebsiteUrl(url);
     if (!targetUrl) {
       if (url.trim()) setFormError('Enter a valid website URL, e.g. example.com');
       setPrompt('');
+      setStatusMessage('');
       return;
     }
     setFormError(null);
-    setGeneratedFor(targetUrl);
     setPrompt(buildWebsiteCopyPrompt(targetUrl));
+    setStatusMessage(`Prompt generated for ${targetUrl} — review it below.`);
   };
 
   return (
@@ -84,16 +95,16 @@ export function CopySiteSection() {
           </p>
         )}
 
+        {/* Persistent live region: mounted before any announcement so the first
+            message is reliably delivered (regions added already-populated can be
+            missed by VoiceOver/Safari), and kept short so the prompt itself is
+            never read aloud. */}
+        <p role="status" aria-live="polite" className="sr-only">
+          {statusMessage}
+        </p>
+
         {prompt && (
           <div className="mt-8 rounded-xl border border-border bg-background p-5 sm:p-6 shadow-xs">
-            {/* Scoped live region: announce generation and copy feedback without reading the whole prompt aloud. */}
-            <p role="status" aria-live="polite" className="sr-only">
-              {copyError
-                ? `Copy failed: ${copyError}. Activate Copy to try again.`
-                : copied === 'prompt'
-                  ? 'Prompt copied to clipboard.'
-                  : `Prompt generated for ${generatedFor} — review it below.`}
-            </p>
             <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-sm font-medium text-muted-foreground">
                 Copy this prompt. Paste into Claude, Cursor, or any agent.
