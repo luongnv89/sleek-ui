@@ -161,6 +161,120 @@
             "default": { "type": "string" },
             "lg": { "type": "string" }
           }
+        },
+        "motion": {
+          "type": "object",
+          "description": "Animation and motion tokens — durations, delays, easings, iterations, keyframes, and interaction effects. Optional; omit when the source has no meaningful motion.",
+          "properties": {
+            "duration": {
+              "type": "object",
+              "description": "Named duration scale — CSS duration strings ('150ms', '0.3s') or {value, unit} objects",
+              "additionalProperties": {
+                "anyOf": [
+                  { "type": "string", "pattern": "^[0-9.]+(ms|s)$" },
+                  {
+                    "type": "object",
+                    "required": ["value", "unit"],
+                    "properties": {
+                      "value": { "type": "number" },
+                      "unit": { "type": "string", "enum": ["ms", "s"] }
+                    }
+                  }
+                ]
+              }
+            },
+            "delay": {
+              "type": "object",
+              "description": "Named delay scale — same value shapes as duration",
+              "additionalProperties": {
+                "anyOf": [
+                  { "type": "string", "pattern": "^[0-9.]+(ms|s)$" },
+                  {
+                    "type": "object",
+                    "required": ["value", "unit"],
+                    "properties": {
+                      "value": { "type": "number" },
+                      "unit": { "type": "string", "enum": ["ms", "s"] }
+                    }
+                  }
+                ]
+              }
+            },
+            "easing": {
+              "type": "object",
+              "description": "Named easings — CSS keyword/library easing names as strings, or cubic-bezier control points as 4-number arrays (W3C DTCG cubicBezier). Never 'cubic-bezier(...)' function strings.",
+              "additionalProperties": {
+                "anyOf": [
+                  { "type": "string" },
+                  { "type": "array", "items": { "type": "number" }, "minItems": 4, "maxItems": 4 }
+                ]
+              }
+            },
+            "iteration": {
+              "type": "object",
+              "description": "Named iteration counts — numbers or strings such as 'infinite'",
+              "additionalProperties": {
+                "anyOf": [
+                  { "type": "number" },
+                  { "type": "string" }
+                ]
+              }
+            },
+            "keyframes": {
+              "type": "object",
+              "description": "Named @keyframes rules — {name: {offset: {property: value}}} with offsets like '0%', '50%', 'from', 'to'",
+              "additionalProperties": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "anyOf": [
+                      { "type": "string" },
+                      { "type": "number" }
+                    ]
+                  }
+                }
+              }
+            },
+            "effects": {
+              "type": "array",
+              "description": "Transitions and interaction effects — hover, focus, entrance, exit, scroll behaviors",
+              "items": {
+                "type": "object",
+                "required": ["name", "trigger"],
+                "properties": {
+                  "name": { "type": "string" },
+                  "trigger": {
+                    "type": "string",
+                    "enum": ["hover", "focus", "active", "entrance", "exit", "scroll", "load", "custom"]
+                  },
+                  "target": { "type": "string", "description": "Element or component the effect applies to (e.g. 'button', 'card', 'nav')" },
+                  "properties": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "description": "Animated CSS properties, e.g. ['opacity', 'transform']"
+                  },
+                  "duration": { "type": "string", "description": "Duration token name or CSS duration string" },
+                  "delay": { "type": "string", "description": "Delay token name or CSS duration string" },
+                  "easing": {
+                    "description": "Easing token name, CSS keyword, or cubic-bezier control points",
+                    "anyOf": [
+                      { "type": "string" },
+                      { "type": "array", "items": { "type": "number" }, "minItems": 4, "maxItems": 4 }
+                    ]
+                  },
+                  "iteration": {
+                    "anyOf": [
+                      { "type": "number" },
+                      { "type": "string" }
+                    ]
+                  },
+                  "keyframes": { "type": "string", "description": "Name of a motion.keyframes entry this effect plays" },
+                  "description": { "type": "string" }
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -231,6 +345,21 @@
           "scope": { "type": "string" },
           "color": { "type": "string" },
           "fontStyle": { "type": "string" }
+        }
+      }
+    },
+    "libraries": {
+      "type": "array",
+      "description": "External libraries required to reproduce the design — animation libraries (gsap, framer-motion, ...), icon packs, renderers. Optional; omit when the design needs no external runtime dependencies.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "package", "purpose"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1, "pattern": "^[^\\r\\n]+$", "description": "Display name, e.g. 'GSAP'" },
+          "package": { "type": "string", "pattern": "^(?:@[a-z0-9][a-z0-9._-]*/)?[a-z0-9][a-z0-9._-]*$", "description": "npm package name, e.g. 'gsap'" },
+          "version": { "type": "string", "pattern": "^[~^]?[0-9]+(?:\\.[0-9]+){0,2}(?:-[0-9A-Za-z.-]+)?$", "description": "Semver version constraint observed or recommended, e.g. '^3.12.5'" },
+          "purpose": { "type": "string", "minLength": 1, "pattern": "^[^\\r\\n]+$", "description": "What the library is needed for, e.g. 'scroll-driven entrance animations'" }
         }
       }
     },

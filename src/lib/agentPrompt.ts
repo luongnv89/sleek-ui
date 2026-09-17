@@ -1,4 +1,4 @@
-import type { AppTarget, DesignData } from '../types/design';
+import type { AppTarget, DesignData, MotionDuration, MotionEasing, MotionTokens } from '../types/design';
 import { APP_TARGET_LABELS, APP_TARGET_INSTRUCTIONS } from './appTargets';
 import { COLLECTION_LABELS } from './collections';
 
@@ -21,8 +21,9 @@ Read the JSON, then follow the steps in agentInstructions.steps to apply this de
 3. Load fonts by adding the Google Fonts URL from fonts.urls as a <link> tag
 4. Set font-family from tokens.typography.fontFamily
 5. Apply component styles from the components field (Tailwind class names for shadcn projects)
-6. Ensure focus states match accessibility.focusRing specification
-7. Test both light and dark modes
+6. Reproduce animations when tokens.motion is present — map CSS-compatible easings to --ease-* theme keys, apply library-native easings through the relevant library API, and map keyframes to @keyframes + --animate-* (Tailwind v4); install packages listed in libraries
+7. Ensure focus states match accessibility.focusRing specification
+8. Test both light and dark modes
 
 Target framework: Tailwind CSS + shadcn/ui. For other frameworks, map token names to CSS custom properties semantically.`;
   }
@@ -41,6 +42,7 @@ export function buildGenericAppThemePrompt(
   const styleBlock = formatStyleBlock(designData);
   const colorBlock = formatColorBlock(designData);
   const tokenBlock = formatTokenColorBlock(designData);
+  const librariesSection = formatLibrariesSection(designData);
 
   return `Fetch the app theme at: ${designUrl}
 
@@ -57,7 +59,7 @@ ${colorBlock}
 TOKEN-COLORS (syntax highlighting)
 ${tokenBlock}
 
-Also follow agentInstructions.steps from the JSON. Verify background/foreground contrast and test in both light and dark modes where supported.`;
+${librariesSection}Also follow agentInstructions.steps from the JSON. Verify background/foreground contrast and test in both light and dark modes where supported.`;
 }
 
 export function buildAppThemePrompt(
@@ -70,6 +72,7 @@ export function buildAppThemePrompt(
   const styleBlock = formatStyleBlock(designData);
   const colorBlock = formatColorBlock(designData);
   const tokenBlock = formatTokenColorBlock(designData);
+  const librariesSection = formatLibrariesSection(designData);
 
   return `Fetch the app theme at: ${designUrl}
 
@@ -84,7 +87,7 @@ ${colorBlock}
 TOKEN-COLORS (syntax highlighting)
 ${tokenBlock}
 
-APPLY INSTRUCTIONS (${label})
+${librariesSection}APPLY INSTRUCTIONS (${label})
 ${instructions}
 
 Also follow agentInstructions.steps from the JSON. Verify background/foreground contrast and test in both light and dark modes where supported.`;
@@ -92,7 +95,7 @@ Also follow agentInstructions.steps from the JSON. Verify background/foreground 
 
 function formatStyleBlock(designData?: DesignData | null): string {
   if (!designData?.tokens) return '(see tokens in fetched JSON)';
-  const { typography, spacing, radius, shadows } = designData.tokens;
+  const { typography, spacing, radius, shadows, motion } = designData.tokens;
   const lines: string[] = [];
   if (typography?.fontFamily) lines.push(`fontFamily: ${JSON.stringify(typography.fontFamily)}`);
   if (typography?.fontSize) lines.push(`fontSize: ${JSON.stringify(typography.fontSize)}`);
@@ -100,7 +103,91 @@ function formatStyleBlock(designData?: DesignData | null): string {
   if (spacing) lines.push(`spacing: ${JSON.stringify(spacing)}`);
   if (radius) lines.push(`radius: ${JSON.stringify(radius)}`);
   if (shadows) lines.push(`shadows: ${JSON.stringify(shadows)}`);
+  const motionSummary = motion ? formatMotionSummary(motion) : '';
+  if (motionSummary) lines.push(`motion: ${motionSummary}`);
   return lines.length > 0 ? lines.join('\n') : '(see tokens in fetched JSON)';
+}
+
+function formatDurationValue(value: MotionDuration): string {
+  return typeof value === 'object' ? `${value.value}${value.unit}` : value;
+}
+
+function formatEasingValue(value: MotionEasing): string {
+  return Array.isArray(value) ? `cubic-bezier(${value.join(', ')})` : value;
+}
+
+const CSS_EASING_KEYWORDS = new Set([
+  'ease',
+  'linear',
+  'ease-in',
+  'ease-out',
+  'ease-in-out',
+  'step-start',
+  'step-end',
+]);
+
+function isCssEasing(value: MotionEasing): boolean {
+  return Array.isArray(value) || CSS_EASING_KEYWORDS.has(value.toLowerCase());
+}
+
+/**
+ * Compact one-line motion summary for the STYLE block. Serializes toward
+ * Tailwind v4 conventions (--ease-* theme keys, @keyframes + --animate-*)
+ * while the fetched JSON keeps the raw primitives.
+ */
+function formatMotionSummary(motion: MotionTokens): string {
+  const parts: string[] = [];
+  if (motion.duration) {
+    const entries = Object.entries(motion.duration).map(([k, v]) => `${k}: ${formatDurationValue(v)}`);
+    parts.push(`durations {${entries.join(', ')}}`);
+  }
+  if (motion.delay) {
+    const entries = Object.entries(motion.delay).map(([k, v]) => `${k}: ${formatDurationValue(v)}`);
+    parts.push(`delays {${entries.join(', ')}}`);
+  }
+  if (motion.easing) {
+    const entries = Object.entries(motion.easing);
+    const cssEntries = entries
+      .filter(([, value]) => isCssEasing(value))
+      .map(([key, value]) => `${key}: ${formatEasingValue(value)}`);
+    const libraryEntries = entries
+      .filter(([, value]) => !isCssEasing(value))
+      .map(([key, value]) => `${key}: ${formatEasingValue(value)}`);
+    if (cssEntries.length) parts.push(`CSS easings {${cssEntries.join(', ')}} → --ease-* theme keys`);
+    if (libraryEntries.length) {
+      parts.push(`library-native easings {${libraryEntries.join(', ')}} → apply through the relevant library API (not CSS/Tailwind theme values)`);
+    }
+  }
+  if (motion.iteration) {
+    const entries = Object.entries(motion.iteration).map(([k, v]) => `${k}: ${v}`);
+    parts.push(`iterations {${entries.join(', ')}}`);
+  }
+  if (motion.keyframes) {
+    parts.push(`keyframes [${Object.keys(motion.keyframes).join(', ')}] → @keyframes + --animate-{name}`);
+  }
+  if (motion.effects?.length) {
+    const effects = motion.effects.map(
+      (e) => `${e.name}(${e.trigger}${e.target ? `:${e.target}` : ''})`,
+    );
+    parts.push(`effects [${effects.join(', ')}]`);
+  }
+  return parts.join(' | ');
+}
+
+const SAFE_PACKAGE_NAME = /^(?:@[a-z0-9][a-z0-9._-]*\/)?[a-z0-9][a-z0-9._-]*$/;
+const SAFE_PACKAGE_VERSION = /^[~^]?[0-9]+(?:\.[0-9]+){0,2}(?:-[0-9A-Za-z.-]+)?$/;
+
+/** LIBRARIES block for the prompt — emitted only for safe structured package metadata. */
+function formatLibrariesSection(designData?: DesignData | null): string {
+  const libraries = designData?.libraries;
+  if (!Array.isArray(libraries) || libraries.length === 0) return '';
+  const lines = libraries.flatMap((lib) => {
+    if (!SAFE_PACKAGE_NAME.test(lib.package) || (lib.version && !SAFE_PACKAGE_VERSION.test(lib.version))) return [];
+    const packageSpec = `${lib.package}${lib.version ? `@${lib.version}` : ''}`;
+    return [`- ${lib.name} (${packageSpec}): add package \`${packageSpec}\` with the project's package manager — ${lib.purpose}`];
+  });
+  if (lines.length === 0) return '';
+  return `LIBRARIES (external dependencies — install before applying)\n${lines.join('\n')}\n\n`;
 }
 
 function formatColorBlock(designData?: DesignData | null): string {

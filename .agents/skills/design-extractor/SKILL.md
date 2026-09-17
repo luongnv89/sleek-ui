@@ -16,7 +16,7 @@ Turn any website screenshot or live URL into a reusable design system. Outputs a
 
 Every run produces **two artifacts**:
 
-1. **A JSON file** conforming to `design.v1.json` — CSS tokens (light + dark), typography, spacing, radius, shadows, fonts, accessibility, components, and agent instructions.
+1. **A JSON file** conforming to `design.v1.json` — CSS tokens (light + dark), typography, spacing, radius, shadows, fonts, accessibility, components, optional motion tokens and external libraries, and agent instructions.
 2. **A prompt** — a short, ready-to-paste instruction block an AI agent can use to apply the extracted design to any project.
 
 When run inside the **sleek-ui repository**, it additionally offers to add the design to the catalog via a PR — updating the raw JSON, the bundled source JSON, the design list, and generating a preview SVG.
@@ -62,6 +62,8 @@ Extract the following (see [references/schema-guide.md](references/schema-guide.
 - **Font URLs** — build Google Fonts CSS URLs for each detected family. If a family is not on Google Fonts (e.g., custom corporate font), fall back to the closest Google Fonts alternative and note the substitution.
 - **Components** — button (primary, secondary, ghost), card, input. Reference token names, not raw values.
 - **Accessibility** — focus ring width/color/offset. Default to `2px` / `currentColor` / `2px` unless the source is obviously different.
+- **Motion** (URL inputs only) — durations, delays, easings, iteration counts, keyframes, and interaction effects (hover, focus, entrance, exit, scroll). Follow the detection workflow in [references/extraction-guide.md](references/extraction-guide.md) — screenshot-only inputs cannot capture motion, so omit `tokens.motion` for them.
+- **Libraries** — external animation/runtime libraries detected on the source (e.g., GSAP, Framer Motion, anime.js, AOS, Lottie). Only list libraries actually detected — never guess. Omit `libraries` when none are found.
 
 ### Step 3 — Generate the JSON
 
@@ -82,13 +84,19 @@ Write a JSON file that conforms to [`public/schema/design.v1.json`](../../../pub
   "description": "{one-sentence description, min 10 chars}",
   "categories": ["{1-3 tags}"],
   "author": { "name": "sleek-ui", "url": "https://luongnv.com/sleek-ui" },
-  "tokens": { ... },
+  "tokens": {
+    "colors": {...}, "typography": {...}, "spacing": {...}, "radius": {...}, "shadows": {...},
+    "motion": { "duration": {...}, "easing": {...}, "keyframes": {...}, "effects": [...] }
+  },
   "fonts": { "google": [...], "urls": [...] },
   "accessibility": { "contrastTarget": 4.5, "focusRing": {...}, "reducedMotion": true },
   "components": { "button": {...}, "card": {...}, "input": {...} },
+  "libraries": [ { "name": "...", "package": "...", "version": "^1.2.3", "purpose": "..." } ],
   "agentInstructions": { "defaultMode": "light|dark", "steps": [...] }
 }
 ```
+
+`tokens.motion` and `libraries` are **optional** — include them only when motion/libraries were actually detected. Omit both for screenshot-only inputs and for sources with no meaningful animation.
 
 Use the standard `agentInstructions.steps` from [references/schema-guide.md](references/schema-guide.md) unless the design needs special handling.
 
@@ -102,6 +110,7 @@ The prompt must:
 - Load fonts via a `<link>` tag in `<head>`
 - Set `font-family` from the typography tokens
 - Apply component styles using Tailwind / shadcn classes (when applicable)
+- Reproduce extracted animations when `tokens.motion` is present — map CSS-compatible easings to `--ease-*` theme keys, apply library-native easings through the relevant library API, map keyframes to `@keyframes` + `--animate-*` (Tailwind v4), and add any packages listed in `libraries`
 - Test both light and dark modes
 
 ### Step 5 — Detect Sleek-UI Context
