@@ -115,6 +115,61 @@ describe('mapWebsiteToCodingTheme (#187)', () => {
     expect(mapped.defaultMode).toBe('dark');
     expect(mapWebsiteToCodingTheme(lightSite, backup, { mode: 'keep' }).defaultMode).toBe('light');
   });
+
+  it('checks contrast against the light palette when light mode is kept', () => {
+    const lightSite = {
+      ...website,
+      defaultMode: 'light',
+      tokens: { ...website.tokens, colors: { ...website.tokens.colors, light: { ...website.tokens.colors.light, background: '0 0% 100%', foreground: '0 0% 90%' } } },
+    } as DesignData;
+    const kept = mapWebsiteToCodingTheme(lightSite, backup, { mode: 'keep' });
+    expect(kept.defaultMode).toBe('light');
+    expect(kept.conflicts.some(c => c.key.startsWith('dark.'))).toBe(false);
+    const fg = kept.conflicts.find(c => c.id === 'light.foreground')!;
+    expect(fg.kind).toBe('contrast');
+    expect(contrastRatio(kept.colors.light.foreground, '0 0% 100%')).toBeGreaterThanOrEqual(4.5);
+    const pale = kept.conflicts.find(c => c.kind === 'syntax-contrast');
+    if (pale) expect(pale.message).toContain('light background');
+    const prompt = buildMappedThemePrompt({ websiteUrl: 'w', websiteName: 'w', backupUrl: 'b', backupName: 'b', mapped: kept, appTarget: 'ghostty' });
+    expect(prompt).toContain('tokens.colors.light');
+    expect(prompt).not.toContain('tokens.colors.dark');
+    expect(prompt).toContain('Checked against the light palette');
+  });
+
+  it('holds muted-foreground to the 4.5:1 text minimum', () => {
+    // ~3.9:1 on black: passes the accent minimum but fails body text.
+    const mapped = mapWebsiteToCodingTheme(withDark(website, { background: '0 0% 0%', 'muted-foreground': '0 0% 40%' }), backup);
+    expect(mapped.conflicts.find(c => c.id === 'dark.muted-foreground')?.message).toContain('needs 4.5:1');
+  });
+
+  it('infers a light-first backup that also defines a dark palette as light', () => {
+    const lightFirst = {
+      ...backup,
+      defaultMode: undefined,
+      agentInstructions: { ...backup.agentInstructions, defaultMode: undefined },
+      tokens: { ...backup.tokens, colors: { light: { background: '0 0% 100%' }, dark: { background: '0 0% 10%' } } },
+      tokenColors: [{ scope: 'keyword', color: '220 80% 30%' }, { scope: 'comment', color: '0 0% 35%' }],
+    } as DesignData;
+    const mapped = mapWebsiteToCodingTheme({ ...website, defaultMode: 'light' } as DesignData, lightFirst);
+    expect(mapped.conflicts.find(c => c.kind === 'mode-mismatch')).toBeUndefined();
+    expect(mapped.defaultMode).toBe('light');
+  });
+
+  it('keeps the first of duplicate backup scopes and respects website overrides', () => {
+    const dup = { ...backup, tokenColors: [{ scope: 'string', color: '100 50% 60%' }, { scope: 'string', color: '10 50% 60%' }] } as DesignData;
+    const site = { ...website, tokenColors: [{ scope: 'string', color: '0 0% 90%' }] } as DesignData;
+    const mapped = mapWebsiteToCodingTheme(site, dup);
+    expect(mapped.tokenColors).toEqual([{ scope: 'string', color: '0 0% 90%' }]);
+    expect(mapped.tokenColorSources).toEqual({ string: 'website' });
+  });
+
+  it('reports colors it cannot analyze', () => {
+    const hex = { ...backup, tokenColors: [{ scope: 'keyword', color: '#ff0000' }] } as DesignData;
+    const mapped = mapWebsiteToCodingTheme(website, hex);
+    expect(mapped.uncheckedColors).toContain('tokenColors.keyword');
+    const prompt = buildMappedThemePrompt({ websiteUrl: 'w', websiteName: 'w', backupUrl: 'b', backupName: 'b', mapped });
+    expect(prompt).toContain('Not analyzed (only H S% L% colors are checked');
+  });
 });
 
 describe('buildMappedThemePrompt (#187)', () => {
@@ -147,7 +202,8 @@ describe('buildMappedThemePrompt (#187)', () => {
     expect(prompt).toContain('Selected: keep original → 0 62.8% 30.6%');
     expect(prompt).toContain("Map the values above to your app's theme format");
 
-    const clean = mapWebsiteToCodingTheme({ ...backup, tokenColors: [] } as DesignData, { ...backup, tokenColors: [] } as DesignData);
+    const legible = withDark(backup, { 'muted-foreground': '0 0% 60%' }, { tokenColors: [] });
+    const clean = mapWebsiteToCodingTheme(legible, legible);
     expect(clean.conflicts).toEqual([]);
     const cleanPrompt = buildMappedThemePrompt({ websiteUrl: 'w', websiteName: 'w', backupUrl: 'b', backupName: 'b', mapped: clean });
     expect(cleanPrompt).toContain('- None detected.');

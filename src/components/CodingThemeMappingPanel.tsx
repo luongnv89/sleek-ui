@@ -151,6 +151,14 @@ export function CodingThemeMappingPanel({
             <h3 className="text-sm font-semibold">
               {hasConflicts ? `Conflicts to validate (${mapped.conflicts.length})` : 'No conflicts detected'}
             </h3>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Checked against the {mapped.defaultMode} palette. The brand-accent check covers the keyword scope only.
+            </p>
+            {mapped.uncheckedColors.length > 0 && (
+              <p className="mt-1 text-xs text-destructive">
+                Not analyzed (only H S% L% colors are checked — verify manually): {mapped.uncheckedColors.join(', ')}
+              </p>
+            )}
             {hasConflicts && (
               <ul className="mt-2 space-y-3">
                 {mapped.conflicts.map(conflict => (

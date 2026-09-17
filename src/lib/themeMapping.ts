@@ -33,6 +33,8 @@ export interface MappedTheme {
   fontFamilySources: Record<string, ValueSource>;
   defaultMode: 'light' | 'dark';
   conflicts: ThemeConflict[];
+  /** Color tokens that could not be analyzed because they are not in `H S% L%` format. */
+  uncheckedColors: string[];
 }
 
 const MIN_TEXT_CONTRAST = 4.5;
@@ -40,8 +42,8 @@ const MIN_ACCENT_CONTRAST = 3;
 const ACCENT_HUE_TOLERANCE = 30;
 // Below this saturation a hue is meaningless (grey/white), so no brand clash can be judged.
 const MIN_BRAND_SATURATION = 15;
-const TEXT_KEYS = new Set(['foreground', 'card-foreground', 'secondary-foreground']);
-const ACCENT_KEYS = new Set(['primary', 'accent', 'destructive', 'muted-foreground', 'ring']);
+const TEXT_KEYS = new Set(['foreground', 'card-foreground', 'secondary-foreground', 'muted-foreground']);
+const ACCENT_KEYS = new Set(['primary', 'accent', 'destructive', 'ring']);
 
 interface Hsl {
   h: number;
@@ -121,10 +123,22 @@ function mergeRecord(
   return { values, sources };
 }
 
+function meanContrast(colors: string[], background: string | undefined): number | null {
+  const ratios = colors.map(c => contrastRatio(c, background)).filter((r): r is number => r !== null);
+  return ratios.length ? ratios.reduce((a, b) => a + b, 0) / ratios.length : null;
+}
+
 function inferMode(design: DesignData): 'light' | 'dark' {
   if (design.defaultMode) return design.defaultMode;
   if (design.agentInstructions?.defaultMode) return design.agentInstructions.defaultMode;
-  const bg = parseHsl(design.tokens?.colors?.dark?.background);
+  const lightBg = design.tokens?.colors?.light?.background;
+  const darkBg = design.tokens?.colors?.dark?.background;
+  // A theme defining both palettes is judged by which background its syntax colors were designed for.
+  const syntax = (design.tokenColors ?? []).filter(t => t.scope !== 'background').map(t => t.color);
+  const onLight = meanContrast(syntax, lightBg);
+  const onDark = meanContrast(syntax, darkBg);
+  if (onLight !== null && onDark !== null) return onLight > onDark ? 'light' : 'dark';
+  const bg = parseHsl(darkBg);
   return bg && bg.l < 50 ? 'dark' : 'light';
 }
 
@@ -150,7 +164,11 @@ export function mapWebsiteToCodingTheme(
   const tokenColors: TokenColor[] = [];
   const tokenColorSources: Record<string, ValueSource> = {};
   const websiteByScope = new Map(websiteTokenColors.map(t => [t.scope, t]));
+  const seenScopes = new Set<string>();
   for (const entry of backup.tokenColors ?? []) {
+    // Duplicate backup scopes would share one source tag and skew coverage; keep the first.
+    if (seenScopes.has(entry.scope)) continue;
+    seenScopes.add(entry.scope);
     const fromWebsite = websiteByScope.get(entry.scope);
     tokenColors.push({ ...(fromWebsite ?? entry) });
     tokenColorSources[entry.scope] = fromWebsite ? 'website' : 'backup';
@@ -164,6 +182,7 @@ export function mapWebsiteToCodingTheme(
   const conflicts: ThemeConflict[] = [];
   const websiteMode = website.defaultMode ?? website.agentInstructions?.defaultMode;
   const backupMode = inferMode(backup);
+  let defaultMode = websiteMode ?? backupMode;
   if (websiteMode && websiteMode !== backupMode) {
     conflicts.push({
       id: 'mode',
@@ -174,17 +193,32 @@ export function mapWebsiteToCodingTheme(
       suggestedValue: backupMode,
       suggestion: `Use ${backupMode} mode so the backup syntax colors stay legible.`,
     });
+    defaultMode = (choices.mode ?? 'suggested') === 'suggested' ? backupMode : websiteMode;
   }
 
-  const background = dark.values.background;
-  for (const [key, value] of Object.entries(dark.values)) {
+  // Every legibility check runs against the palette of the mode the theme will actually use.
+  const mode = defaultMode;
+  const palette = mode === 'dark' ? dark : light;
+  const backupPalette = backup.tokens?.colors?.[mode];
+  const websitePalette = website.tokens?.colors?.[mode];
+  const background = palette.values.background;
+  const uncheckedColors = new Set<string>();
+  const checkable = (key: string, value: string | undefined) => {
+    if (parseHsl(value)) return true;
+    if (value) uncheckedColors.add(key);
+    return false;
+  };
+  checkable(`${mode}.background`, background);
+
+  for (const [key, value] of Object.entries(palette.values)) {
     const isText = TEXT_KEYS.has(key);
     if (!isText && !ACCENT_KEYS.has(key)) continue;
-    if (dark.sources[key] !== 'website') continue;
+    if (palette.sources[key] !== 'website') continue;
+    if (!checkable(`${mode}.${key}`, value)) continue;
     const min = isText ? MIN_TEXT_CONTRAST : MIN_ACCENT_CONTRAST;
     const ratio = contrastRatio(value, background);
     if (ratio === null || ratio >= min) continue;
-    const backupValue = backup.tokens?.colors?.dark?.[key];
+    const backupValue = backupPalette?.[key];
     const backupRatio = contrastRatio(backupValue, background);
     const suggestedValue =
       backupValue && backupRatio !== null && backupRatio >= min
@@ -192,10 +226,10 @@ export function mapWebsiteToCodingTheme(
         : adjustForContrast(value, background, min);
     const fromBackup = suggestedValue === backupValue;
     conflicts.push({
-      id: `dark.${key}`,
+      id: `${mode}.${key}`,
       kind: 'contrast',
-      key: `dark.${key}`,
-      message: `Website dark ${key} (${value}) has ${ratio.toFixed(2)}:1 contrast on the background (${background}); needs ${min}:1.`,
+      key: `${mode}.${key}`,
+      message: `Website ${mode} ${key} (${value}) has ${ratio.toFixed(2)}:1 contrast on the background (${background}); needs ${min}:1.`,
       currentValue: value,
       suggestedValue,
       suggestion: fromBackup
@@ -204,9 +238,11 @@ export function mapWebsiteToCodingTheme(
     });
   }
 
-  const websitePrimary = parseHsl(website.tokens?.colors?.dark?.primary);
+  const primaryValue = websitePalette?.primary;
+  const websitePrimary = parseHsl(primaryValue);
   tokenColors.forEach(entry => {
     if (entry.scope === 'background' || tokenColorSources[entry.scope] !== 'backup') return;
+    if (!checkable(`tokenColors.${entry.scope}`, entry.color)) return;
     const ratio = contrastRatio(entry.color, background);
     if (ratio !== null && ratio < MIN_ACCENT_CONTRAST) {
       const suggestedValue = adjustForContrast(entry.color, background, MIN_ACCENT_CONTRAST);
@@ -214,16 +250,15 @@ export function mapWebsiteToCodingTheme(
         id: `tokenColors.${entry.scope}`,
         kind: 'syntax-contrast',
         key: `tokenColors.${entry.scope}`,
-        message: `Backup ${entry.scope} color (${entry.color}) has ${ratio.toFixed(2)}:1 contrast on the website background (${background}).`,
+        message: `Backup ${entry.scope} color (${entry.color}) has ${ratio.toFixed(2)}:1 contrast on the website ${mode} background (${background}).`,
         currentValue: entry.color,
         suggestedValue,
         suggestion: `Adjust lightness to ${suggestedValue}.`,
       });
       return;
     }
-    const color = parseHsl(entry.color);
-    if (entry.scope === 'keyword' && websitePrimary && websitePrimary.s >= MIN_BRAND_SATURATION && color && hueDistance(websitePrimary, color) > ACCENT_HUE_TOLERANCE) {
-      const primaryValue = website.tokens.colors.dark.primary;
+    const color = parseHsl(entry.color)!;
+    if (entry.scope === 'keyword' && primaryValue && websitePrimary && websitePrimary.s >= MIN_BRAND_SATURATION && hueDistance(websitePrimary, color) > ACCENT_HUE_TOLERANCE) {
       const primaryRatio = contrastRatio(primaryValue, background);
       if (primaryRatio === null || primaryRatio < MIN_ACCENT_CONTRAST) return;
       conflicts.push({
@@ -238,15 +273,13 @@ export function mapWebsiteToCodingTheme(
     }
   });
 
-  let defaultMode = websiteMode ?? backupMode;
   for (const conflict of conflicts) {
+    if (conflict.kind === 'mode-mismatch') continue;
     const value = (choices[conflict.id] ?? 'suggested') === 'suggested' ? conflict.suggestedValue : conflict.currentValue;
-    if (conflict.kind === 'mode-mismatch') {
-      defaultMode = value as 'light' | 'dark';
-    } else if (conflict.kind === 'contrast') {
-      const key = conflict.key.slice('dark.'.length);
-      dark.values[key] = value;
-      if (value !== conflict.currentValue && value === backup.tokens?.colors?.dark?.[key]) dark.sources[key] = 'backup';
+    if (conflict.kind === 'contrast') {
+      const key = conflict.key.slice(`${mode}.`.length);
+      palette.values[key] = value;
+      if (value !== conflict.currentValue && value === backupPalette?.[key]) palette.sources[key] = 'backup';
     } else {
       const scope = conflict.key.slice('tokenColors.'.length);
       const entry = tokenColors.find(t => t.scope === scope);
@@ -264,6 +297,7 @@ export function mapWebsiteToCodingTheme(
     fontFamilySources: fonts.sources,
     defaultMode,
     conflicts,
+    uncheckedColors: [...uncheckedColors],
   };
 }
 
@@ -315,8 +349,11 @@ export function buildMappedThemePrompt({
         })
         .join('\n')
     : '- None detected.';
+  const uncheckedLine = mapped.uncheckedColors.length
+    ? `Not analyzed (only H S% L% colors are checked — verify manually): ${mapped.uncheckedColors.join(', ')}\n`
+    : '';
   const applySection = appTarget
-    ? `APPLY INSTRUCTIONS (${APP_TARGET_LABELS[appTarget]})\n${APP_TARGET_INSTRUCTIONS[appTarget]}\n\n`
+    ? `APPLY INSTRUCTIONS (${APP_TARGET_LABELS[appTarget]})\n${APP_TARGET_INSTRUCTIONS[appTarget].split('tokens.colors.dark').join(`tokens.colors.${mapped.defaultMode}`)}\n\n`
     : `APPLY INSTRUCTIONS\nMap the values above to your app's theme format (terminal palette, editor workbench colors, syntax token colors).\n\n`;
 
   return `Build a complete coding/terminal theme from the website design "${websiteName}", using "${backupName}" as the backup theme.
@@ -347,8 +384,9 @@ TOKEN-COLORS (syntax highlighting)
 ${tokenLines || '  (none — derive from the colors above)'}
 
 CONFLICTS AND INCONSISTENCIES (validate before applying)
+Checked against the ${mapped.defaultMode} palette. The brand-accent check covers the keyword scope only.
 ${conflictLines}
-
+${uncheckedLine}
 ${applySection}Before writing any theme file, show me the conflicts above with the selected resolution and ask me to confirm or change each choice. Then apply the theme and verify background/foreground contrast.`;
 }
 
