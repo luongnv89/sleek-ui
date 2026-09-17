@@ -50,6 +50,19 @@ describe('CopySiteSection (#189)', () => {
     expect(output.textContent).toMatch(/wait for my approval/i);
   });
 
+  it('announces the output in a status region with a keyboard-scrollable prompt', () => {
+    renderSection();
+    typeUrl('stripe.com');
+    fireEvent.click(screen.getByRole('button', { name: 'Generate prompt' }));
+
+    // Screen readers announce the injected panel via the polite live region.
+    expect(screen.getByRole('status')).toBeInTheDocument();
+    // The overflowing <pre> must be tabbable so keyboard users can scroll it.
+    const output = screen.getByRole('region', { name: 'Generated prompt' });
+    expect(output).toHaveAttribute('tabindex', '0');
+    expect(output.textContent).toContain('https://stripe.com');
+  });
+
   it('copies the generated prompt to the clipboard with Copied! feedback', async () => {
     const writeText = mockClipboard(() => Promise.resolve());
     renderSection();

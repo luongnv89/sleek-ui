@@ -55,7 +55,11 @@ export function CopySiteSection() {
         </form>
 
         {prompt && (
-          <div className="mt-8 rounded-xl border border-border bg-background p-5 sm:p-6 shadow-xs">
+          <div
+            role="status"
+            aria-live="polite"
+            className="mt-8 rounded-xl border border-border bg-background p-5 sm:p-6 shadow-xs"
+          >
             <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-sm font-medium text-muted-foreground">
                 Copy this prompt. Paste into Claude, Cursor, or any agent.
@@ -70,7 +74,12 @@ export function CopySiteSection() {
                 {copied === 'prompt' ? 'Copied!' : 'Copy'}
               </Button>
             </div>
-            <pre className="max-h-96 overflow-auto whitespace-pre-wrap rounded-lg border border-border bg-muted/60 p-3 sm:p-4 font-mono text-xs sm:text-sm text-foreground/90">
+            <pre
+              role="region"
+              aria-label="Generated prompt"
+              tabIndex={0}
+              className="max-h-96 overflow-auto whitespace-pre-wrap rounded-lg border border-border bg-muted/60 p-3 sm:p-4 font-mono text-xs sm:text-sm text-foreground/90"
+            >
               {prompt}
             </pre>
           </div>
