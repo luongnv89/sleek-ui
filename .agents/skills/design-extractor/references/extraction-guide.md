@@ -131,6 +131,42 @@ For each color `"H S% L%"`:
 
 Mirror the above — invert lightness, scale saturation up slightly (`newS = S * 1.2`, clamped at 100), brighten foregrounds, darken backgrounds.
 
+## Motion and Library Capture (URL inputs only)
+
+Motion cannot be seen in a still screenshot — this section applies **only** to URL inputs where the `/browse` headless-Chromium session can evaluate JavaScript on the live page. For screenshot-only inputs, omit `tokens.motion` and `libraries` entirely (see graceful degradation below).
+
+### Detecting external animation libraries
+
+While the `/browse` session is open, enumerate the page for known libraries:
+
+1. **Script sources** — list `document.scripts` `src` values and match against known package names: `gsap|greensock|TweenMax|ScrollTrigger`, `framer-motion`, `animejs|anime.js`, `aos`, `lottie|bodymovin`, `three.js|three`, `motion-one|@motionone`.
+2. **DOM markers** — library-injected attributes/classes such as `data-framer-motion`, `data-aos`, `data-lottie`, `data-scroll`, `gsap-` class prefixes.
+3. **Window globals** — probe `window.gsap`, `window.anime`, `window.lottie`, `window.AOS`, `window.Motion`, `window.THREE`, `window.ScrollTrigger`.
+4. **Inline script markers** — search inline `<script>` text for the same names (bundled code often still mentions `gsap.registerPlugin`, `framer-motion`, etc.).
+
+For each detected library, fill a `libraries` entry: `name` (display name), `package` (npm package), `version` (if discoverable, e.g. `gsap.version`), `installCommand` (`npm install {package}`), `purpose` (what it animates — e.g. "scroll-driven entrance animations").
+
+### Capturing motion primitives
+
+1. **Stylesheet rules** — iterate `document.styleSheets` (same-origin only — cross-origin sheets throw `SecurityError`, skip them) and collect:
+   - `CSSKeyframesRule` names and their offset/property bodies → `tokens.motion.keyframes` as `{name: {offset: {property: value}}}`.
+   - `transition`/`transition-duration`/`transition-timing-function`/`animation` declarations on style rules → candidate durations/easings.
+2. **Computed styles on interactive elements** — read `getComputedStyle` on representative elements (buttons, links, cards, nav items, hero elements) for `transition-duration`, `transition-delay`, `transition-timing-function`, `animation-name`, `animation-duration`, `animation-iteration-count`. Distill the observed values into the named `duration`/`delay`/`easing`/`iteration` scales — do not dump every distinct value.
+3. **Interaction effects** — for each observed hover/focus/entrance/exit/scroll behavior, emit a `motion.effects` entry: `{name, trigger, target, properties, duration, easing, keyframes?, description?}`. `trigger` is one of `hover`, `focus`, `active`, `entrance`, `exit`, `scroll`, `load`, `custom`.
+
+**Easing format rule:** store cubic-bezier easings as 4-number arrays (`"standard": [0.4, 0, 0.2, 1]` — W3C DTCG cubicBezier style), **never** as `"cubic-bezier(0.4, 0, 0.2, 1)"` function strings — the sleek-ui runtime token sanitizer rejects parentheses in token values. CSS keywords (`ease-out`) and library easing names (`power2.out`) stay as strings.
+
+### Graceful degradation (mandatory)
+
+Emit **no** `motion`/`libraries` fields — never fabricated guesses — when:
+
+- the input is a screenshot (still images carry no timing data),
+- JS evaluation is unavailable in the browse session,
+- a bundler has erased identifiable names and no globals/stylesheet rules survive,
+- nothing was detected (a static site is a perfectly valid result).
+
+A design without `tokens.motion`/`libraries` must still validate — both fields are optional. Note in your audit output when motion capture was skipped and why (e.g., "screenshot-only input — motion not captured").
+
 ## Edge Cases
 
 **Very colorful designs** (e.g., playful consumer apps with 4–5 accent colors): pick the most-used brand color as `primary`, the second as `accent`. Additional brand colors can go in custom tokens (`success`, `warning`, `info`), or as design inspiration in the `description` field.

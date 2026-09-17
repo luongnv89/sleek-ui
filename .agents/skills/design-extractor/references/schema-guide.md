@@ -17,7 +17,7 @@ Quick reference for the fields the extracted JSON must contain. Always validate 
 }
 ```
 
-All seven top-level keys (`$schema`, `name`, `version`, `description`, `categories`, `tokens`, `fonts`, `agentInstructions`) are mandatory. The schema also accepts optional `author`, `accessibility`, `components`, and `preview`.
+All seven top-level keys (`$schema`, `name`, `version`, `description`, `categories`, `tokens`, `fonts`, `agentInstructions`) are mandatory. The schema also accepts optional `author`, `collection`, `appTargets`, `accessibility`, `components`, `tokenColors`, `libraries`, and `preview`.
 
 | Field | Rules |
 |---|---|
@@ -71,6 +71,8 @@ Additional tokens like `success`, `warning`, `info` are allowed but not required
 4. **`radius`** — `sm`, `default`, `lg`, `full` all required
 5. **`shadows`** — `sm`, `default`, `lg` (all optional individually but include the object)
 
+A sixth key, **`motion`**, is optional — see [Motion Tokens](#motion-tokens-optional) below.
+
 ## Typography Defaults
 
 When the source doesn't clearly specify, use these defaults:
@@ -105,6 +107,54 @@ When the source doesn't clearly specify, use these defaults:
 ```
 
 For flat / neo-brutalist designs, replace with hard offset shadows (e.g., `"4px 4px 0 0 rgb(0 0 0)"`).
+
+## Motion Tokens (optional)
+
+`tokens.motion` captures animation behavior. **Omit it entirely** when the source has no meaningful motion or the input is a screenshot — never fabricate values.
+
+```json
+"motion": {
+  "duration": { "fast": "150ms", "normal": "300ms", "slow": { "value": 0.5, "unit": "s" } },
+  "delay": { "stagger": "75ms" },
+  "easing": { "standard": [0.4, 0, 0.2, 1], "bounce": "ease-out" },
+  "iteration": { "once": 1, "loop": "infinite" },
+  "keyframes": {
+    "fade-in": { "0%": { "opacity": "0" }, "100%": { "opacity": "1" } },
+    "slide-up": { "from": { "transform": "translateY(8px)" }, "to": { "transform": "translateY(0)" } }
+  },
+  "effects": [
+    { "name": "hover-lift", "trigger": "hover", "target": "button", "properties": ["transform"], "duration": "fast", "easing": "bounce" },
+    { "name": "card-fade-in", "trigger": "entrance", "target": "card", "keyframes": "fade-in", "duration": "normal" },
+    { "name": "scroll-reveal", "trigger": "scroll", "target": "section", "description": "fade in on scroll" }
+  ]
+}
+```
+
+| Field | Shape | Rules |
+|---|---|---|
+| `duration` / `delay` | `{name: "150ms"}` or `{name: {value, unit}}` | Strings must end in `ms`/`s`; `unit` is `"ms"` or `"s"` |
+| `easing` | `{name: "ease-out"}` or `{name: [0.4, 0, 0.2, 1]}` | Cubic-bezier easings are **4-number arrays** (W3C DTCG cubicBezier), never `"cubic-bezier(...)"` strings — the runtime token sanitizer rejects parentheses. CSS keywords and library easing names (`"power2.out"`) stay strings. |
+| `iteration` | `{name: 1}` or `{name: "infinite"}` | Numbers or strings |
+| `keyframes` | `{name: {offset: {prop: value}}}` | Offsets like `"0%"`, `"50%"`, `"from"`, `"to"`; property values are strings or numbers |
+| `effects` | array | Each entry requires `name` + `trigger` (`hover`, `focus`, `active`, `entrance`, `exit`, `scroll`, `load`, `custom`); `target`, `properties`, `duration`, `delay`, `easing`, `iteration`, `keyframes`, `description` optional. `duration`/`delay`/`easing`/`keyframes` may reference named entries above. |
+
+## Libraries (optional)
+
+Top-level `libraries` lists external packages needed to reproduce the design — typically animation libraries detected during URL extraction. **Omit it** when none were detected.
+
+```json
+"libraries": [
+  {
+    "name": "GSAP",
+    "package": "gsap",
+    "version": "^3.12.5",
+    "installCommand": "npm install gsap",
+    "purpose": "scroll-driven entrance animations"
+  }
+]
+```
+
+`name`, `package`, `installCommand`, and `purpose` are required per entry; `version` is optional.
 
 ## Fonts Section
 
@@ -151,6 +201,7 @@ Use this block verbatim unless the design needs special handling:
     "Load fonts by adding the Google Fonts URL from fonts.urls as a <link> tag",
     "Set font-family from tokens.typography.fontFamily",
     "Apply component styles from the components field (Tailwind class names for shadcn projects)",
+    "Reproduce animations when tokens.motion is present — map easings to --ease-* theme keys and keyframes to @keyframes + --animate-* (Tailwind v4); install packages listed in libraries",
     "Ensure focus states match accessibility.focusRing specification",
     "Test both light and dark modes"
   ]

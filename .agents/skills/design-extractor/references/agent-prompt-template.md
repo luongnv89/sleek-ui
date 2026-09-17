@@ -73,12 +73,45 @@ code, pre { font-family: "{mono-family}", ui-monospace, monospace; }
 - **Cards**: background `hsl(var(--card))`, border `1px solid hsl(var(--border))`, border-radius `calc(var(--radius) + 0.25rem)`.
 - **Inputs**: background `hsl(var(--background))`, border `1px solid hsl(var(--input))`, focus ring matches `--ring`.
 
+## Animation & Motion
+
+(Omit this whole section when the design has no `tokens.motion`.)
+
+Define the extracted motion primitives in your theme (Tailwind v4 @theme — one entry per easing and per keyframes animation):
+
+  @theme {
+    --ease-{name}: cubic-bezier({x1}, {x2}, {x3}, {x4});          /* per tokens.motion.easing entry */
+    --animate-{name}: {keyframes-name} {duration} var(--ease-{easing});
+  }
+
+  @keyframes {keyframes-name} {
+    /* per tokens.motion.keyframes.{name} — {offset} { property: value } */
+  }
+
+Durations/delays from tokens.motion.duration/delay map to transition-duration/transition-delay (e.g. --duration-fast: 150ms). Iteration counts map to animation-iteration-count.
+
+Reproduce these interaction effects from `tokens.motion.effects`:
+
+- **{effect.name}** — {trigger} on {target}: animate {properties} over {duration} with {easing}{, playing keyframes {keyframes}}{ — description}
+- (one bullet per effects entry; honor `prefers-reduced-motion` when `accessibility.reducedMotion` is true)
+
+## External Libraries
+
+(Omit this whole section when the design has no `libraries` array.)
+
+Install these dependencies before applying the design:
+
+- **{name}** — `{installCommand}` — {purpose}
+- (one bullet per libraries entry)
+
 ## Checklist
 
 - [ ] Set CSS custom properties on `:root` and `.dark`
 - [ ] Load Google Fonts via `<link>`
 - [ ] Set `font-family` on body
 - [ ] Apply component styles
+- [ ] Reproduce animations from tokens.motion (@keyframes + `--animate-*`/`--ease-*` theme keys) — when present
+- [ ] Install external libraries from libraries — when present
 - [ ] Test both light and dark modes
 - [ ] Verify contrast ratios meet accessibility.contrastTarget ({value})
 ```
