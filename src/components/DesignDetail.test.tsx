@@ -268,3 +268,39 @@ describe('DesignDetail stale-design navigation (#129)', () => {
     expect(document.title).toBe('sleek-ui — Professional design systems for AI agents');
   });
 });
+
+describe('DesignDetail coding theme mapping panel (#187)', () => {
+  const theme = (slug: string, collection: 'coding' | 'terminal' | 'web') => ({
+    ...testDesign,
+    slug,
+    name: `Theme ${slug}`,
+    collection,
+    jsonUrl: `https://luongnv.com/sleek-ui/designs/${slug}.json`,
+    detailUrl: `/designs/${slug}`,
+  });
+
+  it('shows the panel for web designs with only coding and terminal themes as backups', async () => {
+    designsModule.loadDesigns.mockResolvedValue([
+      testDesign,
+      theme('code-a', 'coding'),
+      theme('term-b', 'terminal'),
+      theme('web-c', 'web'),
+    ]);
+    renderDetail('test-design');
+    const select = await screen.findByLabelText('Backup theme');
+    const options = Array.from((select as HTMLSelectElement).options).map(o => o.value);
+    expect(options).toEqual(['', 'code-a', 'term-b']);
+  });
+
+  it('hides the panel for non-web designs', async () => {
+    designsModule.loadDesigns.mockResolvedValue([theme('code-a', 'coding'), theme('term-b', 'terminal')]);
+    designsModule.loadDesignData.mockResolvedValue(rawData);
+    renderDetail('code-a');
+    expect(await screen.findByRole('heading', { level: 1, name: 'Theme code-a' })).toBeInTheDocument();
+    // Token data has loaded (apply is enabled), so the panel's absence is not a loading artifact.
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Apply this design to the website' })).toBeEnabled()
+    );
+    expect(screen.queryByLabelText('Backup theme')).not.toBeInTheDocument();
+  });
+});
