@@ -1,14 +1,19 @@
 {
   "$schema": "https://luongnv.com/sleek-ui/schema/design.v1.json",
-  "name": "coding-pi-synthwave-84",
+  "name": "aura",
   "version": "1.0.0",
-  "description": "Synthwave '84 coding theme extracted from the original Pi theme, preserving its UI palette and syntax colors.",
+  "description": "Aura theme extracted from the original Pi theme, preserving its UI palette and syntax colors.",
   "categories": [
+    "terminal",
     "coding",
     "dark"
   ],
-  "collection": "coding",
+  "collection": "terminal",
   "appTargets": [
+    "pi",
+    "ghostty",
+    "iterm2",
+    "warp",
     "opencode",
     "vscode"
   ],
@@ -23,38 +28,38 @@
         "foreground": "240 10% 3.9%",
         "muted": "240 4.8% 95.9%",
         "muted-foreground": "240 3.8% 46.1%",
-        "primary": "317 100% 75%",
+        "primary": "259 100% 73%",
         "primary-foreground": "0 0% 100%",
         "secondary": "240 4.8% 95.9%",
         "secondary-foreground": "240 10% 3.9%",
-        "accent": "183 98% 49%",
+        "accent": "160 100% 69%",
         "accent-foreground": "240 10% 3.9%",
-        "destructive": "356 99% 63%",
+        "destructive": "0 100% 70%",
         "destructive-foreground": "0 0% 100%",
         "border": "240 5.9% 90%",
         "input": "240 5.9% 90%",
-        "ring": "317 100% 75%",
+        "ring": "259 100% 73%",
         "card": "0 0% 100%",
         "card-foreground": "240 10% 3.9%"
       },
       "dark": {
-        "background": "250 20% 17%",
-        "foreground": "0 3% 70%",
-        "muted": "251 21% 10%",
-        "muted-foreground": "233 30% 63%",
-        "primary": "317 100% 75%",
-        "primary-foreground": "250 20% 17%",
-        "secondary": "251 21% 10%",
-        "secondary-foreground": "0 3% 70%",
-        "accent": "183 98% 49%",
-        "accent-foreground": "250 20% 17%",
-        "destructive": "356 99% 63%",
-        "destructive-foreground": "250 20% 17%",
-        "border": "231 34% 44%",
-        "input": "257 32% 24%",
-        "ring": "317 100% 75%",
-        "card": "267 27% 15%",
-        "card-foreground": "0 3% 70%"
+        "background": "249 15% 9%",
+        "foreground": "270 6% 93%",
+        "muted": "250 18% 7%",
+        "muted-foreground": "0 0% 43%",
+        "primary": "259 100% 73%",
+        "primary-foreground": "249 15% 9%",
+        "secondary": "250 18% 7%",
+        "secondary-foreground": "270 6% 93%",
+        "accent": "160 100% 69%",
+        "accent-foreground": "249 15% 9%",
+        "destructive": "0 100% 70%",
+        "destructive-foreground": "249 15% 9%",
+        "border": "245 14% 19%",
+        "input": "246 14% 14%",
+        "ring": "259 100% 73%",
+        "card": "247 15% 12%",
+        "card-foreground": "270 6% 93%"
       }
     },
     "typography": {
@@ -185,47 +190,47 @@
   "tokenColors": [
     {
       "scope": "comment",
-      "color": "257 13% 45%",
+      "color": "0 0% 29%",
       "fontStyle": "italic"
     },
     {
       "scope": "keyword",
-      "color": "317 100% 75%"
+      "color": "259 100% 73%"
     },
     {
       "scope": "function",
-      "color": "5 92% 71%"
+      "color": "34 100% 76%"
     },
     {
       "scope": "variable",
-      "color": "0 3% 70%"
+      "color": "270 6% 93%"
     },
     {
       "scope": "string",
-      "color": "317 100% 75%"
+      "color": "259 100% 73%"
     },
     {
       "scope": "number",
-      "color": "48 99% 68%"
+      "color": "34 100% 76%"
     },
     {
       "scope": "type",
-      "color": "183 98% 49%"
+      "color": "160 100% 69%"
     },
     {
       "scope": "operator",
-      "color": "183 98% 49%"
+      "color": "160 100% 69%"
     },
     {
       "scope": "punctuation",
-      "color": "0 3% 70%"
+      "color": "270 6% 93%"
     }
   ],
   "agentInstructions": {
     "defaultMode": "dark",
     "steps": [
       "Set CSS custom properties from tokens.colors on :root (light) and .dark (dark mode)",
-      "Map tokenColors scopes to editor token color customizations",
+      "Map tokenColors scopes to the target terminal or editor color configuration",
       "Load JetBrains Mono from fonts.urls and use it as the primary monospace font",
       "Apply component styles from the components field",
       "Ensure focus states match accessibility.focusRing specification",
@@ -233,10 +238,10 @@
     ]
   },
   "preview": {
-    "thumbnail": "/previews/coding-pi-synthwave-84-thumb.svg"
+    "thumbnail": "/previews/aura-thumb.svg"
   },
   "source": {
     "repo": "https://github.com/luongnv89/pi-extensions",
-    "path": "themes/synthwave-84.json"
+    "path": "themes/aura.json"
   }
 }

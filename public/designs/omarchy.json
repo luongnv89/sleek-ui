@@ -1,14 +1,19 @@
 {
   "$schema": "https://luongnv.com/sleek-ui/schema/design.v1.json",
-  "name": "coding-pi-neon-green",
+  "name": "omarchy",
   "version": "1.0.0",
-  "description": "Neon Green coding theme extracted from the original Pi theme, preserving its UI palette and syntax colors.",
+  "description": "Omarchy theme extracted from the original Pi theme, preserving its UI palette and syntax colors.",
   "categories": [
+    "terminal",
     "coding",
     "dark"
   ],
-  "collection": "coding",
+  "collection": "terminal",
   "appTargets": [
+    "pi",
+    "ghostty",
+    "iterm2",
+    "warp",
     "opencode",
     "vscode"
   ],
@@ -19,42 +24,42 @@
   "tokens": {
     "colors": {
       "light": {
-        "background": "37 39% 94%",
-        "foreground": "24 12% 16%",
-        "muted": "39 31% 84%",
-        "muted-foreground": "35 12% 61%",
-        "primary": "109 34% 45%",
-        "primary-foreground": "37 39% 94%",
-        "secondary": "39 31% 84%",
-        "secondary-foreground": "24 12% 16%",
-        "accent": "180 30% 42%",
-        "accent-foreground": "37 39% 94%",
-        "destructive": "0 47% 53%",
-        "destructive-foreground": "37 39% 94%",
-        "border": "109 34% 45%",
-        "input": "35 12% 61%",
-        "ring": "109 34% 45%",
-        "card": "40 37% 89%",
-        "card-foreground": "24 12% 16%"
+        "background": "0 0% 100%",
+        "foreground": "240 10% 3.9%",
+        "muted": "240 4.8% 95.9%",
+        "muted-foreground": "240 3.8% 46.1%",
+        "primary": "156 100% 50%",
+        "primary-foreground": "0 0% 100%",
+        "secondary": "240 4.8% 95.9%",
+        "secondary-foreground": "240 10% 3.9%",
+        "accent": "195 100% 60%",
+        "accent-foreground": "240 10% 3.9%",
+        "destructive": "0 32% 49%",
+        "destructive-foreground": "0 0% 100%",
+        "border": "240 5.9% 90%",
+        "input": "240 5.9% 90%",
+        "ring": "156 100% 50%",
+        "card": "0 0% 100%",
+        "card-foreground": "240 10% 3.9%"
       },
       "dark": {
-        "background": "228 22% 9%",
-        "foreground": "216 28% 93%",
-        "muted": "225 22% 18%",
-        "muted-foreground": "220 9% 46%",
-        "primary": "140 78% 65%",
-        "primary-foreground": "228 22% 9%",
-        "secondary": "225 22% 18%",
-        "secondary-foreground": "216 28% 93%",
-        "accent": "186 65% 66%",
-        "accent-foreground": "228 22% 9%",
-        "destructive": "350 83% 66%",
-        "destructive-foreground": "228 22% 9%",
-        "border": "140 78% 65%",
-        "input": "220 9% 46%",
-        "ring": "140 78% 65%",
-        "card": "226 25% 14%",
-        "card-foreground": "216 28% 93%"
+        "background": "204 14% 7%",
+        "foreground": "180 2% 80%",
+        "muted": "207 12% 15%",
+        "muted-foreground": "210 7% 47%",
+        "primary": "156 100% 50%",
+        "primary-foreground": "204 14% 7%",
+        "secondary": "207 12% 15%",
+        "secondary-foreground": "180 2% 80%",
+        "accent": "195 100% 60%",
+        "accent-foreground": "204 14% 7%",
+        "destructive": "0 32% 49%",
+        "destructive-foreground": "204 14% 7%",
+        "border": "203 8% 33%",
+        "input": "205 9% 26%",
+        "ring": "156 100% 50%",
+        "card": "206 13% 11%",
+        "card-foreground": "180 2% 80%"
       }
     },
     "typography": {
@@ -185,47 +190,47 @@
   "tokenColors": [
     {
       "scope": "comment",
-      "color": "220 9% 46%",
+      "color": "0 0% 33%",
       "fontStyle": "italic"
     },
     {
       "scope": "keyword",
-      "color": "291 57% 72%"
+      "color": "195 100% 60%"
     },
     {
       "scope": "function",
-      "color": "140 78% 65%"
+      "color": "195 100% 60%"
     },
     {
       "scope": "variable",
-      "color": "186 65% 66%"
+      "color": "156 100% 50%"
     },
     {
       "scope": "string",
-      "color": "137 66% 73%"
+      "color": "156 100% 50%"
     },
     {
       "scope": "number",
-      "color": "291 57% 72%"
+      "color": "23 46% 48%"
     },
     {
       "scope": "type",
-      "color": "186 65% 66%"
+      "color": "195 100% 60%"
     },
     {
       "scope": "operator",
-      "color": "140 78% 65%"
+      "color": "195 100% 60%"
     },
     {
       "scope": "punctuation",
-      "color": "220 18% 74%"
+      "color": "210 7% 47%"
     }
   ],
   "agentInstructions": {
     "defaultMode": "dark",
     "steps": [
       "Set CSS custom properties from tokens.colors on :root (light) and .dark (dark mode)",
-      "Map tokenColors scopes to editor token color customizations",
+      "Map tokenColors scopes to the target terminal or editor color configuration",
       "Load JetBrains Mono from fonts.urls and use it as the primary monospace font",
       "Apply component styles from the components field",
       "Ensure focus states match accessibility.focusRing specification",
@@ -233,10 +238,10 @@
     ]
   },
   "preview": {
-    "thumbnail": "/previews/coding-pi-neon-green-thumb.svg"
+    "thumbnail": "/previews/omarchy-thumb.svg"
   },
   "source": {
     "repo": "https://github.com/luongnv89/pi-extensions",
-    "path": "themes/neon-green.json"
+    "path": "themes/omarchy.json"
   }
 }

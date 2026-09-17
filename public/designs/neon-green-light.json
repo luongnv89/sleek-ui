@@ -1,10 +1,11 @@
 {
   "$schema": "https://luongnv.com/sleek-ui/schema/design.v1.json",
-  "name": "terminal-pi-neon-green-light",
+  "name": "neon-green-light",
   "version": "1.0.0",
-  "description": "Neon Green Light terminal theme extracted from the original Pi theme, preserving its UI palette and syntax colors.",
+  "description": "Neon Green Light theme extracted from the original Pi theme, preserving its UI palette and syntax colors.",
   "categories": [
     "terminal",
+    "coding",
     "light"
   ],
   "collection": "terminal",
@@ -12,7 +13,9 @@
     "pi",
     "ghostty",
     "iterm2",
-    "warp"
+    "warp",
+    "opencode",
+    "vscode"
   ],
   "author": {
     "name": "pi-extensions",
@@ -227,7 +230,7 @@
     "defaultMode": "light",
     "steps": [
       "Set CSS custom properties from tokens.colors on :root (light) and .dark (dark mode)",
-      "Map tokenColors scopes to the target terminal ANSI palette",
+      "Map tokenColors scopes to the target terminal or editor color configuration",
       "Load JetBrains Mono from fonts.urls and use it as the primary monospace font",
       "Apply component styles from the components field",
       "Ensure focus states match accessibility.focusRing specification",
@@ -235,7 +238,7 @@
     ]
   },
   "preview": {
-    "thumbnail": "/previews/terminal-pi-neon-green-light-thumb.svg"
+    "thumbnail": "/previews/neon-green-light-thumb.svg"
   },
   "source": {
     "repo": "https://github.com/luongnv89/pi-extensions",
