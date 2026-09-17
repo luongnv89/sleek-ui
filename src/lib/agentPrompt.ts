@@ -8,6 +8,15 @@ export interface AppThemePromptOptions {
   designData?: DesignData | null;
 }
 
+/**
+ * Always-on step appended to every copyable agent prompt: the agent must
+ * validate the applied result for conflicts (e.g. dark text on a dark
+ * background), fix any inconsistencies, and adapt the best solution to the
+ * current environment.
+ */
+const CONFLICT_VALIDATION_STEP =
+  'Validate the applied result for conflicts — e.g. dark text on a dark background or other insufficient contrast — fix any inconsistencies found, and choose the best solution adapted to the current environment';
+
 export function buildAgentPrompt(designUrl: string, options?: AppThemePromptOptions): string {
   const collection = options?.collection ?? 'web';
   const appTarget = options?.appTarget;
@@ -24,6 +33,7 @@ Read the JSON, then follow the steps in agentInstructions.steps to apply this de
 6. Reproduce animations when tokens.motion is present — map CSS-compatible easings to --ease-* theme keys, apply library-native easings through the relevant library API, and map keyframes to @keyframes + --animate-* (Tailwind v4); install packages listed in libraries
 7. Ensure focus states match accessibility.focusRing specification
 8. Test both light and dark modes
+9. ${CONFLICT_VALIDATION_STEP}
 
 Target framework: Tailwind CSS + shadcn/ui. For other frameworks, map token names to CSS custom properties semantically.`;
   }
@@ -59,7 +69,7 @@ ${colorBlock}
 TOKEN-COLORS (syntax highlighting)
 ${tokenBlock}
 
-${librariesSection}Also follow agentInstructions.steps from the JSON. Verify background/foreground contrast and test in both light and dark modes where supported.`;
+${librariesSection}Also follow agentInstructions.steps from the JSON. ${CONFLICT_VALIDATION_STEP}. Test in both light and dark modes where supported.`;
 }
 
 export function buildAppThemePrompt(
@@ -90,7 +100,7 @@ ${tokenBlock}
 ${librariesSection}APPLY INSTRUCTIONS (${label})
 ${instructions}
 
-Also follow agentInstructions.steps from the JSON. Verify background/foreground contrast and test in both light and dark modes where supported.`;
+Also follow agentInstructions.steps from the JSON. ${CONFLICT_VALIDATION_STEP}. Test in both light and dark modes where supported.`;
 }
 
 function formatStyleBlock(designData?: DesignData | null): string {

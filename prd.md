@@ -1,9 +1,9 @@
 # Product Requirements Document: sleek-ui
 
-**Version:** 1.0.0  
-**Status:** APPROVED — Ready to Implement  
-**Created:** 2026-03-26  
-**Author:** Luong NGUYEN  
+**Version:** 1.0.0\
+**Status:** APPROVED — Ready to Implement\
+**Created:** 2026-03-26\
+**Author:** Luong NGUYEN\
 **Source:** gstack-design.md (Eng Review CLEARED)
 
 ---
@@ -684,13 +684,16 @@ The following is the ready-to-paste agent prompt surfaced by the "Copy Agent Pro
 Fetch the design system at: https://luongnv.com/sleek-ui/designs/{slug}.json
 
 Read the JSON, then follow the steps in agentInstructions.steps to apply this design system to my project:
+
 1. Set CSS custom properties from tokens.colors on :root (light) and .dark (dark mode)
 2. Set --radius from tokens.radius.default
 3. Load fonts by adding the Google Fonts URL from fonts.urls as a <link> tag
 4. Set font-family from tokens.typography.fontFamily
 5. Apply component styles from the components field (Tailwind class names for shadcn projects)
-6. Ensure focus states match accessibility.focusRing specification
-7. Test both light and dark modes
+6. Reproduce animations when tokens.motion is present — map CSS-compatible easings to --ease-* theme keys, apply library-native easings through the relevant library API, and map keyframes to @keyframes + --animate-* (Tailwind v4); install packages listed in libraries
+7. Ensure focus states match accessibility.focusRing specification
+8. Test both light and dark modes
+9. Validate the applied result for conflicts — e.g. dark text on a dark background or other insufficient contrast — fix any inconsistencies found, and choose the best solution adapted to the current environment
 
 Target framework: Tailwind CSS + shadcn/ui. For other frameworks, map token names to CSS custom properties semantically.
 ```
