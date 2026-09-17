@@ -30,6 +30,7 @@ export function CodingThemeMappingPanel({
   const selectId = useId();
   const [backupSlug, setBackupSlug] = useState('');
   const [backupData, setBackupData] = useState<DesignData | null>(null);
+  const [backupFailed, setBackupFailed] = useState(false);
   const [choices, setChoices] = useState<Record<string, ConflictChoice>>({});
   const [validated, setValidated] = useState(false);
   const [appTarget, setAppTarget] = useState<AppTarget | ''>('');
@@ -40,12 +41,15 @@ export function CodingThemeMappingPanel({
   useEffect(() => {
     let alive = true;
     setBackupData(null);
+    setBackupFailed(false);
     setChoices({});
     setValidated(false);
     setAppTarget('');
     if (!backupSlug) return;
     loadBackup(backupSlug).then(data => {
-      if (alive) setBackupData(data);
+      if (!alive) return;
+      setBackupData(data);
+      setBackupFailed(data === null);
     });
     return () => {
       alive = false;
@@ -137,7 +141,7 @@ export function CodingThemeMappingPanel({
 
       {backupSlug && !mapped && (
         <p className="mt-4 text-sm text-muted-foreground" role="status">
-          Loading backup theme…
+          {backupFailed ? 'Could not load the backup theme. Pick another one.' : 'Loading backup theme…'}
         </p>
       )}
 

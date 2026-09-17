@@ -68,6 +68,7 @@ describe('mapWebsiteToCodingTheme (#187)', () => {
     const conflict = mapped.conflicts.find(c => c.id === 'dark.foreground')!;
     expect(contrastRatio(conflict.suggestedValue, mapped.colors.dark.background)).toBeGreaterThanOrEqual(4.5);
     expect(conflict.suggestion).toMatch(/Adjust lightness/);
+    expect(mapped.colorSources.dark.foreground).toBe('website');
   });
 
   it('flags backup syntax colors that are illegible on the website background', () => {

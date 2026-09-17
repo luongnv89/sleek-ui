@@ -244,7 +244,7 @@ export function mapWebsiteToCodingTheme(
     } else if (conflict.kind === 'contrast') {
       const key = conflict.key.slice('dark.'.length);
       dark.values[key] = value;
-      if (value !== conflict.currentValue) dark.sources[key] = 'backup';
+      if (value !== conflict.currentValue && value === backup.tokens?.colors?.dark?.[key]) dark.sources[key] = 'backup';
     } else {
       const scope = conflict.key.slice('tokenColors.'.length);
       const entry = tokenColors.find(t => t.scope === scope);

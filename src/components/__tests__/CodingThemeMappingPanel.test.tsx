@@ -66,4 +66,14 @@ describe('CodingThemeMappingPanel (#187)', () => {
     fireEvent.change(screen.getByLabelText('App target'), { target: { value: 'vscode' } });
     expect(prompt.textContent).toContain('APPLY INSTRUCTIONS (VS Code)');
   });
+
+  it('shows an error when the backup theme fails to load', async () => {
+    render(
+      <CodingThemeMappingPanel websiteUrl="u" websiteName="n" websiteData={apple as unknown as DesignData} backupThemes={[auraTheme]} loadBackup={() => Promise.resolve(null)} />,
+    );
+    await act(async () => {
+      fireEvent.change(screen.getByLabelText('Backup theme'), { target: { value: 'aura' } });
+    });
+    expect(screen.getByRole('status')).toHaveTextContent('Could not load the backup theme');
+  });
 });
