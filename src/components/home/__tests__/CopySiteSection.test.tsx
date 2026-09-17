@@ -69,6 +69,8 @@ describe('CopySiteSection (#189)', () => {
     // The overflowing <pre> must be tabbable so keyboard users can scroll it.
     const output = screen.getByRole('region', { name: 'Generated prompt' });
     expect(output).toHaveAttribute('tabindex', '0');
+    // Long URLs must wrap instead of scrolling horizontally on small screens.
+    expect(output).toHaveClass('break-all');
     expect(output.textContent).toContain('https://stripe.com');
   });
 
@@ -95,6 +97,20 @@ describe('CopySiteSection (#189)', () => {
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
     expect(screen.getByLabelText('Website URL')).not.toHaveAttribute('aria-invalid');
     expect(screen.getByText(/Copy the design of the website at:/)).toBeInTheDocument();
+  });
+
+  it('removes the generated prompt when a resubmitted URL is invalid', () => {
+    renderSection();
+    typeUrl('stripe.com');
+    fireEvent.click(screen.getByRole('button', { name: 'Generate prompt' }));
+    expect(screen.getByText(/Copy the design of the website at:/)).toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveTextContent('Prompt generated');
+
+    typeUrl('foo bar');
+    fireEvent.click(screen.getByRole('button', { name: 'Generate prompt' }));
+    expect(screen.getByRole('alert')).toHaveTextContent(/valid website URL/i);
+    expect(screen.queryByText(/Copy the design of the website at:/)).not.toBeInTheDocument();
+    expect(screen.getByRole('status')).toBeEmptyDOMElement();
   });
 
   it('clears the validation error as soon as the URL is edited', () => {

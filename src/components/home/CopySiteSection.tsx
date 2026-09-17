@@ -130,7 +130,7 @@ export function CopySiteSection() {
               role="region"
               aria-label="Generated prompt"
               tabIndex={0}
-              className="max-h-96 overflow-auto whitespace-pre-wrap rounded-lg border border-border bg-muted/60 p-3 sm:p-4 font-mono text-xs sm:text-sm text-foreground/90 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              className="max-h-96 overflow-auto whitespace-pre-wrap break-all rounded-lg border border-border bg-muted/60 p-3 sm:p-4 font-mono text-xs sm:text-sm text-foreground/90 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             >
               {prompt}
             </pre>
