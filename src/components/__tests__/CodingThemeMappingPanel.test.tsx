@@ -80,4 +80,14 @@ describe('CodingThemeMappingPanel (#187)', () => {
     expect(screen.getByRole('status')).toHaveTextContent('Could not load the backup theme');
     expect(screen.getByRole('status')).toHaveClass('text-destructive');
   });
+
+  it('shows an error when loading the backup theme rejects', async () => {
+    render(
+      <CodingThemeMappingPanel websiteUrl="u" websiteName="n" websiteData={apple as unknown as DesignData} backupThemes={[auraTheme]} loadBackup={() => Promise.reject(new Error('network'))} />,
+    );
+    await act(async () => {
+      fireEvent.change(screen.getByLabelText('Backup theme'), { target: { value: 'aura' } });
+    });
+    expect(screen.getByRole('status')).toHaveTextContent('Could not load the backup theme');
+  });
 });

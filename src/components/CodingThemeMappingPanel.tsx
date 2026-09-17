@@ -46,11 +46,17 @@ export function CodingThemeMappingPanel({
     setValidated(false);
     setAppTarget('');
     if (!backupSlug) return;
-    loadBackup(backupSlug).then(data => {
-      if (!alive) return;
-      setBackupData(data);
-      setBackupFailed(data === null);
-    });
+    loadBackup(backupSlug)
+      .then(data => {
+        if (!alive) return;
+        setBackupData(data);
+        setBackupFailed(data === null);
+      })
+      .catch(() => {
+        if (!alive) return;
+        setBackupData(null);
+        setBackupFailed(true);
+      });
     return () => {
       alive = false;
     };

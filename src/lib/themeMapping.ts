@@ -213,7 +213,6 @@ export function mapWebsiteToCodingTheme(
   for (const [key, value] of Object.entries(palette.values)) {
     const isText = TEXT_KEYS.has(key);
     if (!isText && !ACCENT_KEYS.has(key)) continue;
-    if (palette.sources[key] !== 'website') continue;
     if (!checkable(`${mode}.${key}`, value)) continue;
     const min = isText ? MIN_TEXT_CONTRAST : MIN_ACCENT_CONTRAST;
     const ratio = contrastRatio(value, background);
@@ -229,7 +228,7 @@ export function mapWebsiteToCodingTheme(
       id: `${mode}.${key}`,
       kind: 'contrast',
       key: `${mode}.${key}`,
-      message: `Website ${mode} ${key} (${value}) has ${ratio.toFixed(2)}:1 contrast on the background (${background}); needs ${min}:1.`,
+      message: `${palette.sources[key] === 'website' ? 'Website' : 'Backup'} ${mode} ${key} (${value}) has ${ratio.toFixed(2)}:1 contrast on the background (${background}); needs ${min}:1.`,
       currentValue: value,
       suggestedValue,
       suggestion: fromBackup

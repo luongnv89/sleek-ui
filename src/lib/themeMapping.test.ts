@@ -71,6 +71,17 @@ describe('mapWebsiteToCodingTheme (#187)', () => {
     expect(mapped.colorSources.dark.foreground).toBe('website');
   });
 
+  it('flags backup palette colors that are illegible on the website background', () => {
+    const sparse = { ...website, tokens: { ...website.tokens, colors: { light: {}, dark: { background: '0 0% 0%' } } } } as DesignData;
+    const lowMuted = withDark(backup, { 'muted-foreground': '0 0% 40%' });
+    const mapped = mapWebsiteToCodingTheme(sparse, lowMuted);
+    const conflict = mapped.conflicts.find(c => c.id === 'dark.muted-foreground')!;
+    expect(conflict.kind).toBe('contrast');
+    expect(conflict.message).toContain('Backup dark muted-foreground');
+    expect(contrastRatio(mapped.colors.dark['muted-foreground'], '0 0% 0%')).toBeGreaterThanOrEqual(4.5);
+    expect(mapped.colorSources.dark['muted-foreground']).toBe('backup');
+  });
+
   it('flags backup syntax colors that are illegible on the website background', () => {
     const darkComment = { ...backup, tokenColors: [{ scope: 'comment', color: '0 0% 10%' }] } as DesignData;
     const mapped = mapWebsiteToCodingTheme(website, darkComment);
