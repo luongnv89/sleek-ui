@@ -7,11 +7,11 @@ jest.mock('@/data/designs', () => ({
 import { filterByCollection, groupByCollection } from '../useDesignCatalog';
 import type { TransformedDesign } from '../../types/design';
 
-const makeDesign = (slug: string, collection?: string): TransformedDesign =>
+const makeDesign = (slug: string, collection?: string, categories = ['test']): TransformedDesign =>
   ({
     slug,
     name: slug,
-    categories: ['test'],
+    categories,
     collection: (collection ?? 'web') as TransformedDesign['collection'],
     appTargets: [],
     colors: { primary: '0 0% 50%', secondary: '0 0% 90%' },
@@ -28,13 +28,14 @@ describe('useDesignCatalog collection filtering (#181)', () => {
     makeDesign('web-b'),
     makeDesign('terminal-pi-dracula', 'terminal'),
     makeDesign('coding-vscode-tokyo-night', 'coding'),
+    makeDesign('aura', 'terminal', ['terminal', 'coding', 'dark']),
   ];
 
   it('groups designs into web, terminal and coding collections', () => {
     const grouped = groupByCollection(catalog);
     expect(grouped.web.map(d => d.slug).sort()).toEqual(['web-a', 'web-b']);
-    expect(grouped.terminal.map(d => d.slug)).toEqual(['terminal-pi-dracula']);
-    expect(grouped.coding.map(d => d.slug)).toEqual(['coding-vscode-tokyo-night']);
+    expect(grouped.terminal.map(d => d.slug)).toEqual(['terminal-pi-dracula', 'aura']);
+    expect(grouped.coding.map(d => d.slug)).toEqual(['coding-vscode-tokyo-night', 'aura']);
   });
 
   it('defaults missing collection to web', () => {
@@ -44,13 +45,15 @@ describe('useDesignCatalog collection filtering (#181)', () => {
   it('filters terminal and coding collections independently', () => {
     expect(filterByCollection(catalog, 'terminal').map(d => d.slug)).toEqual([
       'terminal-pi-dracula',
+      'aura',
     ]);
     expect(filterByCollection(catalog, 'coding').map(d => d.slug)).toEqual([
       'coding-vscode-tokyo-night',
+      'aura',
     ]);
   });
 
   it('returns everything for the all filter', () => {
-    expect(filterByCollection(catalog, 'all')).toHaveLength(4);
+    expect(filterByCollection(catalog, 'all')).toHaveLength(5);
   });
 });
