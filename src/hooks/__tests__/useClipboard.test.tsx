@@ -23,6 +23,22 @@ function Harness({ value }: { value?: string }) {
   );
 }
 
+function ResettableHarness({ value }: { value?: string }) {
+  const { copied, error, copy, resetCopy } = useClipboard<'x' | null>('x', null);
+  return (
+    <div>
+      <button type="button" onClick={() => void copy(value)}>
+        copy
+      </button>
+      <button type="button" onClick={resetCopy}>
+        reset
+      </button>
+      <span data-testid="copied">{copied === 'x' ? 'copied' : 'idle'}</span>
+      <span data-testid="error">{error ?? ''}</span>
+    </div>
+  );
+}
+
 describe('useClipboard (#132)', () => {
   afterEach(() => {
     jest.useRealTimers();
@@ -132,5 +148,88 @@ describe('useClipboard (#132)', () => {
     });
     expect(writeText).not.toHaveBeenCalled();
     expect(screen.getByTestId('error')).toHaveTextContent('Cannot copy empty text');
+  });
+
+  it('reports an absent Clipboard API distinctly from empty text', async () => {
+    // Insecure contexts and old browsers expose no navigator.clipboard.
+    Object.defineProperty(navigator, 'clipboard', { value: undefined, configurable: true });
+    render(<Harness value="hello" />);
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button'));
+    });
+    expect(screen.getByTestId('error')).toHaveTextContent('Clipboard API is not available');
+    expect(screen.getByTestId('copied')).toHaveTextContent('idle');
+  });
+
+  it('auto-clears early-return errors on the same feedback window', async () => {
+    jest.useFakeTimers();
+    mockClipboard();
+    render(<Harness />);
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button'));
+    });
+    expect(screen.getByTestId('error')).toHaveTextContent('Cannot copy empty text');
+
+    act(() => {
+      jest.advanceTimersByTime(COPY_FEEDBACK_MS + 1);
+    });
+    expect(screen.getByTestId('error')).toBeEmptyDOMElement();
+  });
+
+  it('ignores a write that resolves after resetCopy', async () => {
+    // Simulates an async permission prompt: writeText stays pending while the
+    // caller resets (e.g. a new prompt was generated). Its late resolution
+    // must not resurrect feedback for the discarded target.
+    let resolveWrite!: () => void;
+    mockClipboard(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveWrite = resolve;
+        })
+    );
+    render(<ResettableHarness value="hello" />);
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'copy' }));
+    });
+    act(() => {
+      fireEvent.click(screen.getByRole('button', { name: 'reset' }));
+    });
+
+    await act(async () => {
+      resolveWrite();
+      await Promise.resolve();
+    });
+
+    expect(screen.getByTestId('copied')).toHaveTextContent('idle');
+    expect(screen.getByTestId('error')).toBeEmptyDOMElement();
+  });
+
+  it('clears a stale copied flag when a retry fails', async () => {
+    jest.useFakeTimers();
+    const writeText = mockClipboard(() => Promise.resolve());
+    render(<Harness value="hello" />);
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button'));
+      await Promise.resolve();
+    });
+    expect(screen.getByTestId('copied')).toHaveTextContent('copied');
+
+    // Fail inside the 1.5s success window: the copied flag must reset at once.
+    writeText.mockImplementation(() => Promise.reject(new Error('denied')));
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button'));
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    expect(screen.getByTestId('copied')).toHaveTextContent('idle');
+    expect(screen.getByTestId('error')).toHaveTextContent('denied');
+
+    // And no pending success-reset timer resurrects it later.
+    act(() => {
+      jest.advanceTimersByTime(COPY_FEEDBACK_MS + 1000);
+    });
+    expect(screen.getByTestId('copied')).toHaveTextContent('idle');
   });
 });

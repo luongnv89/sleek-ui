@@ -25,35 +25,49 @@ export function useClipboard<T>(flag: T, reset: T) {
   const [copied, setCopied] = useState<T>(reset);
   const [error, setError] = useState<string | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  // Bumped on every copy() call and resetCopy() so a still-pending writeText
+  // can never resurrect feedback for a target that was already replaced.
+  const generation = useRef(0);
 
   useEffect(() => () => clearTimeout(timer.current), []);
 
   const copy = useCallback(
     async (value?: string, copiedFlag: T = flag): Promise<boolean> => {
-      if (!value || !navigator.clipboard) {
-        setError('Cannot copy empty text');
+      const gen = ++generation.current;
+      // Every failure funnels through here: a stale "copied" flag is reset,
+      // and errors auto-clear on the same window as success so feedback never
+      // sticks around permanently (#140). A superseded call touches nothing.
+      const fail = (message: string): false => {
+        if (generation.current !== gen) return false;
+        setCopied(reset);
+        setError(message);
+        clearTimeout(timer.current);
+        timer.current = setTimeout(() => setError(null), COPY_FEEDBACK_MS);
         return false;
+      };
+      if (!navigator.clipboard) {
+        // Distinct from an empty payload: insecure contexts and old browsers
+        // simply lack the API, so "empty text" would be a wrong diagnosis.
+        return fail('Clipboard API is not available');
       }
+      if (!value) return fail('Cannot copy empty text');
       try {
         await navigator.clipboard.writeText(value);
+        if (generation.current !== gen) return false;
         setError(null);
         setCopied(copiedFlag);
         clearTimeout(timer.current);
         timer.current = setTimeout(() => setCopied(reset), COPY_FEEDBACK_MS);
         return true;
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to copy text');
-        clearTimeout(timer.current);
-        // Errors auto-clear on the same window as success so stale feedback
-        // never sticks around permanently (#140).
-        timer.current = setTimeout(() => setError(null), COPY_FEEDBACK_MS);
-        return false;
+        return fail(err instanceof Error ? err.message : 'Failed to copy text');
       }
     },
     [flag, reset]
   );
 
   const resetCopy = useCallback(() => {
+    generation.current += 1;
     clearTimeout(timer.current);
     setCopied(reset);
     setError(null);

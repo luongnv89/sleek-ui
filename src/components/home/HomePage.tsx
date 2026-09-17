@@ -4,6 +4,7 @@ import { SocialProofSection } from '@/components/home/SocialProofSection';
 import { VideoSection } from '@/components/home/VideoSection';
 import { PlanSection } from '@/components/home/PlanSection';
 import { CatalogSection } from '@/components/home/CatalogSection';
+import { CopySiteSection } from '@/components/home/CopySiteSection';
 import { FounderSection } from '@/components/home/FounderSection';
 
 export function HomePage() {
@@ -18,6 +19,8 @@ export function HomePage() {
       {/* ── PLAN (StoryBrand) ── */}
       <PlanSection />
       <CatalogSection />
+      {/* ── COPY A SITE (#189) ── */}
+      <CopySiteSection />
       {/* ── FOUNDER (#82) ── */}
       <FounderSection />
     </div>
