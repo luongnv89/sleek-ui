@@ -115,6 +115,8 @@ export interface DesignData {
   version: string;
   description: string;
   categories: string[];
+  collection?: Collection;
+  appTargets?: AppTarget[];
   defaultMode?: 'light' | 'dark';
   author?: {
     name: string;
@@ -125,14 +127,21 @@ export interface DesignData {
   fonts: Fonts;
   accessibility?: Accessibility;
   components?: unknown;
+  tokenColors?: Array<{ scope: string; color: string; fontStyle?: string }>;
   agentInstructions: AgentInstructions;
   preview?: Preview;
 }
+
+export type Collection = 'web' | 'terminal' | 'coding';
+
+export type AppTarget = 'pi' | 'ghostty' | 'iterm2' | 'warp' | 'opencode' | 'vscode';
 
 export interface TransformedDesign {
   slug: string;
   name: string;
   categories: string[];
+  collection?: Collection;
+  appTargets?: AppTarget[];
   colors: {
     primary: string;
     secondary: string;

@@ -12,6 +12,8 @@ import { AgentPromptPanel } from '@/components/AgentPromptPanel';
 import { PreviewSection } from '@/components/PreviewSection';
 import { loadDesignData, loadDesigns } from '@/data/designs';
 import type { TransformedDesign, DesignData } from '@/types/design';
+import { getAppTargetLabel } from '@/lib/appTargets';
+import { getCollectionLabel } from '@/lib/collections';
 import { useDesign } from '@/context/DesignContext';
 
 export function DesignDetail() {
@@ -85,6 +87,10 @@ export function DesignDetail() {
     );
   }
 
+  const collection = design.collection ?? designData?.collection;
+  const appTargets = (design.appTargets ?? designData?.appTargets) ?? [];
+  const showBadges = (collection !== undefined && collection !== 'web') || appTargets.length > 0;
+
   return (
     <div className={cn('min-h-screen bg-background', showPreviewDark && 'dark')}>
       <div className="container mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
@@ -99,10 +105,25 @@ export function DesignDetail() {
               Back to Catalog
             </Link>
             <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">{design.name}</h1>
+            {showBadges && (
+              <div className="flex flex-wrap items-center gap-2">
+                {collection !== undefined && collection !== 'web' && (
+                  <Badge variant="default" className="text-xs">
+                    {getCollectionLabel(collection)}
+                  </Badge>
+                )}
+                {appTargets.map(target => (
+                  <Badge key={target} variant="outline" className="text-xs">
+                    {getAppTargetLabel(target)}
+                  </Badge>
+                ))}
+              </div>
+            )}
             <p className="text-xl text-muted-foreground">{design.description}</p>
           </div>
           <div className="flex items-center gap-2">
             <Button
+              type="button"
               variant="outline"
               size="icon"
               onClick={() => setShowPreviewDark((prev) => !prev)}
@@ -113,6 +134,7 @@ export function DesignDetail() {
             </Button>
             {isApplied ? (
               <Button
+                type="button"
                 variant="outline"
                 onClick={resetDesign}
                 className="gap-2"
@@ -124,6 +146,7 @@ export function DesignDetail() {
             ) : (
               // Applying reskins the whole site — require an explicit confirm (#140)
               <Button
+                type="button"
                 onClick={() => setConfirmingApply(true)}
                 disabled={!designData}
                 className="gap-2"
@@ -170,10 +193,11 @@ export function DesignDetail() {
                 </div>
               )}
               <div className="mt-6 flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setConfirmingApply(false)}>
+                <Button type="button" variant="outline" onClick={() => setConfirmingApply(false)}>
                   Cancel
                 </Button>
                 <Button
+                  type="button"
                   onClick={() => {
                     if (designData) applyDesign(design, designData);
                     setConfirmingApply(false);
@@ -189,7 +213,13 @@ export function DesignDetail() {
         )}
 
         {/* Agent Prompt — primary action */}
-        <AgentPromptPanel designUrl={design.jsonUrl} />
+        <AgentPromptPanel
+          key={design.slug}
+          designUrl={design.jsonUrl}
+          collection={design.collection ?? designData?.collection ?? 'web'}
+          appTargets={design.appTargets ?? designData?.appTargets ?? []}
+          designData={designData}
+        />
 
         {/* Design Info */}
         <div className="mb-8 grid gap-6 md:grid-cols-2">

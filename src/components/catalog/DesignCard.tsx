@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom'
 import { memo, useState } from 'react'
 import { Badge } from '@/components/ui/Badge'
 import { Card, CardContent, CardHeader } from '@/components/ui/Card'
+import { getAppTargetLabel } from '@/lib/appTargets'
+import { getCollectionLabel } from '@/lib/collections'
 import { TransformedDesign } from '@/types/design'
 
 interface DesignCardProps {
@@ -77,7 +79,17 @@ function DesignCardImpl({ design }: DesignCardProps) {
         <CardHeader className="p-6">
           <div className="flex items-start justify-between gap-2">
             <h3 className="font-semibold text-lg tracking-tight">{design.name}</h3>
+            {design.collection && design.collection !== 'web' && (
+              <Badge variant="default" className="text-xs shrink-0">
+                {getCollectionLabel(design.collection)}
+              </Badge>
+            )}
           </div>
+          {(design.appTargets?.length ?? 0) > 0 && (
+            <p className="mt-1.5 text-xs text-muted-foreground">
+              {design.appTargets!.map(target => getAppTargetLabel(target)).join(' · ')}
+            </p>
+          )}
           <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
             {design.description}
           </p>

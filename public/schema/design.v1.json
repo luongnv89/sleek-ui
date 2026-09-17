@@ -36,6 +36,21 @@
       "items": { "type": "string" },
       "minItems": 1
     },
+    "collection": {
+      "type": "string",
+      "enum": ["web", "terminal", "coding"],
+      "default": "web",
+      "description": "Catalog collection: web designs, terminal app themes, or coding app themes"
+    },
+    "appTargets": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["pi", "ghostty", "iterm2", "warp", "opencode", "vscode"]
+      },
+      "uniqueItems": true,
+      "description": "Application targets this theme can be applied to"
+    },
     "author": {
       "type": "object",
       "properties": {
@@ -204,6 +219,19 @@
         },
         "card": { "type": "object" },
         "input": { "type": "object" }
+      }
+    },
+    "tokenColors": {
+      "type": "array",
+      "description": "Syntax token colors for terminal/coding app themes",
+      "items": {
+        "type": "object",
+        "required": ["scope", "color"],
+        "properties": {
+          "scope": { "type": "string" },
+          "color": { "type": "string" },
+          "fontStyle": { "type": "string" }
+        }
       }
     },
     "agentInstructions": {

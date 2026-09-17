@@ -1,16 +1,29 @@
-import type { TransformedDesign, DesignData } from '../types/design';
+import type { TransformedDesign, DesignData, Collection, AppTarget } from '../types/design';
+import { normalizeAppTargets } from './appTargets';
 
 const GITHUB_PAGES_BASE = 'https://luongnv.com/sleek-ui';
+
+const COLLECTIONS: readonly Collection[] = ['web', 'terminal', 'coding'];
+
+function normalizeCollection(value: unknown): Collection {
+  return typeof value === 'string' && (COLLECTIONS as readonly string[]).includes(value)
+    ? (value as Collection)
+    : 'web';
+}
 
 export const transformDesign = (designJson: DesignData): TransformedDesign => {
   const slug = designJson.name;
   const mode = designJson.defaultMode || 'light';
   const colors = designJson.tokens?.colors?.[mode] || designJson.tokens?.colors?.light || {};
+  const collection = normalizeCollection(designJson.collection);
+  const appTargets: AppTarget[] = normalizeAppTargets(designJson.appTargets);
 
   return {
     slug,
     name: designJson.name,
     categories: designJson.categories || [],
+    collection,
+    appTargets,
     colors: {
       primary: colors.primary || '',
       secondary: colors.secondary || '',

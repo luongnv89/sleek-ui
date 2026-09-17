@@ -333,6 +333,92 @@ function buildTokens(themeColors) {
   };
 }
 
+// Mapping from pi-extensions / vscode-themes palettes to token-colors.
+// Accepts hex or already-HSL values and emits sleek-ui HSL strings plus a
+// tokenColors syntax array for terminal/coding app themes.
+function normalizePaletteColor(value) {
+  if (typeof value !== 'string') return value;
+  if (/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(value.trim())) {
+    return hexToHsl(value.trim());
+  }
+  return value;
+}
+
+function mapAppPaletteToTokens(palette = {}) {
+  const get = (...keys) => {
+    for (const key of keys) {
+      if (palette[key] !== undefined) return normalizePaletteColor(palette[key]);
+    }
+    return undefined;
+  };
+  const background = get('background', 'bg', 'editor.background') || '231 15% 18%';
+  const foreground = get('foreground', 'fg', 'editor.foreground') || '60 30% 96%';
+  const primary = get('primary', 'accent', 'keyword', 'blue') || '265 89% 78%';
+  const accent = get('accent', 'green', 'string') || primary;
+  const mutedFg = get('comment', 'mutedForeground', 'muted-foreground') || '240 3.8% 46.1%';
+  const buildMode = (bg, fg) => ({
+    background: bg,
+    foreground: fg,
+    muted: get('muted') || '240 4.8% 95.9%',
+    'muted-foreground': mutedFg,
+    primary,
+    'primary-foreground': bg,
+    secondary: get('secondary') || '240 4.8% 95.9%',
+    'secondary-foreground': fg,
+    accent,
+    'accent-foreground': bg,
+    destructive: get('red', 'destructive') || '0 84.2% 60.2%',
+    'destructive-foreground': '0 0% 100%',
+    border: get('border') || '240 5.9% 90%',
+    input: get('input') || '240 5.9% 90%',
+    ring: primary,
+    card: get('card') || bg,
+    'card-foreground': fg,
+  });
+  const lightBg = get('lightBackground', 'lightBg') || '0 0% 100%';
+  const lightFg = get('lightForeground', 'lightFg') || '240 10% 3.9%';
+  return {
+    colors: {
+      light: buildMode(lightBg, lightFg),
+      dark: buildMode(background, foreground),
+    },
+  };
+}
+
+function mapAppPaletteToTokenColors(palette = {}) {
+  const scopes = ['comment', 'keyword', 'string', 'variable', 'function', 'constant', 'type', 'background', 'foreground'];
+  return scopes
+    .filter(scope => palette[scope] !== undefined)
+    .map(scope => ({ scope, color: normalizePaletteColor(palette[scope]) }));
+}
+
+function buildAppThemeTemplate({ slug, description, collection, appTargets, palette, source }) {
+  const tokenPart = mapAppPaletteToTokens(palette);
+  const tokenColors = mapAppPaletteToTokenColors(palette);
+  return {
+    $schema: 'https://luongnv.com/sleek-ui/schema/design.v1.json',
+    name: slug,
+    version: '1.0.0',
+    description: (description || `${slug} app theme for terminal and coding tools`).slice(0, 200),
+    categories: [collection, 'dark'],
+    collection,
+    appTargets,
+    author: { name: 'sleek-ui', url: source?.repo || 'https://github.com/luongnv89/pi-extensions' },
+    tokens: {
+      ...tokenPart,
+      typography: buildTypographyTokens(),
+      ...buildSpaceTokens(),
+    },
+    fonts: buildFonts(),
+    accessibility: buildAccessibility(),
+    components: buildComponentTokens(),
+    ...(tokenColors.length > 0 ? { tokenColors } : {}),
+    agentInstructions: buildAgentInstructions(),
+    preview: buildPreview(slug),
+    source: source || buildSource(slug, new Date().toISOString()),
+  };
+}
+
 function buildFonts() {
   return {
     google: [
@@ -556,5 +642,9 @@ module.exports = {
   getHslLightness,
   pickThemeColors,
   buildColorTokens,
+  normalizePaletteColor,
+  mapAppPaletteToTokens,
+  mapAppPaletteToTokenColors,
+  buildAppThemeTemplate,
   convertToSleekUi
 };
