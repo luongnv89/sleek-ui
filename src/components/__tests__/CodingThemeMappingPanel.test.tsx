@@ -46,6 +46,8 @@ describe('CodingThemeMappingPanel (#187)', () => {
     });
     expect(loadBackup).toHaveBeenCalledWith('aura');
     expect(screen.getByText(/Conflicts to validate/)).toBeInTheDocument();
+    // The live region stays mounted once a backup is selected; only its text changes.
+    expect(screen.getByRole('status')).toBeEmptyDOMElement();
 
     const copyButton = screen.getByRole('button', { name: /Copy/ });
     expect(copyButton).toBeDisabled();

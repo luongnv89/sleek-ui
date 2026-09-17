@@ -139,9 +139,12 @@ export function CodingThemeMappingPanel({
         )}
       </div>
 
-      {backupSlug && !mapped && (
-        <p className={`mt-4 text-sm ${backupFailed ? 'text-destructive' : 'text-muted-foreground'}`} role="status">
-          {backupFailed ? 'Could not load the backup theme. Pick another one.' : 'Loading backup theme…'}
+      {backupSlug && (
+        <p
+          className={`text-sm ${mapped ? 'sr-only' : 'mt-4'} ${backupFailed ? 'text-destructive' : 'text-muted-foreground'}`}
+          role="status"
+        >
+          {mapped ? '' : backupFailed ? 'Could not load the backup theme. Pick another one.' : 'Loading backup theme…'}
         </p>
       )}
 
@@ -219,7 +222,7 @@ export function CodingThemeMappingPanel({
               onClick={() => copy(prompt)}
               disabled={!canCopy}
               aria-describedby={`${selectId}-copy-status`}
-              className="shrink-0 gap-2"
+              className="min-h-[44px] shrink-0 gap-2"
             >
               {copied === 'mappedPrompt' ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
               {copied === 'mappedPrompt' ? 'Copied!' : 'Copy'}
