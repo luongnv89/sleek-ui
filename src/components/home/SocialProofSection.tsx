@@ -18,15 +18,15 @@ export function SocialProofSection() {
       <div className="mx-auto max-w-4xl">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
           <div className="rounded-xl border border-border/60 bg-muted/10 p-5">
-            <div className="text-2xl font-bold text-brand tabular-nums" title="Live from the GitHub API">~{stars}</div>
+            <div className="text-2xl font-bold text-foreground tabular-nums" title="Live from the GitHub API">~{stars}</div>
             <div className="text-xs uppercase tracking-wider text-muted-foreground mt-1">GitHub Stars</div>
           </div>
           <div className="rounded-xl border border-border/60 bg-muted/10 p-5">
-            <div className="text-2xl font-bold text-brand tabular-nums" title="Live from the GitHub API">~{forks}</div>
+            <div className="text-2xl font-bold text-foreground tabular-nums" title="Live from the GitHub API">~{forks}</div>
             <div className="text-xs uppercase tracking-wider text-muted-foreground mt-1">Forks</div>
           </div>
           <div className="rounded-xl border border-border/60 bg-muted/10 p-5">
-            <div className="text-2xl font-bold text-brand tabular-nums">{designCount ?? '—'}</div>
+            <div className="text-2xl font-bold text-foreground tabular-nums">{designCount ?? '—'}</div>
             <div className="text-xs uppercase tracking-wider text-muted-foreground mt-1">Design Systems</div>
           </div>
         </div>

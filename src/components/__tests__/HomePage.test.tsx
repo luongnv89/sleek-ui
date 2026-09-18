@@ -19,8 +19,10 @@ jest.mock('@/data/designs', () => {
   };
 });
 
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import App from '@/App';
+import { HomePage } from '@/components/home/HomePage';
 
 async function waitForCatalogLoaded() {
   // Hero count only appears once the lazy catalog has resolved (#135)
@@ -146,6 +148,37 @@ describe('Capability discoverability on the landing surface (#196)', () => {
     expect(ids).toEqual(expect.arrayContaining(['how-it-works', 'theme-pairing', 'copy-site', 'catalog']));
     expect(ids.indexOf('theme-pairing')).toBeLessThan(ids.indexOf('catalog'));
     expect(ids.indexOf('copy-site')).toBeLessThan(ids.indexOf('catalog'));
+  });
+});
+
+describe('Scrollable prompt bodies stay keyboard-reachable (#196, WCAG 2.1.1)', () => {
+  it('exposes the how-it-works example prompt as a focusable named region', () => {
+    render(<App />);
+    const region = screen.getByRole('region', { name: 'Example prompt' });
+    expect(region.tagName).toBe('CODE');
+    expect(region).toHaveAttribute('tabindex', '0');
+    expect(region).toHaveClass('max-h-96', 'overflow-auto', 'focus-visible:ring-2');
+  });
+});
+
+describe('Off-route section links finish on the home route (#196)', () => {
+  it('scrolls to the section named in the router state once the sections have mounted', async () => {
+    const scrollIntoView = jest.fn();
+    Element.prototype.scrollIntoView = scrollIntoView;
+    try {
+      render(
+        <MemoryRouter initialEntries={[{ pathname: '/', state: { scrollTo: 'copy-site' } }]}>
+          <HomePage />
+        </MemoryRouter>,
+      );
+      await waitFor(() =>
+        expect(scrollIntoView.mock.instances.map(node => (node as HTMLElement).id)).toContain(
+          'copy-site',
+        ),
+      );
+    } finally {
+      delete (Element.prototype as Partial<Element>).scrollIntoView;
+    }
   });
 });
 

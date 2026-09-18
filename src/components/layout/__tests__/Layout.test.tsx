@@ -80,6 +80,39 @@ describe('Layout (#120)', () => {
     }
   });
 
+  it('routes home when a footer section link fires off the home route (#196)', async () => {
+    const scrollIntoView = jest.fn();
+    Element.prototype.scrollIntoView = scrollIntoView;
+    try {
+      render(
+        <ThemeProvider>
+          <MemoryRouter initialEntries={['/designs/alpha-design']}>
+            <Routes>
+              <Route path="/" element={<Layout />}>
+                <Route index element={<div>outlet-content</div>} />
+                <Route path="designs/:slug" element={<div>detail-content</div>} />
+              </Route>
+            </Routes>
+          </MemoryRouter>
+        </ThemeProvider>,
+      );
+      expect(screen.getByText('detail-content')).toBeInTheDocument();
+
+      const footer = screen.getByRole('contentinfo');
+      const pairing = Array.from(footer.querySelectorAll('nav button')).find(
+        b => b.textContent === 'Theme pairing',
+      )!;
+      fireEvent.click(pairing);
+
+      // Off-route the control is no longer dead: it navigates to the route that
+      // owns the section ids, which then finishes the scroll after mount.
+      expect(await screen.findByText('outlet-content')).toBeInTheDocument();
+      expect(scrollIntoView).not.toHaveBeenCalled();
+    } finally {
+      delete (Element.prototype as Partial<Element>).scrollIntoView;
+    }
+  });
+
   it('exposes the How it works scroll control as a button', () => {
     Element.prototype.scrollIntoView = jest.fn();
     try {

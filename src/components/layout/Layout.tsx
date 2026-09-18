@@ -4,8 +4,12 @@ import { Header } from '@/components/ui/Header'
 import { buttonVariants } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 import { useDesignCatalog } from '@/hooks/useDesignCatalog'
+import { useSectionScroll } from '@/hooks/useSectionScroll'
 
-/** In-page navigation is scrollIntoView, never `<a href="#…">` (#104/#147). */
+/**
+ * In-page navigation is scrollIntoView, never `<a href="#…">` (#104/#147). The
+ * footer renders on every route, so the handler is route-aware.
+ */
 const FOOTER_SECTIONS = [
   { id: 'theme-pairing', label: 'Theme pairing' },
   { id: 'copy-site', label: 'Copy a site' },
@@ -14,6 +18,7 @@ const FOOTER_SECTIONS = [
 
 export function Layout() {
   const { designs, loading } = useDesignCatalog()
+  const scrollToSection = useSectionScroll()
   const designCount = loading ? null : designs.length
   return (
     <div className="min-h-screen bg-background text-foreground font-sans">
@@ -43,7 +48,7 @@ export function Layout() {
               <button
                 key={section.id}
                 type="button"
-                onClick={() => document.getElementById(section.id)?.scrollIntoView({ behavior: 'smooth' })}
+                onClick={() => scrollToSection(section.id)}
                 className="transition-colors hover:text-foreground"
               >
                 {section.label}

@@ -13,8 +13,10 @@
      The fixed sleek-ui green is an IDENTITY mark, not an accent. Use it only
      for the logo, the wordmark, and the founder monogram — never for a button,
      a link, a hover state, a focus ring or any other interactive affordance.
-     Known residual (#196): SocialProofSection still tints its three stat digits
-     with `text-brand`; that file was out of scope for the #196 redesign.
+     `text-brand` is used on exactly two surfaces, both identity marks by
+     decision (#196): the header wordmark (`Header.tsx`) and the founder
+     monogram (`FounderSection.tsx`). Data — counts, stats, metrics — uses
+     `--foreground`, never the brand green.
      ────────────────────────────────────────────────────────────────────────── */
   --color-brand: #00FF41;
   --color-brand-hover: #00e639;

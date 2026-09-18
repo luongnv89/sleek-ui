@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { Header } from '../Header';
 
@@ -80,6 +80,32 @@ describe('Header capability navigation (#196)', () => {
     )!;
     fireEvent.click(mobileCopySite);
     expect(screen.queryByRole('button', { name: /Close menu/i })).toBeNull();
+  });
+});
+
+describe('Header section links off the home route (#196)', () => {
+  afterEach(() => {
+    delete (Element.prototype as Partial<Element>).scrollIntoView;
+  });
+
+  it('navigates to the home route instead of scrolling a section id that is not there', () => {
+    const scrollIntoView = jest.fn();
+    Element.prototype.scrollIntoView = scrollIntoView;
+    render(
+      <MemoryRouter initialEntries={['/designs/alpha-design']}>
+        <ThemeProvider>
+          <Routes>
+            <Route path="/" element={<div>home-route</div>} />
+            <Route path="/designs/:slug" element={<Header />} />
+          </Routes>
+        </ThemeProvider>
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Theme pairing' }));
+
+    expect(scrollIntoView).not.toHaveBeenCalled();
+    expect(screen.getByText('home-route')).toBeInTheDocument();
   });
 });
 

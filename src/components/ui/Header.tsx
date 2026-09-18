@@ -5,10 +5,13 @@ import { ThemeToggle } from './ThemeToggle'
 import { LogoMark } from './LogoMark'
 import { Button } from './Button'
 import { useTheme } from '@/context/ThemeContext'
+import { useSectionScroll } from '@/hooks/useSectionScroll'
 
 /**
  * In-page navigation is scrollIntoView, never `<a href="#…">` — the app runs under
  * HashRouter on the GitHub Pages base, where a hash href hijacks the route (#104/#147).
+ * The ids live on the home route only, so off-route the handler routes home first
+ * (see useSectionScroll).
  */
 const SECTION_LINKS = [
   { id: 'theme-pairing', label: 'Theme pairing' },
@@ -16,11 +19,9 @@ const SECTION_LINKS = [
   { id: 'how-it-works', label: 'How it works' },
 ] as const
 
-const scrollToSection = (id: string) =>
-  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
-
 export function Header() {
   const { theme, toggleTheme } = useTheme()
+  const scrollToSection = useSectionScroll()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
