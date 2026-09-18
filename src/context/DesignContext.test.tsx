@@ -5,13 +5,16 @@ import { render, screen, fireEvent, act } from '@testing-library/react';
 import {
   DesignProvider,
   getContrastRatio,
+  getLayeredContrastRatio,
   getOverlayContrastRatio,
   isAccessibleColorScale,
   useDesign,
   withAccessiblePrimary,
 } from './DesignContext';
-import elevenLabs from '@/data/designs/elevenlabs.json';
 import linear from '@/data/designs/linear.app.json';
+import neonGreen from '@/data/designs/neon-green.json';
+import openCode from '@/data/designs/opencode.json';
+import vercel from '@/data/designs/vercel.json';
 import type { DesignData, TransformedDesign } from '@/types/design';
 
 const baseDesign: DesignData = {
@@ -99,79 +102,131 @@ describe('DesignContext validation (#102)', () => {
     expect(css).toContain('.dark {');
   });
 
-  it('derives readable primary, hover, and focus pairs for the real ElevenLabs theme', () => {
-    const data = elevenLabs as unknown as DesignData;
-    render(
-      <DesignProvider>
-        <ApplyButton data={data} />
-      </DesignProvider>,
-    );
-    fireEvent.click(screen.getByText('apply'));
-
-    const css = getAppliedStyle()?.textContent ?? '';
-    for (const mode of ['light', 'dark'] as const) {
-      const source = data.tokens.colors[mode];
-      const normalized = withAccessiblePrimary(source, mode);
-      expect(isAccessibleColorScale(normalized)).toBe(true);
-      expect(getContrastRatio(normalized.primary, normalized.background)).toBeGreaterThanOrEqual(4.5);
-      expect(
-        getOverlayContrastRatio(
-          normalized['primary-foreground'],
-          normalized.primary,
-          normalized.background,
-          0.9,
-        ),
-      ).toBeGreaterThanOrEqual(4.5);
-      expect(getContrastRatio(normalized.ring, normalized.background)).toBeGreaterThanOrEqual(3);
-      expect(getContrastRatio(normalized.ring, normalized.card)).toBeGreaterThanOrEqual(3);
-      expect(css).toContain(`--primary: ${normalized.primary};`);
-      expect(css).toContain(`--primary-foreground: ${normalized['primary-foreground']};`);
-      expect(css).toContain(`--ring: ${normalized.ring};`);
-    }
-
-    expect(withAccessiblePrimary(data.tokens.colors.light, 'light').primary).not.toBe(
-      data.tokens.colors.light.primary,
-    );
+  it('repairs Linear light foreground text and its translucent prompt surface', () => {
+    const source = linear.tokens.colors.light;
+    const normalized = withAccessiblePrimary(source, 'light');
+    expect(normalized.background).toBe(source.background);
+    expect(normalized.muted).toBe(source.muted);
+    expect(getContrastRatio(normalized.foreground, normalized.background)).toBeGreaterThanOrEqual(4.5);
+    expect(
+      getLayeredContrastRatio(
+        normalized.foreground,
+        0.9,
+        normalized.muted,
+        0.5,
+        normalized.background,
+      ),
+    ).toBeGreaterThanOrEqual(4.5);
   });
 
-  it('uses a complete safe fallback for Linear dark and impossible mixed surfaces', () => {
-    const linearDark = withAccessiblePrimary(linear.tokens.colors.dark, 'dark');
-    expect(isAccessibleColorScale(linearDark)).toBe(true);
-    expect(linearDark.background).not.toBe(linear.tokens.colors.dark.background);
-    expect(linearDark.card).not.toBe(linear.tokens.colors.dark.card);
+  it('repairs Neon Green light muted text on background and card', () => {
+    const source = neonGreen.tokens.colors.light;
+    const normalized = withAccessiblePrimary(source, 'light');
+    expect(normalized.background).toBe(source.background);
+    expect(normalized.card).toBe(source.card);
+    expect(getContrastRatio(normalized['muted-foreground'], normalized.background)).toBeGreaterThanOrEqual(4.5);
+    expect(getContrastRatio(normalized['muted-foreground'], normalized.card)).toBeGreaterThanOrEqual(4.5);
+  });
 
+  it('repairs OpenCode dark outline hover text', () => {
+    const source = openCode.tokens.colors.dark;
+    const normalized = withAccessiblePrimary(source, 'dark');
+    expect(normalized.accent).toBe(source.accent);
+    expect(getContrastRatio(normalized['accent-foreground'], normalized.accent)).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it('repairs Vercel light focus rings on primary-tinted surfaces', () => {
+    const source = vercel.tokens.colors.light;
+    const normalized = withAccessiblePrimary(source, 'light');
+    expect(normalized.background).toBe(source.background);
+    expect(normalized.card).toBe(source.card);
+    expect(normalized.muted).toBe(source.muted);
+    expect(normalized.primary).toBe(source.primary);
+    expect(
+      getOverlayContrastRatio(normalized.ring, normalized.primary, normalized.background, 0.05),
+    ).toBeGreaterThanOrEqual(3.1);
+  });
+
+  it('uses the complete safe palette when no foreground can satisfy every rendered surface', () => {
     const impossible = {
-      background: '0 0% 100%',
+      background: '0 0% 0%',
+      foreground: '0 0% 100%',
       card: '0 0% 0%',
-      muted: '0 0% 50%',
-      primary: '220 80% 50%',
-      'primary-foreground': '0 0% 100%',
+      'card-foreground': '0 0% 100%',
       popover: '0 0% 0%',
-      'popover-foreground': '0 0% 0%',
-      destructive: '0 0% 100%',
+      'popover-foreground': '0 0% 100%',
+      muted: '0 0% 100%',
+      'muted-foreground': '0 0% 100%',
+      primary: '0 0% 0%',
+      'primary-foreground': '0 0% 100%',
+      secondary: '0 0% 0%',
+      'secondary-foreground': '0 0% 100%',
+      accent: '0 0% 0%',
+      'accent-foreground': '0 0% 100%',
+      destructive: '0 0% 0%',
       'destructive-foreground': '0 0% 100%',
-      ring: '0 0% 50%',
+      ring: '0 0% 100%',
     };
     const normalized = withAccessiblePrimary(impossible, 'light');
-    expect(normalized).not.toEqual(impossible);
-    expect(normalized.background).toBe('0 0% 100%');
-    expect(normalized.card).toBe('0 0% 100%');
-    expect(normalized.popover).toBe('0 0% 100%');
-    expect(normalized.destructive).toBe('0 0% 9%');
-    expect(getContrastRatio(normalized.destructive, normalized['destructive-foreground']))
-      .toBeGreaterThanOrEqual(4.5);
+    const safeLight = {
+      background: '0 0% 100%',
+      foreground: '0 0% 9%',
+      card: '0 0% 100%',
+      'card-foreground': '0 0% 9%',
+      popover: '0 0% 100%',
+      'popover-foreground': '0 0% 9%',
+      muted: '0 0% 96%',
+      'muted-foreground': '0 0% 35%',
+      primary: '0 0% 9%',
+      'primary-foreground': '0 0% 100%',
+      secondary: '0 0% 96%',
+      'secondary-foreground': '0 0% 9%',
+      accent: '0 0% 96%',
+      'accent-foreground': '0 0% 9%',
+      destructive: '0 0% 9%',
+      'destructive-foreground': '0 0% 100%',
+      border: '0 0% 85%',
+      input: '0 0% 85%',
+      ring: '0 0% 20%',
+    };
+
+    expect(normalized).toEqual(safeLight);
     expect(isAccessibleColorScale(normalized)).toBe(true);
   });
 
-  it('normalizes every catalog color mode to the accessibility postcondition', () => {
+  it('normalizes every available catalog color mode to the exact accessibility matrix', () => {
     const designsDirectory = join(process.cwd(), 'src/data/designs');
     const failures: string[] = [];
 
     for (const file of readdirSync(designsDirectory).filter(name => name.endsWith('.json'))) {
       const data = JSON.parse(readFileSync(join(designsDirectory, file), 'utf8')) as DesignData;
       for (const mode of ['light', 'dark'] as const) {
-        const normalized = withAccessiblePrimary(data.tokens.colors[mode], mode);
-        if (!isAccessibleColorScale(normalized)) failures.push(`${file}:${mode}`);
+        const source = data.tokens.colors[mode];
+        if (!source) continue;
+        const colors = withAccessiblePrimary(source, mode);
+        const checks: Array<[string, number | null, number]> = [
+          ['foreground/background', getContrastRatio(colors.foreground, colors.background), 4.5],
+          ['foreground/90 on muted/50', getLayeredContrastRatio(colors.foreground, 0.9, colors.muted, 0.5, colors.background), 4.5],
+          ['muted-foreground/background', getContrastRatio(colors['muted-foreground'], colors.background), 4.5],
+          ['muted-foreground/card', getContrastRatio(colors['muted-foreground'], colors.card), 4.5],
+          ['primary-foreground/primary', getContrastRatio(colors['primary-foreground'], colors.primary), 4.5],
+          ['primary-foreground/primary-hover', getOverlayContrastRatio(colors['primary-foreground'], colors.primary, colors.background, 0.9), 4.5],
+          ['secondary-foreground/secondary', getContrastRatio(colors['secondary-foreground'], colors.secondary), 4.5],
+          ['accent-foreground/accent', getContrastRatio(colors['accent-foreground'], colors.accent), 4.5],
+          ['destructive-foreground/destructive', getContrastRatio(colors['destructive-foreground'], colors.destructive), 4.5],
+          ['card-foreground/card', getContrastRatio(colors['card-foreground'], colors.card), 4.5],
+          ['popover-foreground/popover', getContrastRatio(colors['popover-foreground'], colors.popover), 4.5],
+          ['ring/background', getContrastRatio(colors.ring, colors.background), 3.1],
+          ['ring/card', getContrastRatio(colors.ring, colors.card), 3.1],
+          ['ring/muted/30', getOverlayContrastRatio(colors.ring, colors.muted, colors.background, 0.3), 3.1],
+          ['ring/primary/5', getOverlayContrastRatio(colors.ring, colors.primary, colors.background, 0.05), 3.1],
+          ['ring/primary/10', getOverlayContrastRatio(colors.ring, colors.primary, colors.background, 0.1), 3.1],
+        ];
+        for (const [pair, ratio, threshold] of checks) {
+          if (ratio === null || ratio < threshold) {
+            failures.push(`${file}:${mode}:${pair}:${ratio ?? 'invalid'}`);
+          }
+        }
       }
     }
 

@@ -7,7 +7,7 @@ const SAFE_TOKEN_VALUE = /^[A-Za-z0-9 _%.,'"#+/-]+$/;
 const SAFE_TOKEN_KEY = /^[A-Za-z0-9_-]+$/;
 const HSL_TOKEN = /^(-?(?:\d+(?:\.\d+)?|\.\d+))\s+(-?(?:\d+(?:\.\d+)?|\.\d+))%\s+(-?(?:\d+(?:\.\d+)?|\.\d+))%$/;
 const MIN_TEXT_CONTRAST = 4.5;
-const MIN_FOCUS_CONTRAST = 3;
+const MIN_FOCUS_CONTRAST = 3.1;
 const SAFE_COLOR_FALLBACKS = {
   light: {
     background: '0 0% 100%',
@@ -119,6 +119,27 @@ export function getOverlayContrastRatio(
   return rgbContrast(textRgb, composite(overlayRgb, backgroundRgb, opacity));
 }
 
+/** Contrast when both text and its surface use Tailwind opacity modifiers. */
+export function getLayeredContrastRatio(
+  text: string,
+  textOpacity: number,
+  surface: string,
+  surfaceOpacity: number,
+  background: string,
+): number | null {
+  const textRgb = hslToRgb(text);
+  const surfaceRgb = hslToRgb(surface);
+  const backgroundRgb = hslToRgb(background);
+  if (
+    !textRgb || !surfaceRgb || !backgroundRgb
+    || textOpacity < 0 || textOpacity > 1
+    || surfaceOpacity < 0 || surfaceOpacity > 1
+  ) return null;
+
+  const renderedSurface = composite(surfaceRgb, backgroundRgb, surfaceOpacity);
+  return rgbContrast(composite(textRgb, renderedSurface, textOpacity), renderedSurface);
+}
+
 function orderedLightnesses(original: number): number[] {
   return [
     original,
@@ -130,15 +151,15 @@ function orderedLightnesses(original: number): number[] {
 
 function readableForeground(
   preferred: string | undefined,
-  primary: Rgb,
-  surfaces: Rgb[],
+  fallback: string,
+  isReadable: (candidate: Rgb) => boolean,
 ): string | null {
-  const candidates = [preferred, '0 0% 0%', '0 0% 100%'].filter(
+  const candidates = [preferred, '0 0% 0%', '0 0% 100%', fallback].filter(
     (value, index, values): value is string => Boolean(value) && values.indexOf(value) === index,
   );
   return candidates.find(value => {
     const rgb = hslToRgb(value);
-    return rgb !== null && [primary, ...surfaces].every(surface => rgbContrast(rgb, surface) >= MIN_TEXT_CONTRAST);
+    return rgb !== null && isReadable(rgb);
   }) ?? null;
 }
 
@@ -171,30 +192,59 @@ function deriveAccessibleRing(scale: Record<string, string>, surfaces: Rgb[]): s
 
 /** Postcondition shared by runtime normalization and catalog-wide regressions. */
 export function isAccessibleColorScale(scale: Record<string, string>): boolean {
-  const background = hslToRgb(scale.background);
-  const card = hslToRgb(scale.card);
-  const muted = hslToRgb(scale.muted);
-  const primary = hslToRgb(scale.primary);
-  const foreground = hslToRgb(scale['primary-foreground']);
-  const ring = hslToRgb(scale.ring);
-  if (!background || !card || !muted || !primary || !foreground || !ring) return false;
+  const colors = {
+    background: hslToRgb(scale.background),
+    foreground: hslToRgb(scale.foreground),
+    card: hslToRgb(scale.card),
+    cardForeground: hslToRgb(scale['card-foreground']),
+    popover: hslToRgb(scale.popover),
+    popoverForeground: hslToRgb(scale['popover-foreground']),
+    muted: hslToRgb(scale.muted),
+    mutedForeground: hslToRgb(scale['muted-foreground']),
+    primary: hslToRgb(scale.primary),
+    primaryForeground: hslToRgb(scale['primary-foreground']),
+    secondary: hslToRgb(scale.secondary),
+    secondaryForeground: hslToRgb(scale['secondary-foreground']),
+    accent: hslToRgb(scale.accent),
+    accentForeground: hslToRgb(scale['accent-foreground']),
+    destructive: hslToRgb(scale.destructive),
+    destructiveForeground: hslToRgb(scale['destructive-foreground']),
+    ring: hslToRgb(scale.ring),
+  };
+  if (Object.values(colors).some(color => color === null)) return false;
 
-  const accentSurfaces = [
+  const {
+    background, foreground, card, cardForeground, popover, popoverForeground,
+    muted, mutedForeground, primary, primaryForeground, secondary,
+    secondaryForeground, accent, accentForeground, destructive,
+    destructiveForeground, ring,
+  } = colors as Record<keyof typeof colors, Rgb>;
+  const promptSurface = composite(muted, background, 0.5);
+  const promptText = composite(foreground, promptSurface, 0.9);
+  const primaryHover = composite(primary, background, 0.9);
+  const textPairs: Array<[Rgb, Rgb]> = [
+    [foreground, background],
+    [promptText, promptSurface],
+    [mutedForeground, background],
+    [mutedForeground, card],
+    [primaryForeground, primary],
+    [primaryForeground, primaryHover],
+    [secondaryForeground, secondary],
+    [accentForeground, accent],
+    [destructiveForeground, destructive],
+    [cardForeground, card],
+    [popoverForeground, popover],
+  ];
+  const focusSurfaces = [
     background,
     card,
     composite(muted, background, 0.3),
+    composite(primary, background, 0.05),
     composite(primary, background, 0.1),
-    composite(primary, card, 0.1),
-  ];
-  const controlSurfaces = [
-    primary,
-    composite(primary, background, 0.9),
-    composite(primary, card, 0.9),
   ];
 
-  return accentSurfaces.every(surface => rgbContrast(primary, surface) >= MIN_TEXT_CONTRAST)
-    && controlSurfaces.every(surface => rgbContrast(foreground, surface) >= MIN_TEXT_CONTRAST)
-    && [background, card].every(surface => rgbContrast(ring, surface) >= MIN_FOCUS_CONTRAST);
+  return textPairs.every(([text, surface]) => rgbContrast(text, surface) >= MIN_TEXT_CONTRAST)
+    && focusSurfaces.every(surface => rgbContrast(ring, surface) >= MIN_FOCUS_CONTRAST);
 }
 
 function fallbackScale(scale: Record<string, string>, mode?: ColorMode): Record<string, string> {
@@ -205,61 +255,74 @@ function fallbackScale(scale: Record<string, string>, mode?: ColorMode): Record<
 
 /**
  * Applied designs can contain visually valid swatches that are not valid UI
- * pairs. Derive a same-hue primary that remains readable as both small accent
- * text and a button surface, including the translucent backgrounds used by the
- * catalog. The catalog JSON itself remains untouched.
+ * pairs. Preserve semantic surfaces, narrowly repair their foregrounds, then
+ * enforce the finite set of text and focus combinations rendered by the app.
  */
 export function withAccessiblePrimary(
   scale: Record<string, string>,
   mode?: ColorMode,
 ): Record<string, string> {
-  const primaryMatch = scale.primary?.trim().match(HSL_TOKEN);
   const background = hslToRgb(scale.background);
-  if (!primaryMatch || !background) return fallbackScale(scale, mode);
-
-  const normalizedSurfaces = {
-    ...scale,
-    card: hslToRgb(scale.card) ? scale.card : scale.background,
-    muted: hslToRgb(scale.muted) ? scale.muted : scale.background,
-  };
-  const card = hslToRgb(normalizedSurfaces.card)!;
-  const muted = hslToRgb(normalizedSurfaces.muted)!;
-  const fixedSurfaces = [background, card, composite(muted, background, 0.3)];
-  const hue = Number(primaryMatch[1]);
-  const saturation = Number(primaryMatch[2]);
-
-  for (const lightness of orderedLightnesses(Number(primaryMatch[3]))) {
-    const candidate = `${hue} ${saturation}% ${Number(lightness.toFixed(1))}%`;
-    const primary = hslToRgb(candidate)!;
-    const accentSurfaces = [
-      ...fixedSurfaces,
-      composite(primary, background, 0.1),
-      composite(primary, card, 0.1),
-    ];
-    if (accentSurfaces.some(surface => rgbContrast(primary, surface) < MIN_TEXT_CONTRAST)) continue;
-
-    // Primary controls use a 90%-opaque hover surface. Validate that state too,
-    // rather than making only the resting CTA readable.
-    const foreground = readableForeground(
-      scale['primary-foreground'],
-      primary,
-      [composite(primary, background, 0.9), composite(primary, card, 0.9)],
-    );
-    if (!foreground) continue;
-
-    const candidateScale = {
-      ...normalizedSurfaces,
-      primary: candidate,
-      'primary-foreground': foreground,
-    };
-    const ring = deriveAccessibleRing(candidateScale, [background, card]);
-    if (!ring) break;
-
-    const result = { ...candidateScale, ring };
-    if (isAccessibleColorScale(result)) return result;
+  const fallbackMode = mode ?? (background && luminance(background) < 0.5 ? 'dark' : 'light');
+  const safe = SAFE_COLOR_FALLBACKS[fallbackMode];
+  const result = { ...scale };
+  const surfaceTokens = [
+    'background', 'card', 'popover', 'muted', 'primary', 'secondary', 'accent', 'destructive',
+  ] as const;
+  const parsed = {} as Record<(typeof surfaceTokens)[number], Rgb>;
+  for (const token of surfaceTokens) {
+    const value = scale[token] ?? safe[token];
+    const color = hslToRgb(value);
+    if (!color) return fallbackScale(scale, fallbackMode);
+    result[token] = value;
+    parsed[token] = color;
   }
 
-  return fallbackScale(scale, mode);
+  const promptSurface = composite(parsed.muted, parsed.background, 0.5);
+  const primaryHover = composite(parsed.primary, parsed.background, 0.9);
+  const foregrounds: Array<[
+    keyof typeof SAFE_COLOR_FALLBACKS.light,
+    (candidate: Rgb) => boolean,
+  ]> = [
+    ['foreground', candidate =>
+      rgbContrast(candidate, parsed.background) >= MIN_TEXT_CONTRAST
+      && rgbContrast(composite(candidate, promptSurface, 0.9), promptSurface) >= MIN_TEXT_CONTRAST],
+    ['muted-foreground', candidate =>
+      [parsed.background, parsed.card].every(surface =>
+        rgbContrast(candidate, surface) >= MIN_TEXT_CONTRAST)],
+    ['primary-foreground', candidate =>
+      [parsed.primary, primaryHover].every(surface =>
+        rgbContrast(candidate, surface) >= MIN_TEXT_CONTRAST)],
+    ['secondary-foreground', candidate =>
+      rgbContrast(candidate, parsed.secondary) >= MIN_TEXT_CONTRAST],
+    ['accent-foreground', candidate =>
+      rgbContrast(candidate, parsed.accent) >= MIN_TEXT_CONTRAST],
+    ['destructive-foreground', candidate =>
+      rgbContrast(candidate, parsed.destructive) >= MIN_TEXT_CONTRAST],
+    ['card-foreground', candidate =>
+      rgbContrast(candidate, parsed.card) >= MIN_TEXT_CONTRAST],
+    ['popover-foreground', candidate =>
+      rgbContrast(candidate, parsed.popover) >= MIN_TEXT_CONTRAST],
+  ];
+
+  for (const [token, isReadable] of foregrounds) {
+    const foreground = readableForeground(scale[token], safe[token], isReadable);
+    if (!foreground) return fallbackScale(scale, fallbackMode);
+    result[token] = foreground;
+  }
+
+  const focusSurfaces = [
+    parsed.background,
+    parsed.card,
+    composite(parsed.muted, parsed.background, 0.3),
+    composite(parsed.primary, parsed.background, 0.05),
+    composite(parsed.primary, parsed.background, 0.1),
+  ];
+  const ring = deriveAccessibleRing(result, focusSurfaces);
+  if (!ring) return fallbackScale(scale, fallbackMode);
+  result.ring = ring;
+
+  return isAccessibleColorScale(result) ? result : fallbackScale(scale, fallbackMode);
 }
 
 interface AppliedDesign {
