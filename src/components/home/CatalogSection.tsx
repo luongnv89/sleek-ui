@@ -1,4 +1,6 @@
 import { useMemo, useState } from 'react';
+import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
 import { SearchBar } from '@/components/ui/SearchBar';
 import { CategoryFilter } from '@/components/ui/CategoryFilter';
 import { DesignCard } from '@/components/catalog/DesignCard';
@@ -38,35 +40,49 @@ export function CatalogSection() {
   );
 
   return (
-    <section id="catalog" className="px-4 py-16 sm:py-20">
-      <div className="mx-auto max-w-7xl space-y-8">
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+    <section
+      id="catalog"
+      aria-labelledby="catalog-heading"
+      className="border-t border-border/60 bg-background px-gutter py-band sm:py-band-lg"
+    >
+      <div className="mx-auto max-w-wide space-y-flow">
+        <div className="flex flex-col gap-stack sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">Choose your system</h2>
-            <p className="mt-1.5 text-muted-foreground">
+            <p className="font-mono text-eyebrow uppercase text-primary">The catalog</p>
+            <h2
+              id="catalog-heading"
+              className="mt-stack text-headline font-extrabold text-foreground sm:text-display"
+            >
+              Choose your system
+            </h2>
+            <p className="mt-stack text-lede text-muted-foreground">
               Every design includes light + dark tokens, typography, and agent instructions. Start here.
             </p>
           </div>
-          <span className="text-sm text-muted-foreground tabular-nums">
+          <span className="text-label tabular-nums text-muted-foreground">
             {filteredDesigns.length} / {total} designs
           </span>
         </div>
 
         <div role="group" aria-label="Filter by collection" className="flex flex-wrap gap-2">
           {COLLECTION_TABS.map(tab => (
-            <button
+            <Button
               key={tab.id}
               type="button"
+              size="sm"
+              variant={activeCollection === tab.id ? 'default' : 'outline'}
               aria-pressed={activeCollection === tab.id}
               onClick={() => { setActiveCollection(tab.id); setSelectedCategory(null); setSearchValue(''); }}
-              className={
-                activeCollection === tab.id
-                  ? 'inline-flex min-h-[44px] items-center rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
-                  : 'inline-flex min-h-[44px] items-center rounded-full border border-border bg-background px-4 py-1.5 text-sm text-muted-foreground hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
-              }
+              className="min-h-[44px] gap-1.5 rounded-full px-4 text-label"
             >
-              {tab.label} ({counts[tab.id as 'web' | 'terminal' | 'coding'] ?? 0})
-            </button>
+              {tab.label}
+              <Badge
+                variant={activeCollection === tab.id ? 'secondary' : 'accent'}
+                className="px-1.5 text-micro font-medium tabular-nums"
+              >
+                {counts[tab.id as 'web' | 'terminal' | 'coding'] ?? 0}
+              </Badge>
+            </Button>
           ))}
         </div>
 
@@ -83,26 +99,28 @@ export function CatalogSection() {
         />
 
         {loading ? (
-          <p className="py-20 text-center text-muted-foreground" role="status">Loading designs…</p>
+          <p className="py-band text-center text-muted-foreground" role="status">Loading designs…</p>
         ) : filteredDesigns.length > 0 ? (
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-stack sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
             {filteredDesigns.map((design) => (
               <DesignCard key={design.slug} design={design} />
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center py-20 text-center text-muted-foreground gap-3">
+          <div className="flex flex-col items-center gap-stack py-band text-center text-muted-foreground">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 opacity-30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
             <p>No designs match your search.</p>
-            <button
+            <Button
               type="button"
+              variant="link"
+              size="sm"
               onClick={() => { setSearchValue(''); setSelectedCategory(null); }}
-              className="text-sm text-brand hover:underline"
+              className="min-h-[44px] text-label"
             >
               Clear filters
-            </button>
+            </Button>
           </div>
         )}
       </div>

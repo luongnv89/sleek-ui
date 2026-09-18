@@ -1,6 +1,8 @@
 import { useEffect, useId, useMemo, useState } from 'react';
 import { Check, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { PromptSurface, promptBodyClassName } from '@/components/ui/PromptSurface';
+import { ThemePairTriad } from '@/components/ui/ThemePairTriad';
 import { useClipboard } from '@/hooks/useClipboard';
 import { APP_TARGET_LABELS } from '@/lib/appTargets';
 import { getCollectionLabel } from '@/lib/collections';
@@ -10,6 +12,17 @@ import {
   type ConflictChoice,
 } from '@/lib/themeMapping';
 import type { AppTarget, DesignData, TransformedDesign } from '@/types/design';
+
+const selectClass =
+  'min-h-[44px] w-full rounded-md border border-input bg-background px-3 text-label focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring';
+
+/** Decorative swatch row for a design's light palette. */
+function paletteSwatches(scale: Record<string, string> | undefined): string[] {
+  return ['primary', 'background', 'foreground']
+    .map(key => scale?.[key])
+    .filter((value): value is string => typeof value === 'string' && value.length > 0)
+    .map(value => `hsl(${value})`);
+}
 
 interface CodingThemeMappingPanelProps {
   websiteUrl: string;
@@ -92,62 +105,84 @@ export function CodingThemeMappingPanel({
     setValidated(false);
   };
 
+  const showAppTarget = backup !== null && (backup.appTargets?.length ?? 0) > 0;
+
   return (
     <section
       aria-labelledby={`${selectId}-heading`}
-      className="mb-10 rounded-xl border border-border bg-card p-6"
+      className="mb-10 rounded-xl border border-border bg-card p-gutter sm:p-6"
     >
-      <h2 id={`${selectId}-heading`} className="text-xs font-semibold uppercase tracking-widest text-primary">
-        Use as a coding theme
+      <p className="font-mono text-eyebrow uppercase text-primary">Theme pairing</p>
+      <h2 id={`${selectId}-heading`} className="mt-stack text-title font-bold text-foreground">
+        Pair this with a coding theme
       </h2>
-      <p className="mt-0.5 text-sm text-muted-foreground">
+      <p className="mt-1.5 text-label text-muted-foreground">
         Pick a backup coding or terminal theme. Values from this website design win; the backup fills the rest.
       </p>
 
-      <div className="mt-4 flex flex-wrap items-end gap-4">
-        <div className="flex flex-col gap-1">
-          <label htmlFor={selectId} className="text-sm font-medium">
-            Backup theme
-          </label>
-          <select
-            id={selectId}
-            value={backupSlug}
-            onChange={e => setBackupSlug(e.target.value)}
-            className="min-h-[44px] rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
-          >
-            <option value="">Select a backup theme…</option>
-            {backupThemes.map(theme => (
-              <option key={theme.slug} value={theme.slug}>
-                {theme.name} ({getCollectionLabel(theme.collection ?? 'coding')})
-              </option>
-            ))}
-          </select>
-        </div>
-        {backup && (backup.appTargets?.length ?? 0) > 0 && (
-          <div className="flex flex-col gap-1">
-            <label htmlFor={`${selectId}-target`} className="text-sm font-medium">
-              App target
-            </label>
+      {/* The three parts of the flow, rendered by the same component the landing
+          section uses so the capability reads identically in both places (#196). */}
+      <ThemePairTriad
+        className="mt-flow"
+        web={{
+          label: 'Web theme',
+          title: websiteName,
+          description: 'This design. Its values win every conflict.',
+          swatches: paletteSwatches(websiteData.tokens.colors?.light),
+        }}
+        backup={{
+          label: 'Backup terminal theme',
+          labelFor: selectId,
+          description: 'Fills the syntax, ANSI and editor values this design has no opinion about.',
+          swatches: paletteSwatches(backupData?.tokens.colors?.dark),
+          control: (
             <select
-              id={`${selectId}-target`}
-              value={appTarget}
-              onChange={e => setAppTarget(e.target.value as AppTarget | '')}
-              className="min-h-[44px] rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
+              id={selectId}
+              value={backupSlug}
+              onChange={e => setBackupSlug(e.target.value)}
+              className={selectClass}
             >
-              <option value="">Any app</option>
-              {backup.appTargets?.map(target => (
-                <option key={target} value={target}>
-                  {APP_TARGET_LABELS[target]}
+              <option value="">Select a backup theme…</option>
+              {backupThemes.map(theme => (
+                <option key={theme.slug} value={theme.slug}>
+                  {theme.name} ({getCollectionLabel(theme.collection ?? 'coding')})
                 </option>
               ))}
             </select>
-          </div>
-        )}
-      </div>
+          ),
+        }}
+        result={{
+          label: 'Mapped coding theme',
+          title: mapped && backup ? `${websiteName} × ${backup.name}` : 'Select a backup theme',
+          description: mapped
+            ? `Mapped against the ${mapped.defaultMode} palette.`
+            : 'One agent prompt that themes your editor and terminal.',
+          control: showAppTarget ? (
+            <div className="flex flex-col gap-1">
+              <label htmlFor={`${selectId}-target`} className="text-micro font-medium text-foreground">
+                App target
+              </label>
+              <select
+                id={`${selectId}-target`}
+                value={appTarget}
+                onChange={e => setAppTarget(e.target.value as AppTarget | '')}
+                className={selectClass}
+              >
+                <option value="">Any app</option>
+                {backup?.appTargets?.map(target => (
+                  <option key={target} value={target}>
+                    {APP_TARGET_LABELS[target]}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : undefined,
+        }}
+      />
 
       {backupSlug && (
         <p
-          className={`text-sm ${mapped ? 'sr-only' : 'mt-4'} ${backupFailed ? 'text-destructive' : 'text-muted-foreground'}`}
+          className={`text-label ${mapped ? 'sr-only' : 'mt-flow'} ${backupFailed ? 'text-destructive' : 'text-muted-foreground'}`}
           role="status"
         >
           {mapped ? '' : backupFailed ? 'Could not load the backup theme. Pick another one.' : 'Loading backup theme…'}
@@ -156,23 +191,23 @@ export function CodingThemeMappingPanel({
 
       {mapped && (
         <>
-          <div className="mt-6">
-            <h3 className="text-sm font-semibold">
+          <div className="mt-flow">
+            <h3 className="text-label font-semibold text-foreground">
               {hasConflicts ? `Conflicts to validate (${mapped.conflicts.length})` : 'No conflicts detected'}
             </h3>
-            <p className="mt-1 text-xs text-muted-foreground">
+            <p className="mt-1 text-micro text-muted-foreground">
               Checked against the {mapped.defaultMode} palette. The brand-accent check covers the keyword scope only.
             </p>
             {mapped.uncheckedColors.length > 0 && (
-              <p className="mt-1 text-xs text-destructive">
+              <p className="mt-1 text-micro text-destructive">
                 Not analyzed (only H S% L% colors are checked — verify manually): {mapped.uncheckedColors.join(', ')}
               </p>
             )}
             {hasConflicts && (
-              <ul className="mt-2 space-y-3">
+              <ul className="mt-stack space-y-stack">
                 {mapped.conflicts.map(conflict => (
-                  <li key={conflict.id} className="rounded-lg border border-border p-3 text-sm">
-                    <p className="font-mono text-xs text-muted-foreground">{conflict.key}</p>
+                  <li key={conflict.id} className="rounded-lg border border-border p-3 text-label">
+                    <p className="font-mono text-micro text-muted-foreground">{conflict.key}</p>
                     <p className="mt-1">{conflict.message}</p>
                     <p className="mt-1 text-muted-foreground">Suggestion: {conflict.suggestion}</p>
                     <fieldset className="mt-2 flex flex-wrap gap-4">
@@ -201,45 +236,49 @@ export function CodingThemeMappingPanel({
               </ul>
             )}
             {hasConflicts && (
-              <label className="mt-3 inline-flex min-h-[44px] items-center gap-2 text-sm font-medium">
+              <label className="mt-stack inline-flex min-h-[44px] items-center gap-2 text-label font-medium">
                 <input type="checkbox" checked={validated} onChange={e => setValidated(e.target.checked)} />
                 I&rsquo;ve reviewed these choices
               </label>
             )}
           </div>
 
-          <div className="mt-4 flex items-center justify-between gap-4">
-            <p
-              id={`${selectId}-copy-status`}
-              className={`text-sm ${copyError ? 'text-destructive' : 'text-muted-foreground'}`}
-              aria-live="polite"
-            >
-              {copyError
-                ? `Could not copy the prompt: ${copyError}`
-                : copied === 'mappedPrompt'
-                  ? 'Prompt copied to clipboard.'
-                  : canCopy
-                    ? 'Prompt ready to copy.'
-                    : 'Validate the conflict choices to copy the prompt.'}
-            </p>
-            <Button
-              type="button"
-              size="sm"
-              onClick={() => copy(prompt)}
-              disabled={!canCopy}
-              aria-describedby={`${selectId}-copy-status`}
-              className="min-h-[44px] shrink-0 gap-2"
-            >
-              {copied === 'mappedPrompt' ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-              {copied === 'mappedPrompt' ? 'Copied!' : 'Copy'}
-            </Button>
-          </div>
-          <pre
-            data-testid="mapped-theme-prompt"
-            className="mt-3 max-h-96 overflow-auto whitespace-pre-wrap rounded-lg border border-border bg-background/80 p-4 font-mono text-sm text-foreground/90"
+          <PromptSurface
+            className="mt-flow"
+            label="Mapped theme prompt"
+            meta={
+              <p
+                id={`${selectId}-copy-status`}
+                className={`text-micro ${copyError ? 'text-destructive' : 'text-muted-foreground'}`}
+                aria-live="polite"
+              >
+                {copyError
+                  ? `Could not copy the prompt: ${copyError}`
+                  : copied === 'mappedPrompt'
+                    ? 'Prompt copied to clipboard.'
+                    : canCopy
+                      ? 'Prompt ready to copy.'
+                      : 'Validate the conflict choices to copy the prompt.'}
+              </p>
+            }
+            actions={
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => copy(prompt)}
+                disabled={!canCopy}
+                aria-describedby={`${selectId}-copy-status`}
+                className="min-h-[44px] shrink-0 gap-2"
+              >
+                {copied === 'mappedPrompt' ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                {copied === 'mappedPrompt' ? 'Copied!' : 'Copy'}
+              </Button>
+            }
           >
-            {prompt}
-          </pre>
+            <pre data-testid="mapped-theme-prompt" className={promptBodyClassName}>
+              {prompt}
+            </pre>
+          </PromptSurface>
         </>
       )}
     </section>
