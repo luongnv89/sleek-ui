@@ -5,6 +5,7 @@ jest.mock('@/data/designs', () => ({
 }));
 
 import { render, screen, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { Layout } from '../Layout';
@@ -76,6 +77,30 @@ describe('Layout (#120)', () => {
       expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth' });
       target.remove();
     } finally {
+      delete (Element.prototype as Partial<Element>).scrollIntoView;
+    }
+  });
+
+  it('moves focus to a footer destination after keyboard activation', async () => {
+    const user = userEvent.setup();
+    Element.prototype.scrollIntoView = jest.fn();
+    const target = document.createElement('section');
+    target.id = 'copy-site';
+    document.body.appendChild(target);
+    try {
+      renderLayout();
+      const footer = screen.getByRole('contentinfo');
+      const copySite = Array.from(footer.querySelectorAll<HTMLButtonElement>('nav button')).find(
+        button => button.textContent === 'Copy a site',
+      )!;
+      copySite.focus();
+
+      await user.keyboard('{Enter}');
+
+      expect(target).toHaveAttribute('tabindex', '-1');
+      expect(document.activeElement).toBe(target);
+    } finally {
+      target.remove();
       delete (Element.prototype as Partial<Element>).scrollIntoView;
     }
   });

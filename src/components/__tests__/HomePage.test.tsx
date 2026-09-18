@@ -176,6 +176,9 @@ describe('Off-route section links finish on the home route (#196)', () => {
           'copy-site',
         ),
       );
+      const target = document.getElementById('copy-site');
+      expect(target).toHaveAttribute('tabindex', '-1');
+      expect(document.activeElement).toBe(target);
     } finally {
       delete (Element.prototype as Partial<Element>).scrollIntoView;
     }

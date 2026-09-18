@@ -1,4 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { Header } from '../Header';
@@ -80,6 +81,31 @@ describe('Header capability navigation (#196)', () => {
     )!;
     fireEvent.click(mobileCopySite);
     expect(screen.queryByRole('button', { name: /Close menu/i })).toBeNull();
+  });
+
+  it('moves focus to the destination after keyboard activation closes the mobile menu', async () => {
+    const user = userEvent.setup();
+    Element.prototype.scrollIntoView = jest.fn();
+    const target = document.createElement('section');
+    target.id = 'theme-pairing';
+    document.body.appendChild(target);
+    try {
+      renderHeader();
+      openMenu();
+      const menu = document.querySelector('div.border-t nav')!;
+      const mobilePairing = Array.from(menu.querySelectorAll('button')).find(
+        button => button.textContent === 'Theme pairing',
+      )!;
+      mobilePairing.focus();
+
+      await user.keyboard('{Enter}');
+
+      expect(screen.queryByRole('button', { name: /Close menu/i })).toBeNull();
+      expect(target).toHaveAttribute('tabindex', '-1');
+      expect(document.activeElement).toBe(target);
+    } finally {
+      target.remove();
+    }
   });
 });
 

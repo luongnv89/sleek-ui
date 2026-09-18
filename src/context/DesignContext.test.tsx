@@ -1,6 +1,12 @@
 import { memo } from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react';
-import { DesignProvider, useDesign } from './DesignContext';
+import {
+  DesignProvider,
+  getContrastRatio,
+  useDesign,
+  withAccessiblePrimary,
+} from './DesignContext';
+import elevenLabs from '@/data/designs/elevenlabs.json';
 import type { DesignData, TransformedDesign } from '@/types/design';
 
 const baseDesign: DesignData = {
@@ -80,10 +86,38 @@ describe('DesignContext validation (#102)', () => {
     fireEvent.click(screen.getByText('apply'));
     const css = getAppliedStyle()?.textContent ?? '';
     expect(css).toContain('--background: 0 0% 100%;');
-    expect(css).toContain('--primary: 245 90% 73%;');
+    expect(css).toContain(
+      `--primary: ${withAccessiblePrimary(baseDesign.tokens.colors.light).primary};`,
+    );
     expect(css).toContain('--radius: 0.5rem;');
     expect(css).toContain('--font-sans: Inter, sans-serif;');
     expect(css).toContain('.dark {');
+  });
+
+  it('derives readable primary text and control pairs for the real ElevenLabs theme', () => {
+    const data = elevenLabs as unknown as DesignData;
+    render(
+      <DesignProvider>
+        <ApplyButton data={data} />
+      </DesignProvider>,
+    );
+    fireEvent.click(screen.getByText('apply'));
+
+    const css = getAppliedStyle()?.textContent ?? '';
+    for (const mode of ['light', 'dark'] as const) {
+      const source = data.tokens.colors[mode];
+      const normalized = withAccessiblePrimary(source);
+      expect(getContrastRatio(normalized.primary, normalized.background)).toBeGreaterThanOrEqual(4.5);
+      expect(
+        getContrastRatio(normalized.primary, normalized['primary-foreground']),
+      ).toBeGreaterThanOrEqual(4.5);
+      expect(css).toContain(`--primary: ${normalized.primary};`);
+      expect(css).toContain(`--primary-foreground: ${normalized['primary-foreground']};`);
+    }
+
+    expect(withAccessiblePrimary(data.tokens.colors.light).primary).not.toBe(
+      data.tokens.colors.light.primary,
+    );
   });
 
   it.each([

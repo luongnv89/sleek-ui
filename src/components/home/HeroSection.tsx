@@ -2,11 +2,9 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { LogoMark } from '@/components/ui/LogoMark';
 import { useDesignCatalog } from '@/hooks/useDesignCatalog';
+import { scrollToSectionId } from '@/hooks/useSectionScroll';
 
 const AGENTS = ['Claude Code', 'Cursor', 'Codex CLI', 'Windsurf', 'Copilot', 'Gemini CLI'];
-
-const scrollToSection = (id: string) =>
-  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 
 export function HeroSection() {
   const { designs, loading } = useDesignCatalog();
@@ -67,7 +65,7 @@ export function HeroSection() {
 
         <div className="flex flex-col items-center gap-stack">
           <div className="flex w-full flex-col items-stretch justify-center gap-stack sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
-            <Button type="button" size="lg" className="min-h-[44px]" onClick={() => scrollToSection('catalog')}>
+            <Button type="button" size="lg" className="min-h-[44px]" onClick={() => scrollToSectionId('catalog')}>
               Browse {count !== null ? `${count} ` : ''}Design{count === 1 ? '' : 's'}
             </Button>
             <Button
@@ -75,7 +73,7 @@ export function HeroSection() {
               size="lg"
               variant="outline"
               className="min-h-[44px]"
-              onClick={() => scrollToSection('theme-pairing')}
+              onClick={() => scrollToSectionId('theme-pairing')}
             >
               Pair a coding theme
             </Button>
@@ -84,14 +82,14 @@ export function HeroSection() {
               size="lg"
               variant="outline"
               className="min-h-[44px]"
-              onClick={() => scrollToSection('copy-site')}
+              onClick={() => scrollToSectionId('copy-site')}
             >
               Copy any site
             </Button>
           </div>
           <button
             type="button"
-            onClick={() => scrollToSection('how-it-works')}
+            onClick={() => scrollToSectionId('how-it-works')}
             className="min-h-[44px] text-label text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             See how it works ↓

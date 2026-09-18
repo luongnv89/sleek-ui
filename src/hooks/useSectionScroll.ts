@@ -7,8 +7,16 @@ export interface SectionScrollState {
 }
 
 /** In-page navigation is scrollIntoView, never `<a href="#…">` (#104/#147). */
-export const scrollToSectionId = (id: string) =>
-  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+export const scrollToSectionId = (id: string) => {
+  const target = document.getElementById(id)
+  if (!target) return
+
+  // Section controls behave like navigation, so move keyboard/screen-reader
+  // focus to the newly visible content. Preserve any author-provided tabindex.
+  if (!target.hasAttribute('tabindex')) target.tabIndex = -1
+  target.scrollIntoView({ behavior: 'smooth' })
+  target.focus({ preventScroll: true })
+}
 
 /**
  * Section-link handler for the header and the global footer. The section ids
