@@ -101,7 +101,7 @@ export function CatalogSection() {
         {loading ? (
           <p className="py-band text-center text-muted-foreground" role="status">Loading designs…</p>
         ) : filteredDesigns.length > 0 ? (
-          <div className="grid grid-cols-1 gap-stack sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
             {filteredDesigns.map((design) => (
               <DesignCard key={design.slug} design={design} />
             ))}

@@ -73,7 +73,7 @@ export function CopySiteSection() {
 
         {/* What it takes in, what it hands back — before the form, so the visitor
             knows what they are about to get (#196 AC2). */}
-        <dl className="mt-flow grid gap-stack sm:grid-cols-2">
+        <dl className="mt-flow grid gap-grid sm:grid-cols-2">
           <div className="rounded-lg border border-border bg-card p-gutter">
             <dt className="font-mono text-eyebrow uppercase text-muted-foreground">You give</dt>
             <dd className="mt-1.5 text-label font-semibold text-foreground">

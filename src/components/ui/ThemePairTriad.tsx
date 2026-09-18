@@ -85,7 +85,7 @@ export function ThemePairTriad({ web, backup, result, className }: ThemePairTria
     <div
       data-testid="theme-pair-triad"
       className={cn(
-        'grid gap-stack md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)] md:gap-3',
+        'grid gap-grid md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)]',
         className,
       )}
     >

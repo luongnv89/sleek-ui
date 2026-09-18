@@ -237,7 +237,7 @@ export function DesignDetail() {
         )}
 
         {/* Design Info */}
-        <div className="mb-flow grid gap-stack md:grid-cols-2">
+        <div className="mb-flow grid gap-grid md:grid-cols-2">
           <Card>
             <CardHeader>
               <CardTitle>Design Details</CardTitle>

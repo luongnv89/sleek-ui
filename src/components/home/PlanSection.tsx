@@ -68,7 +68,7 @@ export function PlanSection() {
           <p className="mt-stack text-lede text-muted-foreground">Three actions. Your agent does the heavy lifting.</p>
         </div>
 
-        <div className="mt-flow grid gap-stack md:grid-cols-3">
+        <div className="mt-flow grid gap-grid md:grid-cols-3">
           {AGENT_STEPS.map(step => (
             <div key={step.number} className="relative flex flex-col rounded-xl border border-border bg-card p-gutter shadow-xs sm:p-6">
               <div className="mb-stack flex items-center gap-3">

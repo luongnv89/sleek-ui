@@ -78,10 +78,18 @@
   --text-hero--letter-spacing: -0.035em;
 
   /* ── Spacing rhythm (#196) ───────────────────────────────────────────────
-     Four named steps so every band, block and card breathes on the same
-     grid instead of ad-hoc py-16/py-20/mt-8 pairs. */
+     Five named steps so every band, block and card breathes on the same grid
+     instead of ad-hoc py-16/py-20/mt-8 pairs:
+       gutter — page side padding and card interior padding
+       stack  — between elements INSIDE one card, and in a control row
+       grid   — between sibling CARDS in a multi-column grid
+       flow   — between blocks within a section
+       band   — section vertical padding (band-lg from sm: up)
+     `stack` and `grid` are deliberately distinct: a 0.75rem gutter between two
+     design cards reads as a rendering bug, not as rhythm. */
   --spacing-gutter: 1rem;
   --spacing-stack: 0.75rem;
+  --spacing-grid: 1.25rem;
   --spacing-flow: 1.5rem;
   --spacing-band: 4rem;
   --spacing-band-lg: 5.5rem;
