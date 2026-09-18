@@ -77,3 +77,41 @@ describe('buildWebsiteCopyPrompt (#189)', () => {
     expect(prompt).toMatch(/shadow/i);
   });
 });
+
+describe('buildWebsiteCopyPrompt motion and libraries (#198)', () => {
+  it('asks for the site\'s animation and motion design in a dedicated step', () => {
+    const prompt = buildWebsiteCopyPrompt('https://example.com/');
+    expect(prompt).toMatch(/Extract the animation and motion design/i);
+    for (const term of ['transition', 'micro-interaction', 'easing', 'duration', 'scroll', 'hover', 'keyframe', 'entrance', 'trigger']) {
+      expect(prompt).toMatch(new RegExp(term, 'i'));
+    }
+  });
+
+  it('tells the agent to report an empty motion section rather than invent effects', () => {
+    const prompt = buildWebsiteCopyPrompt('https://example.com/');
+    expect(prompt).toMatch(/no meaningful animation/i);
+    expect(prompt).toMatch(/empty motion section rather than invent/i);
+  });
+
+  it('restricts library recommendations to free-to-use libraries', () => {
+    const prompt = buildWebsiteCopyPrompt('https://example.com/');
+    expect(prompt).toMatch(/recommend free libraries/i);
+    expect(prompt).toMatch(/free to use/i);
+    expect(prompt).toMatch(/never recommend paid or licence-restricted/i);
+  });
+
+  it('names each recommended library with the extracted effect or element it serves', () => {
+    const prompt = buildWebsiteCopyPrompt('https://example.com/');
+    expect(prompt).toMatch(/purpose in context/i);
+    expect(prompt).toMatch(/which extracted effect or UI element it serves/i);
+    expect(prompt).toMatch(/never as a bare list/i);
+  });
+
+  it('threads approved libraries and motion through planning and implementation', () => {
+    const prompt = buildWebsiteCopyPrompt('https://example.com/');
+    expect(prompt).toMatch(/motion tokens \(durations, delays, easings\)/i);
+    expect(prompt).toMatch(/installation and setup of each approved free library/i);
+    expect(prompt).toMatch(/install and configure only the approved free libraries/i);
+    expect(prompt).toMatch(/reproduced animations/i);
+  });
+});
