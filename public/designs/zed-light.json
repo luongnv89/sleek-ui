@@ -1,0 +1,247 @@
+{
+  "$schema": "https://luongnv.com/sleek-ui/schema/design.v1.json",
+  "name": "zed-light",
+  "version": "1.0.0",
+  "description": "Zed Light theme ported from Zed editor's default One Light theme (Zed Industries), preserving its UI palette and syntax colors.",
+  "categories": [
+    "terminal",
+    "coding",
+    "light"
+  ],
+  "collection": "terminal",
+  "appTargets": [
+    "pi",
+    "ghostty",
+    "iterm2",
+    "warp",
+    "opencode",
+    "vscode"
+  ],
+  "author": {
+    "name": "pi-extensions",
+    "url": "https://github.com/luongnv89/pi-extensions"
+  },
+  "tokens": {
+    "colors": {
+      "light": {
+        "background": "0 0% 98%",
+        "foreground": "228 6% 15%",
+        "muted": "240 2% 88%",
+        "muted-foreground": "240 1% 35%",
+        "primary": "227 70% 62%",
+        "primary-foreground": "0 0% 98%",
+        "secondary": "240 2% 88%",
+        "secondary-foreground": "228 6% 15%",
+        "accent": "205 53% 47%",
+        "accent-foreground": "0 0% 98%",
+        "destructive": "7 60% 57%",
+        "destructive-foreground": "0 0% 98%",
+        "border": "240 1% 79%",
+        "input": "240 2% 88%",
+        "ring": "237 70% 70%",
+        "card": "240 3% 92%",
+        "card-foreground": "228 6% 15%"
+      },
+      "dark": {
+        "background": "218 12% 18%",
+        "foreground": "213 15% 88%",
+        "muted": "218 13% 24%",
+        "muted-foreground": "221 12% 70%",
+        "primary": "211 72% 68%",
+        "primary-foreground": "218 12% 18%",
+        "secondary": "218 13% 24%",
+        "secondary-foreground": "213 15% 88%",
+        "accent": "188 39% 59%",
+        "accent-foreground": "218 12% 18%",
+        "destructive": "357 50% 63%",
+        "destructive-foreground": "218 12% 18%",
+        "border": "222 11% 31%",
+        "input": "218 13% 24%",
+        "ring": "218 38% 45%",
+        "card": "220 14% 21%",
+        "card-foreground": "213 15% 88%"
+      }
+    },
+    "typography": {
+      "fontFamily": {
+        "sans": "Inter",
+        "serif": "Georgia",
+        "mono": "JetBrains Mono"
+      },
+      "fontSize": {
+        "xs": "0.75rem",
+        "sm": "0.875rem",
+        "base": "1rem",
+        "lg": "1.125rem",
+        "xl": "1.25rem",
+        "2xl": "1.5rem",
+        "3xl": "1.875rem",
+        "4xl": "2.25rem"
+      },
+      "fontWeight": {
+        "normal": 400,
+        "medium": 500,
+        "semibold": 600,
+        "bold": 700
+      },
+      "lineHeight": {
+        "tight": "1.25",
+        "normal": "1.5",
+        "relaxed": "1.625"
+      },
+      "letterSpacing": {
+        "tight": "-0.025em",
+        "normal": "0",
+        "wide": "0.025em"
+      }
+    },
+    "spacing": {
+      "unit": "8px",
+      "xs": "4px",
+      "sm": "8px",
+      "md": "16px",
+      "lg": "24px",
+      "xl": "32px",
+      "2xl": "48px"
+    },
+    "radius": {
+      "sm": "0.125rem",
+      "default": "0.375rem",
+      "lg": "0.5rem",
+      "full": "9999px"
+    },
+    "shadows": {
+      "sm": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+      "default": "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
+      "lg": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)"
+    }
+  },
+  "fonts": {
+    "google": [
+      {
+        "family": "JetBrains Mono",
+        "weights": [
+          400,
+          500,
+          600,
+          700
+        ]
+      }
+    ],
+    "urls": [
+      {
+        "url": "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap",
+        "format": "css2",
+        "family": "JetBrains Mono"
+      }
+    ]
+  },
+  "accessibility": {
+    "contrastTarget": 4.5,
+    "focusRing": {
+      "width": "2px",
+      "color": "currentColor",
+      "offset": "2px"
+    },
+    "reducedMotion": true
+  },
+  "components": {
+    "button": {
+      "primary": {
+        "background": "primary",
+        "color": "primary-foreground",
+        "borderRadius": "radius.default",
+        "padding": "spacing.sm spacing.md",
+        "fontWeight": "semibold"
+      },
+      "secondary": {
+        "background": "secondary",
+        "color": "secondary-foreground",
+        "borderRadius": "radius.default",
+        "padding": "spacing.sm spacing.md",
+        "fontWeight": "medium"
+      },
+      "ghost": {
+        "background": "transparent",
+        "color": "foreground",
+        "borderRadius": "radius.default",
+        "padding": "spacing.sm spacing.md",
+        "fontWeight": "medium"
+      }
+    },
+    "card": {
+      "background": "card",
+      "color": "card-foreground",
+      "borderRadius": "radius.lg",
+      "padding": "spacing.lg",
+      "shadow": "shadows.default",
+      "border": "1px solid border"
+    },
+    "input": {
+      "background": "background",
+      "color": "foreground",
+      "borderRadius": "radius.default",
+      "padding": "spacing.sm spacing.md",
+      "border": "1px solid input",
+      "focusRing": "focusRing",
+      "placeholderColor": "muted-foreground"
+    }
+  },
+  "tokenColors": [
+    {
+      "scope": "comment",
+      "color": "228 3% 65%",
+      "fontStyle": "italic"
+    },
+    {
+      "scope": "keyword",
+      "color": "296 40% 48%"
+    },
+    {
+      "scope": "function",
+      "color": "227 71% 62%"
+    },
+    {
+      "scope": "variable",
+      "color": "228 6% 15%"
+    },
+    {
+      "scope": "string",
+      "color": "109 29% 48%"
+    },
+    {
+      "scope": "number",
+      "color": "32 65% 41%"
+    },
+    {
+      "scope": "type",
+      "color": "205 53% 47%"
+    },
+    {
+      "scope": "operator",
+      "color": "205 53% 47%"
+    },
+    {
+      "scope": "punctuation",
+      "color": "216 3% 31%"
+    }
+  ],
+  "agentInstructions": {
+    "defaultMode": "light",
+    "steps": [
+      "Set CSS custom properties from tokens.colors on :root (light) and .dark (dark mode)",
+      "Map tokenColors scopes to the target terminal or editor color configuration",
+      "Load JetBrains Mono from fonts.urls and use it as the primary monospace font",
+      "Apply component styles from the components field",
+      "Ensure focus states match accessibility.focusRing specification",
+      "Test both light and dark modes"
+    ]
+  },
+  "preview": {
+    "thumbnail": "/previews/zed-light-thumb.svg"
+  },
+  "source": {
+    "repo": "https://github.com/luongnv89/pi-extensions",
+    "path": "themes/zed-light.json"
+  }
+}
