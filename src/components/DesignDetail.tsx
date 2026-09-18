@@ -81,7 +81,7 @@ export function DesignDetail() {
         <div className="text-center">
           <h2 className="text-headline font-bold text-foreground">Design not found</h2>
           <p className="mt-2 text-label text-muted-foreground">The requested design could not be found.</p>
-          <Link to="/" className="mt-4 inline-flex items-center gap-2 text-label text-primary hover:underline">
+          <Link to="/" className="mt-4 inline-flex items-center gap-2 text-label text-primary-text hover:underline">
             <ArrowLeft className="h-4 w-4" />
             Back to Catalog
           </Link>

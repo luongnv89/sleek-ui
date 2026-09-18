@@ -55,11 +55,13 @@ describe('Header capability navigation (#196)', () => {
     expect(labels).toEqual(['Theme pairing', 'Copy a site', 'How it works']);
   });
 
-  it('gives every desktop navigation control a padded 44px target', () => {
+  it('gives every desktop header control a padded 44px target', () => {
     renderHeader();
-    const nav = screen.getByRole('banner').querySelector('nav')!;
+    const header = screen.getByRole('banner');
+    const nav = header.querySelector('nav')!;
     const controls = nav.querySelectorAll(':scope > a, :scope > button');
 
+    expect(header.querySelector('a[href="/"]')).toHaveClass('min-h-11', 'items-center');
     expect(controls).toHaveLength(5);
     controls.forEach(control => {
       expect(control).toHaveClass('inline-flex', 'min-h-[44px]', 'items-center', 'px-3');

@@ -88,7 +88,7 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 font-bold text-xl tracking-tight" onClick={closeMenu}>
+        <Link to="/" className="flex min-h-11 items-center gap-2 font-bold text-xl tracking-tight" onClick={closeMenu}>
           <LogoMark className="h-8 w-8 text-foreground" />
           <span className="bg-clip-text text-transparent bg-linear-to-r from-foreground to-muted-foreground">
             sleek<span className="text-brand">ui</span>

@@ -220,7 +220,7 @@ describe('Catch-all NotFound route (#141)', () => {
     render(<App />);
     expect(await screen.findByText('404')).toBeInTheDocument();
     expect(screen.getByText('This page could not be found.')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /Back to Catalog/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Back to Catalog/i })).toHaveClass('text-primary-text');
     window.location.hash = '#/';
   });
 

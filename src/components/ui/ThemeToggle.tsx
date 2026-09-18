@@ -12,6 +12,7 @@ export function ThemeToggle({ theme, onToggle }: ThemeToggleProps) {
     <Button
       variant="ghost"
       size="icon"
+      className="h-11 w-11"
       onClick={onToggle}
       aria-pressed={theme === 'dark'}
       aria-label={theme === 'light' ? 'Switch to dark theme' : 'Switch to light theme'}

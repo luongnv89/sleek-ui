@@ -88,6 +88,7 @@ describe('DesignDetail characterization (#117)', () => {
     renderDetail('does-not-exist');
     expect(await screen.findByText('Design not found')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Back to Catalog/i })).toHaveAttribute('href', '/');
+    expect(screen.getByRole('link', { name: /Back to Catalog/i })).toHaveClass('text-primary-text');
     // #129: an unmatched slug resets the title to the app default instead of leaving it empty
     expect(document.title).toBe('sleek-ui — Professional design systems for AI agents');
   });
