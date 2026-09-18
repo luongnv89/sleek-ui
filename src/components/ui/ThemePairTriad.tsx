@@ -33,7 +33,7 @@ const connectorClass =
 function Part({ part, emphasis = false }: { part: ThemePairPart; emphasis?: boolean }) {
   const labelClass = cn(
     'font-mono text-eyebrow uppercase',
-    emphasis ? 'text-primary' : 'text-muted-foreground',
+    emphasis ? 'text-primary-text' : 'text-muted-foreground',
   );
 
   return (

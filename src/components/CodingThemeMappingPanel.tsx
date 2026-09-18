@@ -112,7 +112,7 @@ export function CodingThemeMappingPanel({
       aria-labelledby={`${selectId}-heading`}
       className="mb-10 rounded-xl border border-border bg-card p-gutter sm:p-6"
     >
-      <p className="font-mono text-eyebrow uppercase text-primary">Theme pairing</p>
+      <p className="font-mono text-eyebrow uppercase text-primary-text">Theme pairing</p>
       <h2 id={`${selectId}-heading`} className="mt-stack text-title font-bold text-foreground">
         Pair this with a coding theme
       </h2>
@@ -182,7 +182,7 @@ export function CodingThemeMappingPanel({
 
       {backupSlug && (
         <p
-          className={`text-label ${mapped ? 'sr-only' : 'mt-flow'} ${backupFailed ? 'text-destructive' : 'text-muted-foreground'}`}
+          className={`text-label ${mapped ? 'sr-only' : 'mt-flow'} ${backupFailed ? 'text-destructive-text' : 'text-muted-foreground'}`}
           role="status"
         >
           {mapped ? '' : backupFailed ? 'Could not load the backup theme. Pick another one.' : 'Loading backup theme…'}
@@ -199,7 +199,7 @@ export function CodingThemeMappingPanel({
               Checked against the {mapped.defaultMode} palette. The brand-accent check covers the keyword scope only.
             </p>
             {mapped.uncheckedColors.length > 0 && (
-              <p className="mt-1 text-micro text-destructive">
+              <p className="mt-1 text-micro text-destructive-text">
                 Not analyzed (only H S% L% colors are checked — verify manually): {mapped.uncheckedColors.join(', ')}
               </p>
             )}
@@ -249,7 +249,7 @@ export function CodingThemeMappingPanel({
             meta={
               <p
                 id={`${selectId}-copy-status`}
-                className={`text-micro ${copyError ? 'text-destructive' : 'text-muted-foreground'}`}
+                className={`text-micro ${copyError ? 'text-destructive-text' : 'text-muted-foreground'}`}
                 aria-live="polite"
               >
                 {copyError

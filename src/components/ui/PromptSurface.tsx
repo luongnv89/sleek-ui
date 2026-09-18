@@ -62,7 +62,7 @@ export function PromptSurface({
     >
       <div className="mb-stack flex flex-col gap-stack sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0 space-y-1">
-          <p className="font-mono text-eyebrow uppercase text-primary">{label}</p>
+          <p className="font-mono text-eyebrow uppercase text-primary-text">{label}</p>
           {description && <p className="text-micro text-muted-foreground">{description}</p>}
           {meta}
         </div>

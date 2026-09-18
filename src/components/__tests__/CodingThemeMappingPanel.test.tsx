@@ -107,7 +107,7 @@ describe('CodingThemeMappingPanel (#187)', () => {
       fireEvent.change(screen.getByLabelText('Backup terminal theme'), { target: { value: 'aura' } });
     });
     expect(screen.getByRole('status')).toHaveTextContent('Could not load the backup theme');
-    expect(screen.getByRole('status')).toHaveClass('text-destructive');
+    expect(screen.getByRole('status')).toHaveClass('text-destructive-text');
   });
 
   it('shows an error when loading the backup theme rejects', async () => {

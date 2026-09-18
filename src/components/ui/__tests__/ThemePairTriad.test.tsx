@@ -115,7 +115,7 @@ describe('ThemePairTriad (#196)', () => {
     );
 
     expect(screen.getByTestId('theme-pair-triad')).toHaveClass('mt-flow');
-    expect(screen.getByText('Mapped coding theme')).toHaveClass('text-eyebrow', 'text-primary');
+    expect(screen.getByText('Mapped coding theme')).toHaveClass('text-eyebrow', 'text-primary-text');
     expect(screen.getByText('Web theme')).toHaveClass('text-eyebrow', 'text-muted-foreground');
   });
 });

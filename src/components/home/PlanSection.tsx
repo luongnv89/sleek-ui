@@ -58,7 +58,7 @@ export function PlanSection() {
     >
       <div className="mx-auto max-w-page">
         <div className="mx-auto max-w-narrow text-center">
-          <p className="font-mono text-eyebrow uppercase text-primary">How it works</p>
+          <p className="font-mono text-eyebrow uppercase text-primary-text">How it works</p>
           <h2
             id="how-it-works-heading"
             className="mt-stack text-headline font-extrabold text-foreground sm:text-display"
@@ -72,7 +72,7 @@ export function PlanSection() {
           {AGENT_STEPS.map(step => (
             <div key={step.number} className="relative flex flex-col rounded-xl border border-border bg-card p-gutter shadow-xs sm:p-6">
               <div className="mb-stack flex items-center gap-3">
-                <span className="font-mono text-eyebrow font-bold text-primary">{step.number}</span>
+                <span className="font-mono text-eyebrow font-bold text-primary-text">{step.number}</span>
                 <div className="text-muted-foreground">{step.icon}</div>
               </div>
               <h3 className="text-label font-semibold text-foreground">{step.title}</h3>

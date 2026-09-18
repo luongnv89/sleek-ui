@@ -23,7 +23,7 @@ export function PairedThemingSection() {
     >
       <div className="mx-auto max-w-page">
         <div className="mx-auto max-w-narrow text-center">
-          <p className="font-mono text-eyebrow uppercase text-primary">Theme pairing</p>
+          <p className="font-mono text-eyebrow uppercase text-primary-text">Theme pairing</p>
           <h2
             id="theme-pairing-heading"
             className="mt-stack text-headline font-extrabold text-foreground sm:text-display"

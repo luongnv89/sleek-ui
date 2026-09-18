@@ -56,7 +56,7 @@ export function CopySiteSection() {
     >
       <div className="mx-auto max-w-narrow">
         <div className="text-center">
-          <p className="font-mono text-eyebrow uppercase text-primary">{FEATURE_NAME}</p>
+          <p className="font-mono text-eyebrow uppercase text-primary-text">{FEATURE_NAME}</p>
           <h2
             id="copy-site-heading"
             className="mt-stack text-headline font-extrabold text-foreground sm:text-display"
@@ -83,7 +83,7 @@ export function CopySiteSection() {
             </dd>
           </div>
           <div className="rounded-lg border border-primary/40 bg-primary/5 p-gutter dark:border-primary/50 dark:bg-primary/10">
-            <dt className="font-mono text-eyebrow uppercase text-primary">You get</dt>
+            <dt className="font-mono text-eyebrow uppercase text-primary-text">You get</dt>
             <dd className="mt-1.5 text-label font-semibold text-foreground">
               A three-phase agent prompt
             </dd>

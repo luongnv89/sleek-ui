@@ -4,6 +4,7 @@ import { join } from 'path';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import {
   DesignProvider,
+  getAccessibilityChecks,
   getContrastRatio,
   getLayeredContrastRatio,
   getOverlayContrastRatio,
@@ -11,10 +12,13 @@ import {
   useDesign,
   withAccessiblePrimary,
 } from './DesignContext';
+import airtable from '@/data/designs/airtable.json';
+import elevenLabs from '@/data/designs/elevenlabs.json';
 import linear from '@/data/designs/linear.app.json';
 import neonGreen from '@/data/designs/neon-green.json';
 import openCode from '@/data/designs/opencode.json';
 import vercel from '@/data/designs/vercel.json';
+import voltAgent from '@/data/designs/voltagent.json';
 import type { DesignData, TransformedDesign } from '@/types/design';
 
 const baseDesign: DesignData = {
@@ -79,6 +83,15 @@ function getAppliedStyle(): HTMLElement | null {
   return document.getElementById('sleek-applied-design');
 }
 
+function readDefaultCssPalette(selector: ':root' | '.dark'): Record<string, string> {
+  const stylesheet = readFileSync(join(process.cwd(), 'src/index.css'), 'utf8');
+  const escapedSelector = selector === ':root' ? ':root' : '\\.dark';
+  const block = stylesheet.match(new RegExp(`${escapedSelector} \\{([\\s\\S]*?)\\n  \\}`))?.[1] ?? '';
+  return Object.fromEntries(
+    [...block.matchAll(/--([a-z-]+):\s*([^;]+);/g)].map(match => [match[1], match[2].trim()]),
+  );
+}
+
 beforeEach(() => {
   localStorage.clear();
   document.head.innerHTML = '';
@@ -100,6 +113,17 @@ describe('DesignContext validation (#102)', () => {
     expect(css).toContain('--radius: 0.5rem;');
     expect(css).toContain('--font-sans: Inter, sans-serif;');
     expect(css).toContain('.dark {');
+  });
+
+  it.each([
+    ['light', ':root'],
+    ['dark', '.dark'],
+  ] as const)('keeps the unapplied %s CSS palette inside the runtime accessibility contract', (_mode, selector) => {
+    const palette = readDefaultCssPalette(selector);
+    const failures = getAccessibilityChecks(palette).filter(
+      ({ ratio, minimum }) => ratio === null || ratio < minimum,
+    );
+    expect(failures).toEqual([]);
   });
 
   it('repairs Linear light foreground text and its translucent prompt surface', () => {
@@ -147,6 +171,44 @@ describe('DesignContext validation (#102)', () => {
     ).toBeGreaterThanOrEqual(3.1);
   });
 
+  it('repairs ElevenLabs informational, button, error, and ring roles', () => {
+    const source = elevenLabs.tokens.colors.light;
+    const colors = withAccessiblePrimary(source, 'light');
+    expect(colors.background).toBe(source.background);
+    expect(colors.card).toBe(source.card);
+    expect(colors.primary).toBe(source.primary);
+    expect(colors['primary-text']).not.toBe(source.primary);
+    expect(getContrastRatio(colors['primary-foreground'], colors['primary-hover'])).toBeGreaterThanOrEqual(4.5);
+    expect(getContrastRatio(colors['destructive-text'], colors.card)).toBeGreaterThanOrEqual(4.5);
+    expect(isAccessibleColorScale(colors)).toBe(true);
+  });
+
+  it('repairs Airtable dark focus rings on primary tints nested in cards', () => {
+    const source = airtable.tokens.colors.dark;
+    const colors = withAccessiblePrimary(source, 'dark');
+    expect(colors.background).toBe(source.background);
+    expect(colors.card).toBe(source.card);
+    expect(colors.primary).toBe(source.primary);
+    const ringOnPrimary10Card = getAccessibilityChecks(colors).find(
+      check => check.pair === 'ring/primary/10 over card',
+    );
+    expect(ringOnPrimary10Card?.ratio).toBeGreaterThanOrEqual(3.1);
+    expect(isAccessibleColorScale(colors)).toBe(true);
+  });
+
+  it('repairs VoltAgent muted text on actual primary tints and its opaque hover', () => {
+    const source = voltAgent.tokens.colors.light;
+    const colors = withAccessiblePrimary(source, 'light');
+    expect(colors.background).toBe(source.background);
+    expect(colors.card).toBe(source.card);
+    expect(colors.primary).toBe(source.primary);
+    expect(getOverlayContrastRatio(
+      colors['muted-foreground'], colors.primary, colors.card, 0.1,
+    )).toBeGreaterThanOrEqual(4.5);
+    expect(colors['primary-hover']).toMatch(/^\d+(?:\.\d+)? \d+(?:\.\d+)?% \d+(?:\.\d+)?%$/);
+    expect(isAccessibleColorScale(colors)).toBe(true);
+  });
+
   it('uses the complete safe palette when no foreground can satisfy every rendered surface', () => {
     const impossible = {
       background: '0 0% 0%',
@@ -179,18 +241,49 @@ describe('DesignContext validation (#102)', () => {
       'muted-foreground': '0 0% 35%',
       primary: '0 0% 9%',
       'primary-foreground': '0 0% 100%',
+      'primary-hover': '0 0% 15%',
+      'primary-text': '0 0% 9%',
       secondary: '0 0% 96%',
       'secondary-foreground': '0 0% 9%',
       accent: '0 0% 96%',
       'accent-foreground': '0 0% 9%',
       destructive: '0 0% 9%',
       'destructive-foreground': '0 0% 100%',
+      'destructive-text': '0 0% 9%',
       border: '0 0% 85%',
       input: '0 0% 85%',
       ring: '0 0% 20%',
     };
 
     expect(normalized).toEqual(safeLight);
+    expect(isAccessibleColorScale(normalized)).toBe(true);
+  });
+
+  it('fails closed for adversarially different background and card surfaces', () => {
+    const adversarial = {
+      ...baseDesign.tokens.colors.light,
+      background: '0 0% 0%',
+      foreground: '0 0% 100%',
+      card: '0 0% 100%',
+      'card-foreground': '0 0% 0%',
+      popover: '0 0% 0%',
+      'popover-foreground': '0 0% 100%',
+      muted: '0 0% 10%',
+      'muted-foreground': '0 0% 100%',
+      primary: '0 0% 0%',
+      'primary-foreground': '0 0% 100%',
+      secondary: '0 0% 0%',
+      'secondary-foreground': '0 0% 100%',
+      accent: '0 0% 0%',
+      'accent-foreground': '0 0% 100%',
+      destructive: '0 0% 0%',
+      'destructive-foreground': '0 0% 100%',
+      ring: '0 0% 50%',
+    };
+    const normalized = withAccessiblePrimary(adversarial, 'light');
+    expect(normalized.background).toBe('0 0% 100%');
+    expect(normalized.card).toBe('0 0% 100%');
+    expect(normalized['primary-text']).toBe('0 0% 9%');
     expect(isAccessibleColorScale(normalized)).toBe(true);
   });
 
@@ -204,26 +297,8 @@ describe('DesignContext validation (#102)', () => {
         const source = data.tokens.colors[mode];
         if (!source) continue;
         const colors = withAccessiblePrimary(source, mode);
-        const checks: Array<[string, number | null, number]> = [
-          ['foreground/background', getContrastRatio(colors.foreground, colors.background), 4.5],
-          ['foreground/90 on muted/50', getLayeredContrastRatio(colors.foreground, 0.9, colors.muted, 0.5, colors.background), 4.5],
-          ['muted-foreground/background', getContrastRatio(colors['muted-foreground'], colors.background), 4.5],
-          ['muted-foreground/card', getContrastRatio(colors['muted-foreground'], colors.card), 4.5],
-          ['primary-foreground/primary', getContrastRatio(colors['primary-foreground'], colors.primary), 4.5],
-          ['primary-foreground/primary-hover', getOverlayContrastRatio(colors['primary-foreground'], colors.primary, colors.background, 0.9), 4.5],
-          ['secondary-foreground/secondary', getContrastRatio(colors['secondary-foreground'], colors.secondary), 4.5],
-          ['accent-foreground/accent', getContrastRatio(colors['accent-foreground'], colors.accent), 4.5],
-          ['destructive-foreground/destructive', getContrastRatio(colors['destructive-foreground'], colors.destructive), 4.5],
-          ['card-foreground/card', getContrastRatio(colors['card-foreground'], colors.card), 4.5],
-          ['popover-foreground/popover', getContrastRatio(colors['popover-foreground'], colors.popover), 4.5],
-          ['ring/background', getContrastRatio(colors.ring, colors.background), 3.1],
-          ['ring/card', getContrastRatio(colors.ring, colors.card), 3.1],
-          ['ring/muted/30', getOverlayContrastRatio(colors.ring, colors.muted, colors.background, 0.3), 3.1],
-          ['ring/primary/5', getOverlayContrastRatio(colors.ring, colors.primary, colors.background, 0.05), 3.1],
-          ['ring/primary/10', getOverlayContrastRatio(colors.ring, colors.primary, colors.background, 0.1), 3.1],
-        ];
-        for (const [pair, ratio, threshold] of checks) {
-          if (ratio === null || ratio < threshold) {
+        for (const { pair, ratio, minimum } of getAccessibilityChecks(colors)) {
+          if (ratio === null || ratio < minimum) {
             failures.push(`${file}:${mode}:${pair}:${ratio ?? 'invalid'}`);
           }
         }

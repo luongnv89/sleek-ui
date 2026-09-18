@@ -48,7 +48,7 @@ export function CatalogSection() {
       <div className="mx-auto max-w-wide space-y-flow">
         <div className="flex flex-col gap-stack sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="font-mono text-eyebrow uppercase text-primary">The catalog</p>
+            <p className="font-mono text-eyebrow uppercase text-primary-text">The catalog</p>
             <h2
               id="catalog-heading"
               className="mt-stack text-headline font-extrabold text-foreground sm:text-display"

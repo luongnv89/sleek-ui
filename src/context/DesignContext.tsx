@@ -20,12 +20,15 @@ const SAFE_COLOR_FALLBACKS = {
     'muted-foreground': '0 0% 35%',
     primary: '0 0% 9%',
     'primary-foreground': '0 0% 100%',
+    'primary-hover': '0 0% 15%',
+    'primary-text': '0 0% 9%',
     secondary: '0 0% 96%',
     'secondary-foreground': '0 0% 9%',
     accent: '0 0% 96%',
     'accent-foreground': '0 0% 9%',
     destructive: '0 0% 9%',
     'destructive-foreground': '0 0% 100%',
+    'destructive-text': '0 0% 9%',
     border: '0 0% 85%',
     input: '0 0% 85%',
     ring: '0 0% 20%',
@@ -41,12 +44,15 @@ const SAFE_COLOR_FALLBACKS = {
     'muted-foreground': '0 0% 70%',
     primary: '0 0% 98%',
     'primary-foreground': '0 0% 9%',
+    'primary-hover': '0 0% 90%',
+    'primary-text': '0 0% 98%',
     secondary: '0 0% 15%',
     'secondary-foreground': '0 0% 98%',
     accent: '0 0% 15%',
     'accent-foreground': '0 0% 98%',
     destructive: '0 0% 98%',
     'destructive-foreground': '0 0% 9%',
+    'destructive-text': '0 0% 98%',
     border: '0 0% 25%',
     input: '0 0% 25%',
     ring: '0 0% 80%',
@@ -150,17 +156,39 @@ function orderedLightnesses(original: number): number[] {
 }
 
 function readableForeground(
-  preferred: string | undefined,
+  preferred: Array<string | undefined>,
   fallback: string,
   isReadable: (candidate: Rgb) => boolean,
 ): string | null {
-  const candidates = [preferred, '0 0% 0%', '0 0% 100%', fallback].filter(
+  const candidates = [...preferred, '0 0% 0%', '0 0% 100%', fallback].filter(
     (value, index, values): value is string => Boolean(value) && values.indexOf(value) === index,
   );
   return candidates.find(value => {
     const rgb = hslToRgb(value);
     return rgb !== null && isReadable(rgb);
   }) ?? null;
+}
+
+function primaryHoverCandidates(scale: Record<string, string>): string[] {
+  const primaryMatch = scale.primary?.trim().match(HSL_TOKEN);
+  if (!primaryMatch) return [scale['primary-hover'], scale.primary].filter(Boolean);
+
+  const hue = Number(primaryMatch[1]);
+  const saturation = Number(primaryMatch[2]);
+  const originalLightness = Math.min(100, Math.max(0, Number(primaryMatch[3])));
+  const nearby = orderedLightnesses(originalLightness)
+    .filter(lightness => lightness !== originalLightness)
+    .map(lightness => `${hue} ${saturation}% ${Number(lightness.toFixed(1))}%`);
+  return [scale['primary-hover'], ...nearby, scale.primary].filter(
+    (value, index, values): value is string => Boolean(value) && values.indexOf(value) === index,
+  );
+}
+
+function renderedTintSurfaces(primary: Rgb, bases: Rgb[]): Rgb[] {
+  return bases.flatMap(base => [
+    composite(primary, base, 0.05),
+    composite(primary, base, 0.1),
+  ]);
 }
 
 function deriveAccessibleRing(scale: Record<string, string>, surfaces: Rgb[]): string | null {
@@ -190,61 +218,95 @@ function deriveAccessibleRing(scale: Record<string, string>, surfaces: Rgb[]): s
   }) ?? null;
 }
 
-/** Postcondition shared by runtime normalization and catalog-wide regressions. */
-export function isAccessibleColorScale(scale: Record<string, string>): boolean {
-  const colors = {
-    background: hslToRgb(scale.background),
-    foreground: hslToRgb(scale.foreground),
-    card: hslToRgb(scale.card),
-    cardForeground: hslToRgb(scale['card-foreground']),
-    popover: hslToRgb(scale.popover),
-    popoverForeground: hslToRgb(scale['popover-foreground']),
-    muted: hslToRgb(scale.muted),
-    mutedForeground: hslToRgb(scale['muted-foreground']),
-    primary: hslToRgb(scale.primary),
-    primaryForeground: hslToRgb(scale['primary-foreground']),
-    secondary: hslToRgb(scale.secondary),
-    secondaryForeground: hslToRgb(scale['secondary-foreground']),
-    accent: hslToRgb(scale.accent),
-    accentForeground: hslToRgb(scale['accent-foreground']),
-    destructive: hslToRgb(scale.destructive),
-    destructiveForeground: hslToRgb(scale['destructive-foreground']),
-    ring: hslToRgb(scale.ring),
-  };
-  if (Object.values(colors).some(color => color === null)) return false;
+export interface AccessibilityCheck {
+  pair: string;
+  ratio: number | null;
+  minimum: number;
+}
 
-  const {
-    background, foreground, card, cardForeground, popover, popoverForeground,
-    muted, mutedForeground, primary, primaryForeground, secondary,
-    secondaryForeground, accent, accentForeground, destructive,
-    destructiveForeground, ring,
-  } = colors as Record<keyof typeof colors, Rgb>;
-  const promptSurface = composite(muted, background, 0.5);
-  const promptText = composite(foreground, promptSurface, 0.9);
-  const primaryHover = composite(primary, background, 0.9);
-  const textPairs: Array<[Rgb, Rgb]> = [
-    [foreground, background],
-    [promptText, promptSurface],
-    [mutedForeground, background],
-    [mutedForeground, card],
-    [primaryForeground, primary],
-    [primaryForeground, primaryHover],
-    [secondaryForeground, secondary],
-    [accentForeground, accent],
-    [destructiveForeground, destructive],
-    [cardForeground, card],
-    [popoverForeground, popover],
+/** The finite rendered-surface contract shared by runtime normalization and tests. */
+export function getAccessibilityChecks(scale: Record<string, string>): AccessibilityCheck[] {
+  const colors = Object.fromEntries(Object.entries({
+    background: scale.background,
+    foreground: scale.foreground,
+    card: scale.card,
+    cardForeground: scale['card-foreground'],
+    popover: scale.popover,
+    popoverForeground: scale['popover-foreground'],
+    muted: scale.muted,
+    mutedForeground: scale['muted-foreground'],
+    primary: scale.primary,
+    primaryForeground: scale['primary-foreground'],
+    primaryHover: scale['primary-hover'],
+    primaryText: scale['primary-text'],
+    secondary: scale.secondary,
+    secondaryForeground: scale['secondary-foreground'],
+    accent: scale.accent,
+    accentForeground: scale['accent-foreground'],
+    destructive: scale.destructive,
+    destructiveForeground: scale['destructive-foreground'],
+    destructiveText: scale['destructive-text'],
+    ring: scale.ring,
+  }).map(([key, value]) => [key, hslToRgb(value)])) as Record<string, Rgb | null>;
+  if (Object.values(colors).some(color => color === null)) {
+    return [{ pair: 'valid HSL tokens', ratio: null, minimum: MIN_TEXT_CONTRAST }];
+  }
+
+  const parsed = colors as Record<keyof typeof colors, Rgb>;
+  const promptSurface = composite(parsed.muted, parsed.background, 0.5);
+  const muted30 = composite(parsed.muted, parsed.background, 0.3);
+  const bases: Array<[string, Rgb]> = [
+    ['background', parsed.background],
+    ['card', parsed.card],
+    ['muted/30 over background', muted30],
+  ];
+  const primaryTints = bases.flatMap(([baseName, base]) => ([0.05, 0.1] as const).map(opacity => ({
+    name: `primary/${opacity * 100} over ${baseName}`,
+    surface: composite(parsed.primary, base, opacity),
+  })));
+  const textPairs: Array<[string, Rgb, Rgb]> = [
+    ['foreground/background', parsed.foreground, parsed.background],
+    ['foreground/90 on muted/50', composite(parsed.foreground, promptSurface, 0.9), promptSurface],
+    ['muted-foreground/background', parsed.mutedForeground, parsed.background],
+    ['muted-foreground/card', parsed.mutedForeground, parsed.card],
+    ...primaryTints.map(({ name, surface }) => [`muted-foreground/${name}`, parsed.mutedForeground, surface] as [string, Rgb, Rgb]),
+    ['primary-foreground/primary', parsed.primaryForeground, parsed.primary],
+    ['primary-foreground/primary-hover', parsed.primaryForeground, parsed.primaryHover],
+    ...bases.map(([name, surface]) => [`primary-text/${name}`, parsed.primaryText, surface] as [string, Rgb, Rgb]),
+    ...primaryTints.map(({ name, surface }) => [`primary-text/${name}`, parsed.primaryText, surface] as [string, Rgb, Rgb]),
+    ['secondary-foreground/secondary', parsed.secondaryForeground, parsed.secondary],
+    ['accent-foreground/accent', parsed.accentForeground, parsed.accent],
+    ['destructive-foreground/destructive', parsed.destructiveForeground, parsed.destructive],
+    ['destructive-text/card', parsed.destructiveText, parsed.card],
+    ['card-foreground/card', parsed.cardForeground, parsed.card],
+    ['popover-foreground/popover', parsed.popoverForeground, parsed.popover],
   ];
   const focusSurfaces = [
-    background,
-    card,
-    composite(muted, background, 0.3),
-    composite(primary, background, 0.05),
-    composite(primary, background, 0.1),
+    ...bases,
+    ...primaryTints
+      .filter(({ name }) => !name.includes('muted/30'))
+      .map(({ name, surface }) => [name, surface] as [string, Rgb]),
   ];
 
-  return textPairs.every(([text, surface]) => rgbContrast(text, surface) >= MIN_TEXT_CONTRAST)
-    && focusSurfaces.every(surface => rgbContrast(ring, surface) >= MIN_FOCUS_CONTRAST);
+  return [
+    ...textPairs.map(([pair, text, surface]) => ({
+      pair,
+      ratio: rgbContrast(text, surface),
+      minimum: MIN_TEXT_CONTRAST,
+    })),
+    ...focusSurfaces.map(([name, surface]) => ({
+      pair: `ring/${name}`,
+      ratio: rgbContrast(parsed.ring, surface),
+      minimum: MIN_FOCUS_CONTRAST,
+    })),
+  ];
+}
+
+/** Authoritative postcondition for every runtime-normalized color scale. */
+export function isAccessibleColorScale(scale: Record<string, string>): boolean {
+  return getAccessibilityChecks(scale).every(
+    ({ ratio, minimum }) => ratio !== null && ratio >= minimum,
+  );
 }
 
 function fallbackScale(scale: Record<string, string>, mode?: ColorMode): Record<string, string> {
@@ -279,44 +341,71 @@ export function withAccessiblePrimary(
   }
 
   const promptSurface = composite(parsed.muted, parsed.background, 0.5);
-  const primaryHover = composite(parsed.primary, parsed.background, 0.9);
+  const muted30 = composite(parsed.muted, parsed.background, 0.3);
+  const primaryTints = renderedTintSurfaces(parsed.primary, [parsed.background, parsed.card, muted30]);
+  const primaryTextSurfaces = [parsed.background, parsed.card, muted30, ...primaryTints];
   const foregrounds: Array<[
     keyof typeof SAFE_COLOR_FALLBACKS.light,
+    Array<string | undefined>,
     (candidate: Rgb) => boolean,
   ]> = [
-    ['foreground', candidate =>
+    ['foreground', [scale.foreground], candidate =>
       rgbContrast(candidate, parsed.background) >= MIN_TEXT_CONTRAST
       && rgbContrast(composite(candidate, promptSurface, 0.9), promptSurface) >= MIN_TEXT_CONTRAST],
-    ['muted-foreground', candidate =>
-      [parsed.background, parsed.card].every(surface =>
+    ['muted-foreground', [scale['muted-foreground'], scale.foreground], candidate =>
+      [parsed.background, parsed.card, ...primaryTints].every(surface =>
         rgbContrast(candidate, surface) >= MIN_TEXT_CONTRAST)],
-    ['primary-foreground', candidate =>
-      [parsed.primary, primaryHover].every(surface =>
-        rgbContrast(candidate, surface) >= MIN_TEXT_CONTRAST)],
-    ['secondary-foreground', candidate =>
+    ['primary-text', [scale['primary-text'], scale.primary, scale.foreground], candidate =>
+      primaryTextSurfaces.every(surface => rgbContrast(candidate, surface) >= MIN_TEXT_CONTRAST)],
+    ['secondary-foreground', [scale['secondary-foreground']], candidate =>
       rgbContrast(candidate, parsed.secondary) >= MIN_TEXT_CONTRAST],
-    ['accent-foreground', candidate =>
+    ['accent-foreground', [scale['accent-foreground']], candidate =>
       rgbContrast(candidate, parsed.accent) >= MIN_TEXT_CONTRAST],
-    ['destructive-foreground', candidate =>
+    ['destructive-foreground', [scale['destructive-foreground']], candidate =>
       rgbContrast(candidate, parsed.destructive) >= MIN_TEXT_CONTRAST],
-    ['card-foreground', candidate =>
+    ['destructive-text', [scale['destructive-text'], scale.destructive, scale.foreground], candidate =>
       rgbContrast(candidate, parsed.card) >= MIN_TEXT_CONTRAST],
-    ['popover-foreground', candidate =>
+    ['card-foreground', [scale['card-foreground']], candidate =>
+      rgbContrast(candidate, parsed.card) >= MIN_TEXT_CONTRAST],
+    ['popover-foreground', [scale['popover-foreground']], candidate =>
       rgbContrast(candidate, parsed.popover) >= MIN_TEXT_CONTRAST],
   ];
 
-  for (const [token, isReadable] of foregrounds) {
-    const foreground = readableForeground(scale[token], safe[token], isReadable);
+  for (const [token, preferred, isReadable] of foregrounds) {
+    const foreground = readableForeground(preferred, safe[token], isReadable);
     if (!foreground) return fallbackScale(scale, fallbackMode);
     result[token] = foreground;
   }
 
+  const primaryForegroundCandidates = [
+    scale['primary-foreground'],
+    '0 0% 0%',
+    '0 0% 100%',
+    safe['primary-foreground'],
+  ].filter((value, index, values): value is string =>
+    Boolean(value) && values.indexOf(value) === index);
+  let primaryPair: { foreground: string; hover: string } | null = null;
+  for (const foreground of primaryForegroundCandidates) {
+    const foregroundRgb = hslToRgb(foreground);
+    if (!foregroundRgb || rgbContrast(foregroundRgb, parsed.primary) < MIN_TEXT_CONTRAST) continue;
+    const hover = primaryHoverCandidates(scale).find(candidate => {
+      const hoverRgb = hslToRgb(candidate);
+      return hoverRgb !== null && rgbContrast(foregroundRgb, hoverRgb) >= MIN_TEXT_CONTRAST;
+    });
+    if (hover) {
+      primaryPair = { foreground, hover };
+      break;
+    }
+  }
+  if (!primaryPair) return fallbackScale(scale, fallbackMode);
+  result['primary-foreground'] = primaryPair.foreground;
+  result['primary-hover'] = primaryPair.hover;
+
   const focusSurfaces = [
     parsed.background,
     parsed.card,
-    composite(parsed.muted, parsed.background, 0.3),
-    composite(parsed.primary, parsed.background, 0.05),
-    composite(parsed.primary, parsed.background, 0.1),
+    muted30,
+    ...renderedTintSurfaces(parsed.primary, [parsed.background, parsed.card]),
   ];
   const ring = deriveAccessibleRing(result, focusSurfaces);
   if (!ring) return fallbackScale(scale, fallbackMode);

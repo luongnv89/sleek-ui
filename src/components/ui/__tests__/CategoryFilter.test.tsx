@@ -64,6 +64,13 @@ describe('CategoryFilter (#120)', () => {
     );
   });
 
+  it('uses the opaque runtime hover token for selected primary pills', () => {
+    renderFilter('minimal');
+    const selected = screen.getByRole('button', { name: /Minimal/ });
+    expect(selected).toHaveClass('hover:bg-primary-hover');
+    expect(selected).not.toHaveClass('hover:bg-primary/90');
+  });
+
   it('pills meet the 44px minimum hit area (#139)', () => {
     renderFilter();
     const pills = screen.getAllByRole('button');
