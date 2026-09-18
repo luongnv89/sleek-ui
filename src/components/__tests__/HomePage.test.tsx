@@ -19,8 +19,10 @@ jest.mock('@/data/designs', () => {
   };
 });
 
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import App from '@/App';
+import { HomePage } from '@/components/home/HomePage';
 
 async function waitForCatalogLoaded() {
   // Hero count only appears once the lazy catalog has resolved (#135)
@@ -74,6 +76,112 @@ describe('HomePage hero section', () => {
     render(<App />);
     await waitForCatalogLoaded();
     expect(screen.getByText(/Browse 1 Design\b/)).toBeInTheDocument();
+  });
+});
+
+describe('Capability discoverability on the landing surface (#196)', () => {
+  it('names both capabilities in the hero, above the fold (AC3)', () => {
+    render(<App />);
+    const hero = screen.getByRole('heading', { level: 1 }).closest('section')!;
+    expect(hero.textContent).toMatch(/Pair a web theme with a matching coding theme and a backup terminal theme/);
+    expect(hero.textContent).toMatch(/paste any\s+URL to copy that site/);
+  });
+
+  it('offers a one-interaction hero control for each capability (AC3)', () => {
+    render(<App />);
+    expect(screen.getByRole('button', { name: 'Pair a coding theme' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Copy any site' })).toBeInTheDocument();
+  });
+
+  it('reaches each capability section in one interaction from the hero (AC3)', () => {
+    const scrollIntoView = jest.fn();
+    Element.prototype.scrollIntoView = scrollIntoView;
+    try {
+      const { container } = render(<App />);
+      const scrolled = () =>
+        scrollIntoView.mock.instances.map(node => (node as HTMLElement).id);
+
+      fireEvent.click(screen.getByRole('button', { name: 'Pair a coding theme' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Copy any site' }));
+      fireEvent.click(screen.getByRole('button', { name: 'See how it works ↓' }));
+
+      expect(scrolled()).toEqual(['theme-pairing', 'copy-site', 'how-it-works']);
+      // Each hero control resolves to a section that is actually on the page.
+      scrolled().forEach(id => expect(container.querySelector(`section#${id}`)).toBeInTheDocument());
+    } finally {
+      delete (Element.prototype as Partial<Element>).scrollIntoView;
+    }
+  });
+
+  it('scrolls the primary CTA to the catalog (AC5 browsing flow)', async () => {
+    const scrollIntoView = jest.fn();
+    Element.prototype.scrollIntoView = scrollIntoView;
+    try {
+      render(<App />);
+      await waitForCatalogLoaded();
+      fireEvent.click(screen.getByRole('button', { name: /Browse.*Design/ }));
+      expect((scrollIntoView.mock.instances[0] as HTMLElement).id).toBe('catalog');
+    } finally {
+      delete (Element.prototype as Partial<Element>).scrollIntoView;
+    }
+  });
+
+  it('renders the paired-theming section with its three labelled parts (AC1)', () => {
+    const { container } = render(<App />);
+    expect(container.querySelector('section#theme-pairing')).toBeInTheDocument();
+    expect(screen.getByText('Web theme')).toBeInTheDocument();
+    expect(screen.getByText('Backup terminal theme')).toBeInTheDocument();
+    expect(screen.getByText('Mapped coding theme')).toBeInTheDocument();
+  });
+
+  it('renders the copy-a-site section as a named feature with its input/output (AC2)', () => {
+    const { container } = render(<App />);
+    expect(container.querySelector('section#copy-site')).toBeInTheDocument();
+    expect(screen.getByText('Copy a Site')).toBeInTheDocument();
+    expect(screen.getByText('One public website URL')).toBeInTheDocument();
+    expect(screen.getByText('A three-phase agent prompt')).toBeInTheDocument();
+  });
+
+  it('places both capability sections ahead of the design catalog (AC3)', () => {
+    const { container } = render(<App />);
+    const ids = Array.from(container.querySelectorAll('section[id]')).map(s => s.id);
+    expect(ids).toEqual(expect.arrayContaining(['how-it-works', 'theme-pairing', 'copy-site', 'catalog']));
+    expect(ids.indexOf('theme-pairing')).toBeLessThan(ids.indexOf('catalog'));
+    expect(ids.indexOf('copy-site')).toBeLessThan(ids.indexOf('catalog'));
+  });
+});
+
+describe('Scrollable prompt bodies stay keyboard-reachable (#196, WCAG 2.1.1)', () => {
+  it('exposes the how-it-works example prompt as a focusable named region', () => {
+    render(<App />);
+    const region = screen.getByRole('region', { name: 'Example prompt' });
+    expect(region.tagName).toBe('CODE');
+    expect(region).toHaveAttribute('tabindex', '0');
+    expect(region).toHaveClass('max-h-96', 'overflow-auto', 'focus-visible:ring-2');
+  });
+});
+
+describe('Off-route section links finish on the home route (#196)', () => {
+  it('scrolls to the section named in the router state once the sections have mounted', async () => {
+    const scrollIntoView = jest.fn();
+    Element.prototype.scrollIntoView = scrollIntoView;
+    try {
+      render(
+        <MemoryRouter initialEntries={[{ pathname: '/', state: { scrollTo: 'copy-site' } }]}>
+          <HomePage />
+        </MemoryRouter>,
+      );
+      await waitFor(() =>
+        expect(scrollIntoView.mock.instances.map(node => (node as HTMLElement).id)).toContain(
+          'copy-site',
+        ),
+      );
+      const target = document.getElementById('copy-site');
+      expect(target).toHaveAttribute('tabindex', '-1');
+      expect(document.activeElement).toBe(target);
+    } finally {
+      delete (Element.prototype as Partial<Element>).scrollIntoView;
+    }
   });
 });
 

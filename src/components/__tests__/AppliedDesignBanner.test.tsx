@@ -64,6 +64,21 @@ describe('AppliedDesignBanner dismiss vs reset (#140)', () => {
     expect(localStorage.getItem('sleek-ui:applied-design')).not.toBeNull();
   });
 
+  it('uses opaque, validated hover pairs for banner actions', () => {
+    localStorage.setItem(
+      'sleek-ui:applied-design',
+      JSON.stringify({ slug: 'test-design', name: 'Test Design', data: safeData })
+    );
+    renderBanner();
+
+    const dismiss = screen.getByRole('button', { name: 'Dismiss banner' });
+    const reset = screen.getByRole('button', { name: /Reset/i });
+    expect(dismiss).toHaveClass('hover:bg-primary-foreground', 'hover:text-primary');
+    expect(reset).toHaveClass('hover:bg-primary-foreground', 'hover:text-primary');
+    expect(dismiss.className).not.toContain('/20');
+    expect(screen.getByRole('link', { name: 'Test Design' }).className).not.toContain('opacity');
+  });
+
   it('Reset clears the applied design and offers Undo that restores it', async () => {
     localStorage.setItem(
       'sleek-ui:applied-design',

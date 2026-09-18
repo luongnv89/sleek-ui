@@ -204,8 +204,8 @@ describe('In-page anchor controls under HashRouter (#104)', () => {
   it('mobile menu Browse Designs scrolls to catalog and closes the menu', async () => {
     await userEvent.click(screen.getByRole('button', { name: /Open menu/i }));
     await userEvent.click(screen.getByRole('button', { name: 'Browse Designs' }));
-    expectRouteKeptAndScrolled();
     expect(screen.queryByRole('button', { name: /Close menu/i })).not.toBeInTheDocument();
+    await waitFor(expectRouteKeptAndScrolled);
   });
 
   it('renders no hash-anchor hrefs for in-page sections', () => {
@@ -220,7 +220,7 @@ describe('Catch-all NotFound route (#141)', () => {
     render(<App />);
     expect(await screen.findByText('404')).toBeInTheDocument();
     expect(screen.getByText('This page could not be found.')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /Back to Catalog/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Back to Catalog/i })).toHaveClass('text-primary-text');
     window.location.hash = '#/';
   });
 

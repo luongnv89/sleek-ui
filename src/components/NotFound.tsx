@@ -13,7 +13,7 @@ export function NotFound() {
         <p className="mt-2 text-muted-foreground">This page could not be found.</p>
         <Link
           to="/"
-          className="inline-flex items-center gap-2 mt-6 text-primary hover:underline"
+          className="inline-flex items-center gap-2 mt-6 text-primary-text hover:underline"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Catalog

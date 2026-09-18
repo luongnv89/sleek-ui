@@ -7,6 +7,7 @@ describe('ThemeToggle (#139)', () => {
     render(<ThemeToggle theme="light" onToggle={onToggle} />);
     const button = screen.getByRole('button', { name: 'Switch to dark theme' });
     expect(button).toHaveAttribute('aria-pressed', 'false');
+    expect(button).toHaveClass('h-11', 'w-11');
   });
 
   it('announces the target state in its label and aria-pressed when dark', () => {

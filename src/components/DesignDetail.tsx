@@ -79,9 +79,9 @@ export function DesignDetail() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center">
-          <h2 className="text-2xl font-bold">Design not found</h2>
-          <p className="text-muted-foreground mt-2">The requested design could not be found.</p>
-          <Link to="/" className="inline-flex items-center gap-2 mt-4 text-primary hover:underline">
+          <h2 className="text-headline font-bold text-foreground">Design not found</h2>
+          <p className="mt-2 text-label text-muted-foreground">The requested design could not be found.</p>
+          <Link to="/" className="mt-4 inline-flex items-center gap-2 text-label text-primary-text hover:underline">
             <ArrowLeft className="h-4 w-4" />
             Back to Catalog
           </Link>
@@ -96,18 +96,18 @@ export function DesignDetail() {
 
   return (
     <div className={cn('min-h-screen bg-background', showPreviewDark && 'dark')}>
-      <div className="container mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="container mx-auto max-w-page px-gutter py-band sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mb-flow flex flex-col gap-stack sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-col gap-2">
             <Link
               to="/"
-              className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              className="inline-flex items-center gap-2 text-label font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
               <ArrowLeft className="h-4 w-4" />
               Back to Catalog
             </Link>
-            <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">{design.name}</h1>
+            <h1 className="scroll-m-20 text-display font-extrabold text-foreground lg:text-hero">{design.name}</h1>
             {showBadges && (
               <div className="flex flex-wrap items-center gap-2">
                 {collection !== undefined && collection !== 'web' && (
@@ -122,7 +122,7 @@ export function DesignDetail() {
                 ))}
               </div>
             )}
-            <p className="text-xl text-muted-foreground">{design.description}</p>
+            <p className="text-lede text-muted-foreground">{design.description}</p>
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -172,10 +172,10 @@ export function DesignDetail() {
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
           >
             <div className="w-full max-w-md rounded-xl border border-border bg-background p-6 shadow-lg">
-              <h2 className="text-xl font-bold tracking-tight">
+              <h2 className="text-title font-bold text-foreground">
                 Apply &ldquo;{design.name}&rdquo;?
               </h2>
-              <p className="mt-2 text-sm text-muted-foreground">
+              <p className="mt-2 text-label text-muted-foreground">
                 This restyles the entire site with this design&rsquo;s tokens. You can reset it
                 afterwards.
               </p>
@@ -237,14 +237,14 @@ export function DesignDetail() {
         )}
 
         {/* Design Info */}
-        <div className="mb-8 grid gap-6 md:grid-cols-2">
+        <div className="mb-flow grid gap-grid md:grid-cols-2">
           <Card>
             <CardHeader>
               <CardTitle>Design Details</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Categories</p>
+                <p className="text-label font-medium text-muted-foreground">Categories</p>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {design.categories.map((category) => (
                     <Badge key={category} variant="secondary" className="text-xs">
@@ -254,11 +254,11 @@ export function DesignDetail() {
                 </div>
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Default Mode</p>
+                <p className="text-label font-medium text-muted-foreground">Default Mode</p>
                 <p className="mt-2 text-foreground">{design.defaultMode}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">JSON URL</p>
+                <p className="text-label font-medium text-muted-foreground">JSON URL</p>
                 <div className="mt-2 flex items-center gap-2">
                   <Input value={design.jsonUrl} readOnly className="flex-1" />
                   <CopyButton text={design.jsonUrl} />
@@ -272,12 +272,12 @@ export function DesignDetail() {
         <PreviewSection previewDark={showPreviewDark} />
 
         {/* Token Table */}
-        <section className="mb-12">
+        <section className="mb-band">
           <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b pb-2">
-            <h2 className="scroll-m-20 text-2xl font-semibold tracking-tight first:mt-0">
+            <h2 className="scroll-m-20 text-title font-semibold text-foreground first:mt-0">
               Design Tokens
             </h2>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-label text-muted-foreground">
               All token values — click any value to copy
             </p>
           </div>

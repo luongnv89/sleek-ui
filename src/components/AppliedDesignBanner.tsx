@@ -56,7 +56,7 @@ export function AppliedDesignBanner() {
           Design applied:{' '}
           <Link
             to={`/designs/${appliedDesign.slug}`}
-            className="underline underline-offset-2 hover:opacity-80 transition-opacity"
+            className="underline underline-offset-2 hover:decoration-2"
           >
             {appliedDesign.name}
           </Link>
@@ -69,7 +69,7 @@ export function AppliedDesignBanner() {
           size="sm"
           aria-label="Dismiss banner"
           onClick={() => setDismissed(true)}
-          className="text-primary-foreground hover:bg-primary-foreground/20 hover:text-primary-foreground"
+          className="text-primary-foreground hover:bg-primary-foreground hover:text-primary"
         >
           <X className="h-4 w-4" />
         </Button>
@@ -77,7 +77,7 @@ export function AppliedDesignBanner() {
           variant="ghost"
           size="sm"
           onClick={resetDesign}
-          className="gap-1.5 text-primary-foreground hover:bg-primary-foreground/20 hover:text-primary-foreground"
+          className="gap-1.5 text-primary-foreground hover:bg-primary-foreground hover:text-primary"
         >
           <RotateCcw className="h-4 w-4" />
           Reset

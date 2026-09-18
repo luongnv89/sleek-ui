@@ -88,6 +88,7 @@ describe('DesignDetail characterization (#117)', () => {
     renderDetail('does-not-exist');
     expect(await screen.findByText('Design not found')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Back to Catalog/i })).toHaveAttribute('href', '/');
+    expect(screen.getByRole('link', { name: /Back to Catalog/i })).toHaveClass('text-primary-text');
     // #129: an unmatched slug resets the title to the app default instead of leaving it empty
     expect(document.title).toBe('sleek-ui — Professional design systems for AI agents');
   });
@@ -287,7 +288,7 @@ describe('DesignDetail coding theme mapping panel (#187)', () => {
       theme('web-c', 'web'),
     ]);
     renderDetail('test-design');
-    const select = await screen.findByLabelText('Backup theme');
+    const select = await screen.findByLabelText('Backup terminal theme');
     const options = Array.from((select as HTMLSelectElement).options).map(o => o.value);
     expect(options).toEqual(['', 'code-a', 'term-b']);
   });
@@ -301,6 +302,6 @@ describe('DesignDetail coding theme mapping panel (#187)', () => {
     await waitFor(() =>
       expect(screen.getByRole('button', { name: 'Apply this design to the website' })).toBeEnabled()
     );
-    expect(screen.queryByLabelText('Backup theme')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Backup terminal theme')).not.toBeInTheDocument();
   });
 });

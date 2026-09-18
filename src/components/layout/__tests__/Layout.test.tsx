@@ -4,7 +4,8 @@ jest.mock('@/data/designs', () => ({
   loadDesignData: jest.fn(async () => null),
 }));
 
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { Layout } from '../Layout';
@@ -48,6 +49,17 @@ describe('Layout (#120)', () => {
     );
   });
 
+  it('gives every footer navigation control an aligned 44px target', () => {
+    renderLayout();
+    const footer = screen.getByRole('contentinfo');
+    const controls = footer.querySelectorAll('nav > a, nav > button');
+
+    expect(controls).toHaveLength(6);
+    controls.forEach(control => {
+      expect(control).toHaveClass('inline-flex', 'min-h-[44px]', 'items-center', 'px-2');
+    });
+  });
+
   it('marks the static Brand page link as external so the SPA route survives (#141)', () => {
     renderLayout();
     const footer = screen.getByRole('contentinfo');
@@ -55,6 +67,86 @@ describe('Layout (#120)', () => {
     expect(brand).toBeInTheDocument();
     expect(brand).toHaveAttribute('target', '_blank');
     expect(brand).toHaveAttribute('rel', 'noopener noreferrer');
+  });
+
+  it('exposes both #196 capability sections in the footer nav as scroll controls', () => {
+    const scrollIntoView = jest.fn();
+    Element.prototype.scrollIntoView = scrollIntoView;
+    try {
+      renderLayout();
+      const footer = screen.getByRole('contentinfo');
+      const labels = Array.from(footer.querySelectorAll('nav button')).map(b => b.textContent);
+      expect(labels).toEqual(['Theme pairing', 'Copy a site', 'How it works']);
+
+      const target = document.createElement('div');
+      target.id = 'copy-site';
+      document.body.appendChild(target);
+      const copySite = Array.from(footer.querySelectorAll('nav button')).find(
+        b => b.textContent === 'Copy a site',
+      )!;
+      fireEvent.click(copySite);
+      expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth' });
+      target.remove();
+    } finally {
+      delete (Element.prototype as Partial<Element>).scrollIntoView;
+    }
+  });
+
+  it('moves focus to a footer destination after keyboard activation', async () => {
+    const user = userEvent.setup();
+    Element.prototype.scrollIntoView = jest.fn();
+    const target = document.createElement('section');
+    target.id = 'copy-site';
+    document.body.appendChild(target);
+    try {
+      renderLayout();
+      const footer = screen.getByRole('contentinfo');
+      const copySite = Array.from(footer.querySelectorAll<HTMLButtonElement>('nav button')).find(
+        button => button.textContent === 'Copy a site',
+      )!;
+      copySite.focus();
+
+      await user.keyboard('{Enter}');
+
+      expect(target).toHaveAttribute('tabindex', '-1');
+      expect(document.activeElement).toBe(target);
+    } finally {
+      target.remove();
+      delete (Element.prototype as Partial<Element>).scrollIntoView;
+    }
+  });
+
+  it('routes home when a footer section link fires off the home route (#196)', async () => {
+    const scrollIntoView = jest.fn();
+    Element.prototype.scrollIntoView = scrollIntoView;
+    try {
+      render(
+        <ThemeProvider>
+          <MemoryRouter initialEntries={['/designs/alpha-design']}>
+            <Routes>
+              <Route path="/" element={<Layout />}>
+                <Route index element={<div>outlet-content</div>} />
+                <Route path="designs/:slug" element={<div>detail-content</div>} />
+              </Route>
+            </Routes>
+          </MemoryRouter>
+        </ThemeProvider>,
+      );
+      expect(screen.getByText('detail-content')).toBeInTheDocument();
+
+      const footer = screen.getByRole('contentinfo');
+      const pairing = Array.from(footer.querySelectorAll('nav button')).find(
+        b => b.textContent === 'Theme pairing',
+      )!;
+      fireEvent.click(pairing);
+
+      // Off-route the control is no longer dead: it navigates to the route that
+      // owns the section ids, which then finishes the scroll after mount.
+      expect(await screen.findByText('outlet-content')).toBeInTheDocument();
+      expect(scrollIntoView).not.toHaveBeenCalled();
+    } finally {
+      delete (Element.prototype as Partial<Element>).scrollIntoView;
+    }
   });
 
   it('exposes the How it works scroll control as a button', () => {

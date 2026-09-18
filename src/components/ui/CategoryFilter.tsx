@@ -32,7 +32,7 @@ export const CategoryFilter = ({
         className={cn(
           'inline-flex min-h-[44px] items-center rounded-full px-3 py-1 text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
           isAllSelected
-            ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+            ? 'bg-primary text-primary-foreground hover:bg-primary-hover'
             : 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
           pillClassName
         )}
@@ -54,7 +54,7 @@ export const CategoryFilter = ({
             className={cn(
               'inline-flex min-h-[44px] items-center rounded-full px-3 py-1 text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
               isSelected
-                ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                ? 'bg-primary text-primary-foreground hover:bg-primary-hover'
                 : 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
               pillClassName
             )}

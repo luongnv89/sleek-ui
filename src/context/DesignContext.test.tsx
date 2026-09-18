@@ -1,6 +1,24 @@
 import { memo } from 'react';
+import { readFileSync, readdirSync } from 'fs';
+import { join } from 'path';
 import { render, screen, fireEvent, act } from '@testing-library/react';
-import { DesignProvider, useDesign } from './DesignContext';
+import {
+  DesignProvider,
+  getAccessibilityChecks,
+  getContrastRatio,
+  getLayeredContrastRatio,
+  getOverlayContrastRatio,
+  isAccessibleColorScale,
+  useDesign,
+  withAccessiblePrimary,
+} from './DesignContext';
+import airtable from '@/data/designs/airtable.json';
+import elevenLabs from '@/data/designs/elevenlabs.json';
+import linear from '@/data/designs/linear.app.json';
+import neonGreen from '@/data/designs/neon-green.json';
+import openCode from '@/data/designs/opencode.json';
+import vercel from '@/data/designs/vercel.json';
+import voltAgent from '@/data/designs/voltagent.json';
 import type { DesignData, TransformedDesign } from '@/types/design';
 
 const baseDesign: DesignData = {
@@ -65,6 +83,15 @@ function getAppliedStyle(): HTMLElement | null {
   return document.getElementById('sleek-applied-design');
 }
 
+function readDefaultCssPalette(selector: ':root' | '.dark'): Record<string, string> {
+  const stylesheet = readFileSync(join(process.cwd(), 'src/index.css'), 'utf8');
+  const escapedSelector = selector === ':root' ? ':root' : '\\.dark';
+  const block = stylesheet.match(new RegExp(`${escapedSelector} \\{([\\s\\S]*?)\\n  \\}`))?.[1] ?? '';
+  return Object.fromEntries(
+    [...block.matchAll(/--([a-z-]+):\s*([^;]+);/g)].map(match => [match[1], match[2].trim()]),
+  );
+}
+
 beforeEach(() => {
   localStorage.clear();
   document.head.innerHTML = '';
@@ -80,10 +107,205 @@ describe('DesignContext validation (#102)', () => {
     fireEvent.click(screen.getByText('apply'));
     const css = getAppliedStyle()?.textContent ?? '';
     expect(css).toContain('--background: 0 0% 100%;');
-    expect(css).toContain('--primary: 245 90% 73%;');
+    expect(css).toContain(
+      `--primary: ${withAccessiblePrimary(baseDesign.tokens.colors.light).primary};`,
+    );
     expect(css).toContain('--radius: 0.5rem;');
     expect(css).toContain('--font-sans: Inter, sans-serif;');
     expect(css).toContain('.dark {');
+  });
+
+  it.each([
+    ['light', ':root'],
+    ['dark', '.dark'],
+  ] as const)('keeps the unapplied %s CSS palette inside the runtime accessibility contract', (_mode, selector) => {
+    const palette = readDefaultCssPalette(selector);
+    const failures = getAccessibilityChecks(palette).filter(
+      ({ ratio, minimum }) => ratio === null || ratio < minimum,
+    );
+    expect(failures).toEqual([]);
+  });
+
+  it('repairs Linear light foreground text and its translucent prompt surface', () => {
+    const source = linear.tokens.colors.light;
+    const normalized = withAccessiblePrimary(source, 'light');
+    expect(normalized.background).toBe(source.background);
+    expect(normalized.muted).toBe(source.muted);
+    expect(getContrastRatio(normalized.foreground, normalized.background)).toBeGreaterThanOrEqual(4.5);
+    expect(
+      getLayeredContrastRatio(
+        normalized.foreground,
+        0.9,
+        normalized.muted,
+        0.5,
+        normalized.background,
+      ),
+    ).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it('repairs Neon Green light muted text on background and card', () => {
+    const source = neonGreen.tokens.colors.light;
+    const normalized = withAccessiblePrimary(source, 'light');
+    expect(normalized.background).toBe(source.background);
+    expect(normalized.card).toBe(source.card);
+    expect(getContrastRatio(normalized['muted-foreground'], normalized.background)).toBeGreaterThanOrEqual(4.5);
+    expect(getContrastRatio(normalized['muted-foreground'], normalized.card)).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it('repairs OpenCode dark outline hover text', () => {
+    const source = openCode.tokens.colors.dark;
+    const normalized = withAccessiblePrimary(source, 'dark');
+    expect(normalized.accent).toBe(source.accent);
+    expect(getContrastRatio(normalized['accent-foreground'], normalized.accent)).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it('repairs Vercel light focus rings on primary-tinted surfaces', () => {
+    const source = vercel.tokens.colors.light;
+    const normalized = withAccessiblePrimary(source, 'light');
+    expect(normalized.background).toBe(source.background);
+    expect(normalized.card).toBe(source.card);
+    expect(normalized.muted).toBe(source.muted);
+    expect(normalized.primary).toBe(source.primary);
+    expect(
+      getOverlayContrastRatio(normalized.ring, normalized.primary, normalized.background, 0.05),
+    ).toBeGreaterThanOrEqual(3.1);
+  });
+
+  it('repairs ElevenLabs informational, button, error, and ring roles', () => {
+    const source = elevenLabs.tokens.colors.light;
+    const colors = withAccessiblePrimary(source, 'light');
+    expect(colors.background).toBe(source.background);
+    expect(colors.card).toBe(source.card);
+    expect(colors.primary).toBe(source.primary);
+    expect(colors['primary-text']).not.toBe(source.primary);
+    expect(getContrastRatio(colors['primary-foreground'], colors['primary-hover'])).toBeGreaterThanOrEqual(4.5);
+    expect(getContrastRatio(colors['destructive-text'], colors.card)).toBeGreaterThanOrEqual(4.5);
+    expect(isAccessibleColorScale(colors)).toBe(true);
+  });
+
+  it('repairs Airtable dark focus rings on primary tints nested in cards', () => {
+    const source = airtable.tokens.colors.dark;
+    const colors = withAccessiblePrimary(source, 'dark');
+    expect(colors.background).toBe(source.background);
+    expect(colors.card).toBe(source.card);
+    expect(colors.primary).toBe(source.primary);
+    const ringOnPrimary10Card = getAccessibilityChecks(colors).find(
+      check => check.pair === 'ring/primary/10 over card',
+    );
+    expect(ringOnPrimary10Card?.ratio).toBeGreaterThanOrEqual(3.1);
+    expect(isAccessibleColorScale(colors)).toBe(true);
+  });
+
+  it('repairs VoltAgent muted text on actual primary tints and its opaque hover', () => {
+    const source = voltAgent.tokens.colors.light;
+    const colors = withAccessiblePrimary(source, 'light');
+    expect(colors.background).toBe(source.background);
+    expect(colors.card).toBe(source.card);
+    expect(colors.primary).toBe(source.primary);
+    expect(getOverlayContrastRatio(
+      colors['muted-foreground'], colors.primary, colors.card, 0.1,
+    )).toBeGreaterThanOrEqual(4.5);
+    expect(colors['primary-hover']).toMatch(/^\d+(?:\.\d+)? \d+(?:\.\d+)?% \d+(?:\.\d+)?%$/);
+    expect(isAccessibleColorScale(colors)).toBe(true);
+  });
+
+  it('uses the complete safe palette when no foreground can satisfy every rendered surface', () => {
+    const impossible = {
+      background: '0 0% 0%',
+      foreground: '0 0% 100%',
+      card: '0 0% 0%',
+      'card-foreground': '0 0% 100%',
+      popover: '0 0% 0%',
+      'popover-foreground': '0 0% 100%',
+      muted: '0 0% 100%',
+      'muted-foreground': '0 0% 100%',
+      primary: '0 0% 0%',
+      'primary-foreground': '0 0% 100%',
+      secondary: '0 0% 0%',
+      'secondary-foreground': '0 0% 100%',
+      accent: '0 0% 0%',
+      'accent-foreground': '0 0% 100%',
+      destructive: '0 0% 0%',
+      'destructive-foreground': '0 0% 100%',
+      ring: '0 0% 100%',
+    };
+    const normalized = withAccessiblePrimary(impossible, 'light');
+    const safeLight = {
+      background: '0 0% 100%',
+      foreground: '0 0% 9%',
+      card: '0 0% 100%',
+      'card-foreground': '0 0% 9%',
+      popover: '0 0% 100%',
+      'popover-foreground': '0 0% 9%',
+      muted: '0 0% 96%',
+      'muted-foreground': '0 0% 35%',
+      primary: '0 0% 9%',
+      'primary-foreground': '0 0% 100%',
+      'primary-hover': '0 0% 15%',
+      'primary-text': '0 0% 9%',
+      secondary: '0 0% 96%',
+      'secondary-foreground': '0 0% 9%',
+      accent: '0 0% 96%',
+      'accent-foreground': '0 0% 9%',
+      destructive: '0 0% 9%',
+      'destructive-foreground': '0 0% 100%',
+      'destructive-text': '0 0% 9%',
+      border: '0 0% 85%',
+      input: '0 0% 85%',
+      ring: '0 0% 20%',
+    };
+
+    expect(normalized).toEqual(safeLight);
+    expect(isAccessibleColorScale(normalized)).toBe(true);
+  });
+
+  it('fails closed for adversarially different background and card surfaces', () => {
+    const adversarial = {
+      ...baseDesign.tokens.colors.light,
+      background: '0 0% 0%',
+      foreground: '0 0% 100%',
+      card: '0 0% 100%',
+      'card-foreground': '0 0% 0%',
+      popover: '0 0% 0%',
+      'popover-foreground': '0 0% 100%',
+      muted: '0 0% 10%',
+      'muted-foreground': '0 0% 100%',
+      primary: '0 0% 0%',
+      'primary-foreground': '0 0% 100%',
+      secondary: '0 0% 0%',
+      'secondary-foreground': '0 0% 100%',
+      accent: '0 0% 0%',
+      'accent-foreground': '0 0% 100%',
+      destructive: '0 0% 0%',
+      'destructive-foreground': '0 0% 100%',
+      ring: '0 0% 50%',
+    };
+    const normalized = withAccessiblePrimary(adversarial, 'light');
+    expect(normalized.background).toBe('0 0% 100%');
+    expect(normalized.card).toBe('0 0% 100%');
+    expect(normalized['primary-text']).toBe('0 0% 9%');
+    expect(isAccessibleColorScale(normalized)).toBe(true);
+  });
+
+  it('normalizes every available catalog color mode to the exact accessibility matrix', () => {
+    const designsDirectory = join(process.cwd(), 'src/data/designs');
+    const failures: string[] = [];
+
+    for (const file of readdirSync(designsDirectory).filter(name => name.endsWith('.json'))) {
+      const data = JSON.parse(readFileSync(join(designsDirectory, file), 'utf8')) as DesignData;
+      for (const mode of ['light', 'dark'] as const) {
+        const source = data.tokens.colors[mode];
+        if (!source) continue;
+        const colors = withAccessiblePrimary(source, mode);
+        for (const { pair, ratio, minimum } of getAccessibilityChecks(colors)) {
+          if (ratio === null || ratio < minimum) {
+            failures.push(`${file}:${mode}:${pair}:${ratio ?? 'invalid'}`);
+          }
+        }
+      }
+    }
+
+    expect(failures).toEqual([]);
   });
 
   it.each([

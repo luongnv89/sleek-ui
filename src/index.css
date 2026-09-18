@@ -3,7 +3,21 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  /* Sleek-ui brand green — single source of truth for the accent color. */
+  /* ──────────────────────────────────────────────────────────────────────────
+     Interactive/accent token: `--primary`.
+     `--primary` (and only `--primary`) colors every interactive and stateful
+     surface — buttons, CTAs, pressed tabs, focus accents, emphasis. It is
+     re-themed by an applied catalog design, so the whole UI travels together.
+
+     Identity mark: `--color-brand`.
+     The fixed sleek-ui green is an IDENTITY mark, not an accent. Use it only
+     for the logo, the wordmark, and the founder monogram — never for a button,
+     a link, a hover state, a focus ring or any other interactive affordance.
+     `text-brand` is used on exactly two surfaces, both identity marks by
+     decision (#196): the header wordmark (`Header.tsx`) and the founder
+     monogram (`FounderSection.tsx`). Data — counts, stats, metrics — uses
+     `--foreground`, never the brand green.
+     ────────────────────────────────────────────────────────────────────────── */
   --color-brand: #00FF41;
   --color-brand-hover: #00e639;
   --color-brand-active: #00cc33;
@@ -15,10 +29,13 @@
   --color-foreground: hsl(var(--foreground));
   --color-primary: hsl(var(--primary));
   --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-primary-hover: hsl(var(--primary-hover));
+  --color-primary-text: hsl(var(--primary-text));
   --color-secondary: hsl(var(--secondary));
   --color-secondary-foreground: hsl(var(--secondary-foreground));
   --color-destructive: hsl(var(--destructive));
   --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-destructive-text: hsl(var(--destructive-text));
   --color-muted: hsl(var(--muted));
   --color-muted-foreground: hsl(var(--muted-foreground));
   --color-accent: hsl(var(--accent));
@@ -32,6 +49,66 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
 
+  /* ── Type scale (#196) ───────────────────────────────────────────────────
+     One ratio-based scale for every surface. `eyebrow` is the signature
+     motif: a mono, uppercase, wide-tracked section label. Additive — no
+     existing Tailwind size name is redefined. */
+  --text-eyebrow: 0.6875rem;
+  --text-eyebrow--line-height: 1.2;
+  --text-eyebrow--letter-spacing: 0.16em;
+  --text-eyebrow--font-weight: 600;
+  --text-micro: 0.75rem;
+  --text-micro--line-height: 1.5;
+  --text-label: 0.8125rem;
+  --text-label--line-height: 1.5;
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.65;
+  --text-lede: 1.0625rem;
+  --text-lede--line-height: 1.6;
+  --text-title: 1.375rem;
+  --text-title--line-height: 1.25;
+  --text-title--letter-spacing: -0.012em;
+  --text-headline: 1.875rem;
+  --text-headline--line-height: 1.15;
+  --text-headline--letter-spacing: -0.022em;
+  --text-display: 2.5rem;
+  --text-display--line-height: 1.08;
+  --text-display--letter-spacing: -0.03em;
+  --text-hero: 3.5rem;
+  --text-hero--line-height: 1.02;
+  --text-hero--letter-spacing: -0.035em;
+
+  /* ── Spacing rhythm (#196) ───────────────────────────────────────────────
+     Five named steps so every band, block and card breathes on the same grid
+     instead of ad-hoc py-16/py-20/mt-8 pairs:
+       gutter — page side padding and card interior padding
+       stack  — between elements INSIDE one card, and in a control row
+       grid   — between sibling CARDS in a multi-column grid
+       flow   — between blocks within a section
+       band   — section vertical padding (band-lg from sm: up)
+     `stack` and `grid` are deliberately distinct: a 0.75rem gutter between two
+     design cards reads as a rendering bug, not as rhythm. */
+  --spacing-gutter: 1rem;
+  --spacing-stack: 0.75rem;
+  --spacing-grid: 1.25rem;
+  --spacing-flow: 1.5rem;
+  --spacing-band: 4rem;
+  --spacing-band-lg: 5.5rem;
+
+  /* ── Container scale (#196) ──────────────────────────────────────────────
+     Three measures: reading width, standard page, full-bleed catalog.
+     NOTE: `max-w-*` resolves the spacing namespace too, so these names must
+     never collide with a `--spacing-*` name — `--container-band` would be
+     shadowed by `--spacing-band` and silently resolve to 4rem. */
+  --container-narrow: 48rem;
+  --container-page: 72rem;
+  --container-wide: 84rem;
+}
+
+/* Keep font utilities bound to these runtime variables. Unlike `@theme inline`,
+   this compiles `font-sans` and `font-mono` to var(...) references that an
+   applied catalog design can override. */
+@theme {
   --font-sans: Inter, system-ui, sans-serif;
   --font-heading: Inter, system-ui, sans-serif;
   --font-mono: JetBrains Mono, monospace;
@@ -48,25 +125,21 @@
     --popover-foreground: 240 10% 3.9%;
     --primary: 240 5.9% 10%;
     --primary-foreground: 0 0% 98%;
+    --primary-hover: 240 5.9% 16%;
+    --primary-text: 240 5.9% 10%;
     --secondary: 240 4.8% 95.9%;
     --secondary-foreground: 240 5.9% 10%;
     --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
+    --muted-foreground: 240 3.8% 35%;
     --accent: 240 4.8% 95.9%;
     --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 72% 42%;
     --destructive-foreground: 0 0% 98%;
+    --destructive-text: 0 72% 40%;
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
     --ring: 240 5.9% 10%;
     --radius: 0.75rem;
-
-    /* Catalog-specific extras */
-    --header-height: 4rem;
-    --nav-height: 3rem;
-    --sidebar-width: 280px;
-    --transition-fast: 150ms ease;
-    --transition-normal: 200ms ease;
   }
 
   .dark {
@@ -79,6 +152,8 @@
     --popover-foreground: 0 0% 98%;
     --primary: 0 0% 98%;
     --primary-foreground: 240 5.9% 10%;
+    --primary-hover: 0 0% 90%;
+    --primary-text: 0 0% 98%;
     --secondary: 240 3.7% 15.9%;
     --secondary-foreground: 0 0% 98%;
     --muted: 240 3.7% 15.9%;
@@ -87,16 +162,10 @@
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
+    --destructive-text: 0 84% 75%;
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
-
-    /* Catalog-specific extras */
-    --header-height: 4rem;
-    --nav-height: 3rem;
-    --sidebar-width: 280px;
-    --transition-fast: 150ms ease;
-    --transition-normal: 200ms ease;
   }
 }
 
@@ -116,7 +185,7 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: var(--font-sans, Inter, system-ui, sans-serif);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -147,28 +216,5 @@
 
   .text-pretty {
     text-wrap: pretty;
-  }
-
-  /* Focus visible for accessibility */
-  .focus-visible {
-    outline: none;
-    ring-width: 2px;
-    ring-color: hsl(var(--ring));
-    ring-offset-width: 2px;
-    ring-offset-color: hsl(var(--background));
-  }
-
-  /* Gradient text for headings */
-  .gradient-text {
-    background-image: linear-gradient(to right, hsl(var(--foreground)), hsl(var(--muted-foreground)));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  /* Glassmorphism effect */
-  .glass {
-    background-color: hsla(var(--background), 0.8);
-    backdrop-filter: blur(12px);
-    border-color: hsla(var(--border), 0.5);
   }
 }

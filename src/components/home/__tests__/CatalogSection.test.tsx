@@ -107,6 +107,15 @@ describe('CatalogSection filtering (#137)', () => {
     );
   });
 
+  it('keeps the active collection tab legible: the pressed tab keeps both its background and its foreground', async () => {
+    renderCatalog();
+    await waitForCatalog();
+    const group = screen.getByRole('group', { name: 'Filter by collection' });
+    const active = group.querySelector('[aria-pressed="true"]')!;
+    expect(active).toHaveTextContent('Web');
+    expect(active).toHaveClass('bg-primary', 'text-primary-foreground', 'text-label');
+  });
+
   it('keeps the category pills stable across search keystrokes', async () => {
     renderCatalog();
     await waitForCatalog();

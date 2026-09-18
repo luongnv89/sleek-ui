@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Check, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
+import { PromptSurface, promptBodyProps } from '@/components/ui/PromptSurface';
 import { useClipboard } from '@/hooks/useClipboard';
 import { buildAgentPrompt } from '@/lib/agentPrompt';
 import { APP_TARGET_LABELS } from '@/lib/appTargets';
@@ -45,45 +46,45 @@ export function AgentPromptPanel({ designUrl, collection = 'web', appTargets = [
   }, [agentPrompt, resetCopy]);
 
   return (
-    <div className="mb-10 rounded-xl border-2 border-primary/30 bg-primary/5 p-6">
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-primary">Agent Prompt</p>
-          <p className="mt-0.5 text-sm text-muted-foreground">Copy and paste this into Claude Code, Cursor, or any AI agent</p>
-          {isAppTheme && appTargets.length > 0 && (
-            <div className="mt-2 flex flex-wrap items-center gap-2" role="group" aria-label="Select app target">
-              <Badge variant="secondary" className="text-xs">{getCollectionLabel(collection)}</Badge>
-              {appTargets.map(target => (
-                <button
-                  key={target}
-                  type="button"
-                  onClick={() => setActiveTarget(target)}
-                  aria-pressed={selectedTarget === target}
-                  className={
-                    selectedTarget === target
-                      ? 'inline-flex min-h-[44px] items-center rounded-full bg-primary px-3 py-1 text-xs font-medium text-primary-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
-                      : 'inline-flex min-h-[44px] items-center rounded-full border border-border bg-background px-3 py-1 text-xs text-muted-foreground hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
-                  }
-                >
-                  {APP_TARGET_LABELS[target]}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+    <PromptSurface
+      className="mb-10"
+      label="Agent prompt"
+      description="Copy and paste this into Claude Code, Cursor, or any AI agent"
+      meta={
+        isAppTheme && appTargets.length > 0 ? (
+          <div className="flex flex-wrap items-center gap-2 pt-1" role="group" aria-label="Select app target">
+            <Badge variant="secondary" className="text-micro">{getCollectionLabel(collection)}</Badge>
+            {appTargets.map(target => (
+              <button
+                key={target}
+                type="button"
+                onClick={() => setActiveTarget(target)}
+                aria-pressed={selectedTarget === target}
+                className={
+                  selectedTarget === target
+                    ? 'inline-flex min-h-[44px] items-center rounded-full bg-primary px-3 py-1 text-micro font-medium text-primary-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
+                    : 'inline-flex min-h-[44px] items-center rounded-full border border-border bg-background px-3 py-1 text-micro text-muted-foreground hover:text-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
+                }
+              >
+                {APP_TARGET_LABELS[target]}
+              </button>
+            ))}
+          </div>
+        ) : undefined
+      }
+      actions={
         <Button
           type="button"
           size="sm"
           onClick={() => copy(agentPrompt)}
-          className="shrink-0 gap-2"
+          className="min-h-[44px] shrink-0 gap-2"
         >
           {copied === 'agentPrompt' ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
           {copied === 'agentPrompt' ? 'Copied!' : 'Copy'}
         </Button>
-      </div>
-      <pre className="max-h-96 overflow-auto whitespace-pre-wrap rounded-lg bg-background/80 p-4 text-sm font-mono text-foreground/90 border border-border">
-        {agentPrompt}
-      </pre>
-    </div>
+      }
+    >
+      <pre {...promptBodyProps({ label: 'Agent prompt' })}>{agentPrompt}</pre>
+    </PromptSurface>
   );
 }

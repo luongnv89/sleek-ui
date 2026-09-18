@@ -42,7 +42,7 @@ describe('CodingThemeMappingPanel (#187)', () => {
   it('selects a backup theme, requires validation of conflicts, and builds the mapped prompt', async () => {
     renderPanel();
     await act(async () => {
-      fireEvent.change(screen.getByLabelText('Backup theme'), { target: { value: 'aura' } });
+      fireEvent.change(screen.getByLabelText('Backup terminal theme'), { target: { value: 'aura' } });
     });
     expect(loadBackup).toHaveBeenCalledWith('aura');
     expect(screen.getByText(/Conflicts to validate/)).toBeInTheDocument();
@@ -70,15 +70,44 @@ describe('CodingThemeMappingPanel (#187)', () => {
     expect(prompt.textContent).toContain('APPLY INSTRUCTIONS (VS Code)');
   });
 
+  it('renders the three-part flow through the shared ThemePairTriad (#196 AC1)', async () => {
+    renderPanel();
+    expect(screen.getByTestId('theme-pair-triad')).toBeInTheDocument();
+    expect(screen.getByText('Web theme')).toBeInTheDocument();
+    expect(screen.getByText('Backup terminal theme')).toBeInTheDocument();
+    expect(screen.getByText('Mapped coding theme')).toBeInTheDocument();
+    // The web part names this design; the result part waits on a backup.
+    expect(screen.getByText('apple')).toBeInTheDocument();
+    expect(screen.getByText('Select a backup theme')).toBeInTheDocument();
+
+    await act(async () => {
+      fireEvent.change(screen.getByLabelText('Backup terminal theme'), { target: { value: 'aura' } });
+    });
+    expect(screen.getByText('apple × aura')).toBeInTheDocument();
+  });
+
+  it('keeps the copy status out of role=status so the backup loader stays the only one', async () => {
+    renderPanel();
+    await act(async () => {
+      fireEvent.change(screen.getByLabelText('Backup terminal theme'), { target: { value: 'aura' } });
+    });
+    // Exactly one role=status (the backup loader). The copy status is aria-live only,
+    // so a copy outcome never clobbers the load announcement.
+    expect(screen.getAllByRole('status')).toHaveLength(1);
+    expect(screen.getByRole('button', { name: /Copy/ })).toHaveAccessibleDescription(
+      'Validate the conflict choices to copy the prompt.',
+    );
+  });
+
   it('shows an error when the backup theme fails to load', async () => {
     render(
       <CodingThemeMappingPanel websiteUrl="u" websiteName="n" websiteData={apple as unknown as DesignData} backupThemes={[auraTheme]} loadBackup={() => Promise.resolve(null)} />,
     );
     await act(async () => {
-      fireEvent.change(screen.getByLabelText('Backup theme'), { target: { value: 'aura' } });
+      fireEvent.change(screen.getByLabelText('Backup terminal theme'), { target: { value: 'aura' } });
     });
     expect(screen.getByRole('status')).toHaveTextContent('Could not load the backup theme');
-    expect(screen.getByRole('status')).toHaveClass('text-destructive');
+    expect(screen.getByRole('status')).toHaveClass('text-destructive-text');
   });
 
   it('shows an error when loading the backup theme rejects', async () => {
@@ -86,7 +115,7 @@ describe('CodingThemeMappingPanel (#187)', () => {
       <CodingThemeMappingPanel websiteUrl="u" websiteName="n" websiteData={apple as unknown as DesignData} backupThemes={[auraTheme]} loadBackup={() => Promise.reject(new Error('network'))} />,
     );
     await act(async () => {
-      fireEvent.change(screen.getByLabelText('Backup theme'), { target: { value: 'aura' } });
+      fireEvent.change(screen.getByLabelText('Backup terminal theme'), { target: { value: 'aura' } });
     });
     expect(screen.getByRole('status')).toHaveTextContent('Could not load the backup theme');
   });

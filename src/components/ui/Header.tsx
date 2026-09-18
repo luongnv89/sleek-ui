@@ -3,15 +3,46 @@ import { Link } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
 import { ThemeToggle } from './ThemeToggle'
 import { LogoMark } from './LogoMark'
+import { Button } from './Button'
 import { useTheme } from '@/context/ThemeContext'
+import { useSectionScroll } from '@/hooks/useSectionScroll'
+
+/**
+ * In-page navigation is scrollIntoView, never `<a href="#…">` — the app runs under
+ * HashRouter on the GitHub Pages base, where a hash href hijacks the route (#104/#147).
+ * The ids live on the home route only, so off-route the handler routes home first
+ * (see useSectionScroll).
+ */
+const SECTION_LINKS = [
+  { id: 'theme-pairing', label: 'Theme pairing' },
+  { id: 'copy-site', label: 'Copy a site' },
+  { id: 'how-it-works', label: 'How it works' },
+] as const
 
 export function Header() {
   const { theme, toggleTheme } = useTheme()
+  const scrollToSection = useSectionScroll()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
+  const pendingSectionRef = useRef<string | null>(null)
 
   const closeMenu = () => setIsMenuOpen(false)
+  const closeMenuThenScroll = (id: string) => {
+    pendingSectionRef.current = id
+    setIsMenuOpen(false)
+  }
+
+  useEffect(() => {
+    if (isMenuOpen || !pendingSectionRef.current) return
+
+    const frame = window.requestAnimationFrame(() => {
+      const id = pendingSectionRef.current
+      pendingSectionRef.current = null
+      if (id) scrollToSection(id)
+    })
+    return () => window.cancelAnimationFrame(frame)
+  }, [isMenuOpen, scrollToSection])
 
   // Escape closes the menu and returns focus to the toggle; Tab is trapped
   // between the toggle button and the open menu (#139).
@@ -50,14 +81,14 @@ export function Header() {
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [isMenuOpen])
 
-  const navLinkClass = "text-sm font-medium text-foreground hover:text-brand transition-colors"
-  const navLinkMutedClass = "text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+  const navLinkClass = "inline-flex min-h-[44px] items-center px-3 text-label font-medium text-foreground transition-colors hover:text-muted-foreground"
+  const navLinkMutedClass = "inline-flex min-h-[44px] items-center px-3 text-label font-medium text-muted-foreground transition-colors hover:text-foreground"
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 font-bold text-xl tracking-tight" onClick={closeMenu}>
+        <Link to="/" className="flex min-h-11 items-center gap-2 font-bold text-xl tracking-tight" onClick={closeMenu}>
           <LogoMark className="h-8 w-8 text-foreground" />
           <span className="bg-clip-text text-transparent bg-linear-to-r from-foreground to-muted-foreground">
             sleek<span className="text-brand">ui</span>
@@ -65,16 +96,20 @@ export function Header() {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden items-center gap-4 md:flex lg:gap-6">
           <Link to="/" className={navLinkClass}>
             Catalog
           </Link>
-          <button
-            onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
-            className={navLinkMutedClass}
-          >
-            How it works
-          </button>
+          {SECTION_LINKS.map(section => (
+            <button
+              key={section.id}
+              type="button"
+              onClick={() => scrollToSection(section.id)}
+              className={navLinkMutedClass}
+            >
+              {section.label}
+            </button>
+          ))}
           <a href="https://github.com/luongnv89/sleek-ui" target="_blank" rel="noopener noreferrer" className={navLinkMutedClass}>
             GitHub
           </a>
@@ -88,7 +123,7 @@ export function Header() {
           <button
             ref={menuButtonRef}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-md border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-md border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
             aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={isMenuOpen}
           >
@@ -103,39 +138,38 @@ export function Header() {
           <nav className="container mx-auto flex flex-col px-4 py-4 gap-1">
             <Link
               to="/"
-              className="block py-2.5 text-sm font-medium text-foreground hover:text-brand"
+              className="block min-h-[44px] py-2.5 text-label font-medium text-foreground hover:text-muted-foreground"
               onClick={closeMenu}
             >
               Catalog
             </Link>
-            <button
-              className="block py-2.5 text-left text-sm font-medium text-muted-foreground hover:text-foreground"
-              onClick={() => {
-                document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })
-                closeMenu()
-              }}
-            >
-              How it works
-            </button>
+            {SECTION_LINKS.map(section => (
+              <button
+                key={section.id}
+                type="button"
+                className="block min-h-[44px] py-2.5 text-left text-label font-medium text-muted-foreground hover:text-foreground"
+                onClick={() => closeMenuThenScroll(section.id)}
+              >
+                {section.label}
+              </button>
+            ))}
             <a
               href="https://github.com/luongnv89/sleek-ui"
               target="_blank"
               rel="noopener noreferrer"
-              className="block py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground"
+              className="block min-h-[44px] py-2.5 text-label font-medium text-muted-foreground hover:text-foreground"
               onClick={closeMenu}
             >
               GitHub
             </a>
             <div className="pt-2 mt-1 border-t">
-              <button
-                className="inline-flex w-full items-center justify-center rounded-md bg-brand px-4 py-2 text-sm font-semibold text-black hover:bg-brand-hover transition-colors"
-                onClick={() => {
-                  document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' })
-                  closeMenu()
-                }}
+              <Button
+                type="button"
+                className="min-h-[44px] w-full"
+                onClick={() => closeMenuThenScroll('catalog')}
               >
                 Browse Designs
-              </button>
+              </Button>
             </div>
           </nav>
         </div>

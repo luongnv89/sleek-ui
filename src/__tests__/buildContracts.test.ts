@@ -1,5 +1,6 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { compile } from 'tailwindcss';
 
 const root = join(__dirname, '..', '..');
 const read = (rel: string) => readFileSync(join(root, rel), 'utf8');
@@ -29,6 +30,21 @@ describe('bundle composition contracts (#135, #136)', () => {
     expect(loader).toContain("import.meta.glob");
     expect(loader).toContain('loadDesigns');
     expect(loader).toContain('loadDesignData');
+  });
+
+  it('keeps runtime-applied font families in generated font utilities (#196)', async () => {
+    const stylesheet = read(join('src', 'index.css'));
+    const fontTheme = stylesheet.match(/@theme \{[\s\S]*?\n\}/)?.[0];
+    expect(fontTheme).toContain('--font-sans:');
+    expect(fontTheme).toContain('--font-mono:');
+    expect(stylesheet.slice(0, stylesheet.indexOf('@theme {'))).not.toMatch(/--font-(?:sans|mono):/);
+
+    const compiled = await compile(`${fontTheme}\n@tailwind utilities;`);
+    const utilities = compiled.build(['font-sans', 'font-mono']);
+    expect(utilities).toMatch(/\.font-sans\s*\{\s*font-family:\s*var\(--font-sans\)/);
+    expect(utilities).toMatch(/\.font-mono\s*\{\s*font-family:\s*var\(--font-mono\)/);
+    expect(utilities.match(/\.font-(?:sans|mono)\s*\{[^}]+\}/g)?.join('\n')).not.toContain('Inter');
+    expect(utilities.match(/\.font-(?:sans|mono)\s*\{[^}]+\}/g)?.join('\n')).not.toContain('JetBrains Mono');
   });
 
   it('loads the detail route through React.lazy inside Suspense (#136)', () => {
