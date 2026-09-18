@@ -9,6 +9,26 @@ import { cn } from '@/lib/utils';
 export const promptBodyClassName =
   'max-h-96 overflow-auto whitespace-pre-wrap rounded-lg border border-border bg-muted/50 p-3 font-mono text-micro leading-relaxed text-foreground/90 sm:p-4 sm:text-label dark:bg-muted/30';
 
+/**
+ * Props for the prompt body element. The body is scrollable
+ * (`max-h-96 overflow-auto`), and a scrollable region has to be reachable and
+ * operable by keyboard (WCAG 2.1.1), so the focusable named region and its
+ * focus ring are built in here instead of being re-remembered at every call
+ * site. Each caller passes its own `label` — the regions must not share a name.
+ */
+export function promptBodyProps({ label, className }: { label: string; className?: string }) {
+  return {
+    role: 'region',
+    'aria-label': label,
+    tabIndex: 0,
+    className: cn(
+      promptBodyClassName,
+      'focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+      className,
+    ),
+  } as const;
+}
+
 export interface PromptSurfaceProps {
   /** Mono eyebrow naming the prompt, e.g. "Agent prompt". */
   label: string;

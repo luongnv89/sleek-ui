@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { AlertCircle, Check, Copy } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { PromptSurface, promptBodyClassName } from '@/components/ui/PromptSurface';
+import { PromptSurface, promptBodyProps } from '@/components/ui/PromptSurface';
 import { useClipboard } from '@/hooks/useClipboard';
 import { buildWebsiteCopyPrompt, normalizeWebsiteUrl } from '@/lib/websiteCopyPrompt';
 
@@ -168,15 +167,7 @@ export function CopySiteSection() {
               </Button>
             }
           >
-            <pre
-              role="region"
-              aria-label="Generated prompt"
-              tabIndex={0}
-              className={cn(
-                promptBodyClassName,
-                'break-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-              )}
-            >
+            <pre {...promptBodyProps({ label: 'Generated prompt', className: 'break-all' })}>
               {prompt}
             </pre>
           </PromptSurface>

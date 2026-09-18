@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { CopyButton } from '@/components/ui/CopyButton';
-import { PromptSurface, promptBodyClassName } from '@/components/ui/PromptSurface';
+import { PromptSurface, promptBodyProps } from '@/components/ui/PromptSurface';
 import { getRandomPrompt } from '@/lib/randomPrompt';
 
 const AGENT_STEPS = [
@@ -89,7 +89,9 @@ export function PlanSection() {
           actions={<CopyButton text={promptExample} onCopy={() => {}} className="min-h-[44px] shrink-0" />}
           footnote="The agent fetches the JSON and applies tokens, fonts, radius, and component classes automatically."
         >
-          <code className={`block break-all ${promptBodyClassName}`}>{promptExample}</code>
+          <code {...promptBodyProps({ label: 'Example prompt', className: 'block break-all' })}>
+            {promptExample}
+          </code>
         </PromptSurface>
       </div>
     </section>

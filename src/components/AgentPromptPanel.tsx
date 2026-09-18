@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Check, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { PromptSurface, promptBodyClassName } from '@/components/ui/PromptSurface';
+import { PromptSurface, promptBodyProps } from '@/components/ui/PromptSurface';
 import { useClipboard } from '@/hooks/useClipboard';
 import { buildAgentPrompt } from '@/lib/agentPrompt';
 import { APP_TARGET_LABELS } from '@/lib/appTargets';
@@ -84,7 +84,7 @@ export function AgentPromptPanel({ designUrl, collection = 'web', appTargets = [
         </Button>
       }
     >
-      <pre className={promptBodyClassName}>{agentPrompt}</pre>
+      <pre {...promptBodyProps({ label: 'Agent prompt' })}>{agentPrompt}</pre>
     </PromptSurface>
   );
 }

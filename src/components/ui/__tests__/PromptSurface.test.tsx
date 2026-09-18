@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { PromptSurface, promptBodyClassName } from '../PromptSurface';
+import { PromptSurface, promptBodyClassName, promptBodyProps } from '../PromptSurface';
 
 describe('PromptSurface (#196)', () => {
   it('renders the label and the prompt body it is given', () => {
@@ -61,6 +61,25 @@ describe('PromptSurface (#196)', () => {
     const surface = screen.getByTestId('prompt-surface');
     expect(surface).toHaveClass('rounded-xl', 'border', 'border-border', 'bg-card', 'mb-10');
     expect(screen.getByText('Agent prompt')).toHaveClass('font-mono', 'text-eyebrow', 'uppercase');
+  });
+
+  it('makes the scrollable prompt body a focusable named region (WCAG 2.1.1)', () => {
+    render(
+      <PromptSurface label="Agent prompt">
+        <pre {...promptBodyProps({ label: 'Agent prompt', className: 'break-all' })}>prompt</pre>
+      </PromptSurface>,
+    );
+
+    const region = screen.getByRole('region', { name: 'Agent prompt' });
+    expect(region).toHaveAttribute('tabindex', '0');
+    expect(region).toHaveClass(
+      'max-h-96',
+      'overflow-auto',
+      'break-all',
+      'focus-visible:ring-2',
+      'focus-visible:ring-ring',
+      'focus-visible:ring-offset-2',
+    );
   });
 
   it('exports one prompt-body class so every prompt on the site reads identically', () => {

@@ -1,7 +1,7 @@
 import { useEffect, useId, useMemo, useState } from 'react';
 import { Check, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { PromptSurface, promptBodyClassName } from '@/components/ui/PromptSurface';
+import { PromptSurface, promptBodyProps } from '@/components/ui/PromptSurface';
 import { ThemePairTriad } from '@/components/ui/ThemePairTriad';
 import { useClipboard } from '@/hooks/useClipboard';
 import { APP_TARGET_LABELS } from '@/lib/appTargets';
@@ -275,7 +275,10 @@ export function CodingThemeMappingPanel({
               </Button>
             }
           >
-            <pre data-testid="mapped-theme-prompt" className={promptBodyClassName}>
+            <pre
+              data-testid="mapped-theme-prompt"
+              {...promptBodyProps({ label: 'Mapped coding theme prompt' })}
+            >
               {prompt}
             </pre>
           </PromptSurface>
