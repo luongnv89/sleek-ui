@@ -37,6 +37,52 @@ beforeAll(() => {
   });
 });
 
+describe('Header capability navigation (#196)', () => {
+  afterEach(() => {
+    delete (Element.prototype as Partial<Element>).scrollIntoView;
+  });
+
+  it('exposes both capability sections in the desktop nav as scroll controls', () => {
+    renderHeader();
+    const nav = screen.getByRole('banner').querySelector('nav')!;
+    const labels = Array.from(nav.querySelectorAll('button')).map(b => b.textContent);
+    expect(labels).toEqual(['Theme pairing', 'Copy a site', 'How it works']);
+  });
+
+  it('scrolls to the theme-pairing section rather than navigating to a hash href', () => {
+    const scrollIntoView = jest.fn();
+    Element.prototype.scrollIntoView = scrollIntoView;
+    const target = document.createElement('div');
+    target.id = 'theme-pairing';
+    document.body.appendChild(target);
+    try {
+      renderHeader();
+      fireEvent.click(screen.getByRole('button', { name: 'Theme pairing' }));
+      expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth' });
+      // HashRouter would hijack an href="#…" — there must be none (#104/#147).
+      expect(document.querySelectorAll('a[href^="#"]')).toHaveLength(0);
+    } finally {
+      target.remove();
+    }
+  });
+
+  it('repeats both capability sections in the mobile menu and closes it on use', () => {
+    Element.prototype.scrollIntoView = jest.fn();
+    renderHeader();
+    openMenu();
+    const menu = document.querySelector('div.border-t nav')!;
+    const labels = Array.from(menu.querySelectorAll('button')).map(b => b.textContent);
+    expect(labels).toEqual(['Theme pairing', 'Copy a site', 'How it works', 'Browse Designs']);
+
+    // Scoped to the menu: "Copy a site" is deliberately in both navs.
+    const mobileCopySite = Array.from(menu.querySelectorAll('button')).find(
+      b => b.textContent === 'Copy a site',
+    )!;
+    fireEvent.click(mobileCopySite);
+    expect(screen.queryByRole('button', { name: /Close menu/i })).toBeNull();
+  });
+});
+
 describe('Header mobile menu (#139)', () => {
   it('closes on Escape and moves focus back to the toggle button', () => {
     renderHeader();

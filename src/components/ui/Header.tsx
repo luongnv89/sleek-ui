@@ -3,7 +3,21 @@ import { Link } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
 import { ThemeToggle } from './ThemeToggle'
 import { LogoMark } from './LogoMark'
+import { Button } from './Button'
 import { useTheme } from '@/context/ThemeContext'
+
+/**
+ * In-page navigation is scrollIntoView, never `<a href="#…">` — the app runs under
+ * HashRouter on the GitHub Pages base, where a hash href hijacks the route (#104/#147).
+ */
+const SECTION_LINKS = [
+  { id: 'theme-pairing', label: 'Theme pairing' },
+  { id: 'copy-site', label: 'Copy a site' },
+  { id: 'how-it-works', label: 'How it works' },
+] as const
+
+const scrollToSection = (id: string) =>
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
 
 export function Header() {
   const { theme, toggleTheme } = useTheme()
@@ -50,8 +64,8 @@ export function Header() {
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [isMenuOpen])
 
-  const navLinkClass = "text-sm font-medium text-foreground hover:text-brand transition-colors"
-  const navLinkMutedClass = "text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+  const navLinkClass = "text-label font-medium text-foreground transition-colors hover:text-muted-foreground"
+  const navLinkMutedClass = "text-label font-medium text-muted-foreground transition-colors hover:text-foreground"
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -65,16 +79,20 @@ export function Header() {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden items-center gap-4 md:flex lg:gap-6">
           <Link to="/" className={navLinkClass}>
             Catalog
           </Link>
-          <button
-            onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
-            className={navLinkMutedClass}
-          >
-            How it works
-          </button>
+          {SECTION_LINKS.map(section => (
+            <button
+              key={section.id}
+              type="button"
+              onClick={() => scrollToSection(section.id)}
+              className={navLinkMutedClass}
+            >
+              {section.label}
+            </button>
+          ))}
           <a href="https://github.com/luongnv89/sleek-ui" target="_blank" rel="noopener noreferrer" className={navLinkMutedClass}>
             GitHub
           </a>
@@ -103,39 +121,44 @@ export function Header() {
           <nav className="container mx-auto flex flex-col px-4 py-4 gap-1">
             <Link
               to="/"
-              className="block py-2.5 text-sm font-medium text-foreground hover:text-brand"
+              className="block min-h-[44px] py-2.5 text-label font-medium text-foreground hover:text-muted-foreground"
               onClick={closeMenu}
             >
               Catalog
             </Link>
-            <button
-              className="block py-2.5 text-left text-sm font-medium text-muted-foreground hover:text-foreground"
-              onClick={() => {
-                document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })
-                closeMenu()
-              }}
-            >
-              How it works
-            </button>
+            {SECTION_LINKS.map(section => (
+              <button
+                key={section.id}
+                type="button"
+                className="block min-h-[44px] py-2.5 text-left text-label font-medium text-muted-foreground hover:text-foreground"
+                onClick={() => {
+                  scrollToSection(section.id)
+                  closeMenu()
+                }}
+              >
+                {section.label}
+              </button>
+            ))}
             <a
               href="https://github.com/luongnv89/sleek-ui"
               target="_blank"
               rel="noopener noreferrer"
-              className="block py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground"
+              className="block min-h-[44px] py-2.5 text-label font-medium text-muted-foreground hover:text-foreground"
               onClick={closeMenu}
             >
               GitHub
             </a>
             <div className="pt-2 mt-1 border-t">
-              <button
-                className="inline-flex w-full items-center justify-center rounded-md bg-brand px-4 py-2 text-sm font-semibold text-black hover:bg-brand-hover transition-colors"
+              <Button
+                type="button"
+                className="min-h-[44px] w-full"
                 onClick={() => {
-                  document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' })
+                  scrollToSection('catalog')
                   closeMenu()
                 }}
               >
                 Browse Designs
-              </button>
+              </Button>
             </div>
           </nav>
         </div>

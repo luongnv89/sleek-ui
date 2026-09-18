@@ -1,9 +1,17 @@
 import { useEffect, useState } from 'react';
 import { AlertCircle, Check, Copy } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { PromptSurface, promptBodyClassName } from '@/components/ui/PromptSurface';
 import { useClipboard } from '@/hooks/useClipboard';
 import { buildWebsiteCopyPrompt, normalizeWebsiteUrl } from '@/lib/websiteCopyPrompt';
+
+/** Stable section id — in-page navigation is scrollIntoView, never #hrefs (#104/#147). */
+export const COPY_SITE_SECTION_ID = 'copy-site';
+
+/** In-product name of the capability, reused as the form's accessible name. */
+const FEATURE_NAME = 'Copy a Site';
 
 export function CopySiteSection() {
   const [url, setUrl] = useState('');
@@ -42,24 +50,57 @@ export function CopySiteSection() {
   };
 
   return (
-    <section id="copy-site" className="border-t border-border/60 px-4 py-16 sm:py-20">
-      <div className="mx-auto max-w-3xl">
-        <div className="mb-8 text-center">
-          <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">Copy a site you love</h2>
-          <p className="mt-2 mx-auto max-w-xl text-muted-foreground">
-            Paste the URL of any website. You get a prompt that walks your agent through extracting its
-            theme, style, and design details — then applying them to your project, with your approval at
-            every step.
+    <section
+      id={COPY_SITE_SECTION_ID}
+      aria-labelledby="copy-site-heading"
+      className="border-t border-border/60 bg-muted/30 px-gutter py-band sm:py-band-lg"
+    >
+      <div className="mx-auto max-w-narrow">
+        <div className="text-center">
+          <p className="font-mono text-eyebrow uppercase text-primary">{FEATURE_NAME}</p>
+          <h2
+            id="copy-site-heading"
+            className="mt-stack text-headline font-extrabold text-foreground sm:text-display"
+          >
+            Turn any website into an agent prompt
+          </h2>
+          <p className="mt-stack text-lede text-muted-foreground">
+            Paste the URL of a site whose design you want. You get a prompt that walks your agent
+            through extracting its theme, style, and design details — then applying them to your
+            project, with your approval at every step.
           </p>
         </div>
 
+        {/* What it takes in, what it hands back — before the form, so the visitor
+            knows what they are about to get (#196 AC2). */}
+        <dl className="mt-flow grid gap-stack sm:grid-cols-2">
+          <div className="rounded-lg border border-border bg-card p-gutter">
+            <dt className="font-mono text-eyebrow uppercase text-muted-foreground">You give</dt>
+            <dd className="mt-1.5 text-label font-semibold text-foreground">
+              One public website URL
+            </dd>
+            <dd className="mt-1 text-micro text-muted-foreground">
+              No account, no API key, nothing to install.
+            </dd>
+          </div>
+          <div className="rounded-lg border border-primary/40 bg-primary/5 p-gutter dark:border-primary/50 dark:bg-primary/10">
+            <dt className="font-mono text-eyebrow uppercase text-primary">You get</dt>
+            <dd className="mt-1.5 text-label font-semibold text-foreground">
+              A three-phase agent prompt
+            </dd>
+            <dd className="mt-1 text-micro text-muted-foreground">
+              Research, then plan, then implement — the agent stops for your approval between each.
+            </dd>
+          </div>
+        </dl>
+
         <form
           onSubmit={handleSubmit}
-          aria-label="Website-copy prompt generator"
-          className="flex flex-col gap-3 sm:flex-row"
+          aria-label={`${FEATURE_NAME} prompt generator`}
+          className="mt-flow flex flex-col gap-stack sm:flex-row"
         >
           <div className="flex-1">
-            <label htmlFor="copy-site-url" className="mb-1.5 block text-sm font-medium">
+            <label htmlFor="copy-site-url" className="mb-1.5 block text-label font-medium">
               Website URL
             </label>
             <Input
@@ -90,7 +131,7 @@ export function CopySiteSection() {
         </form>
 
         {formError && (
-          <p id="copy-site-url-error" role="alert" className="mt-3 text-sm text-red-600 dark:text-red-400">
+          <p id="copy-site-url-error" role="alert" className="mt-stack text-label text-red-600 dark:text-red-400">
             {formError}
           </p>
         )}
@@ -104,17 +145,17 @@ export function CopySiteSection() {
         </p>
 
         {prompt && (
-          <div className="mt-8 rounded-xl border border-border bg-background p-5 sm:p-6 shadow-xs">
-            <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-sm font-medium text-muted-foreground">
-                Copy this prompt. Paste into Claude, Cursor, or any agent.
-              </p>
+          <PromptSurface
+            className="mt-flow"
+            label="Your agent prompt"
+            description="Copy this, then paste it into Claude Code, Cursor, or any agent."
+            actions={
               <Button
                 type="button"
                 onClick={() => copy(prompt)}
                 aria-label={copyError ? `Copy failed: ${copyError}. Click to try again` : undefined}
                 title={copyError ?? undefined}
-                className="min-h-[44px] shrink-0 gap-2 self-start sm:self-auto"
+                className="min-h-[44px] shrink-0 gap-2"
               >
                 {copyError ? (
                   <AlertCircle className="h-4 w-4 text-red-500" />
@@ -125,16 +166,20 @@ export function CopySiteSection() {
                 )}
                 {copied === 'prompt' ? 'Copied!' : 'Copy'}
               </Button>
-            </div>
+            }
+          >
             <pre
               role="region"
               aria-label="Generated prompt"
               tabIndex={0}
-              className="max-h-96 overflow-auto whitespace-pre-wrap break-all rounded-lg border border-border bg-muted/60 p-3 sm:p-4 font-mono text-xs sm:text-sm text-foreground/90 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              className={cn(
+                promptBodyClassName,
+                'break-all focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+              )}
             >
               {prompt}
             </pre>
-          </div>
+          </PromptSurface>
         )}
       </div>
     </section>

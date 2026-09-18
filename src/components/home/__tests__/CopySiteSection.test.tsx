@@ -23,9 +23,36 @@ describe('CopySiteSection (#189)', () => {
     jest.useRealTimers();
   });
 
+  it('presents the capability as a named, first-class feature (#196 AC2)', () => {
+    renderSection();
+    // The in-product feature name, and the form named after it.
+    expect(screen.getByText('Copy a Site')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent(
+      'Turn any website into an agent prompt',
+    );
+    expect(screen.getByRole('form', { name: 'Copy a Site prompt generator' })).toBeInTheDocument();
+  });
+
+  it('states the input and the output before the form is used (#196 AC2)', () => {
+    renderSection();
+    expect(screen.getByText('You give')).toBeInTheDocument();
+    expect(screen.getByText('One public website URL')).toBeInTheDocument();
+    expect(screen.getByText('You get')).toBeInTheDocument();
+    expect(screen.getByText('A three-phase agent prompt')).toBeInTheDocument();
+    // The explainer precedes the form in DOM order, so it is read first.
+    const explainer = screen.getByText('You give');
+    const form = screen.getByRole('form', { name: 'Copy a Site prompt generator' });
+    expect(explainer.compareDocumentPosition(form) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('carries a stable scroll id so the header and footer can reach it', () => {
+    const { container } = renderSection();
+    expect(container.querySelector('section#copy-site')).toBeInTheDocument();
+  });
+
   it('renders a form that accepts the URL of the website to copy', () => {
     renderSection();
-    expect(screen.getByRole('form', { name: 'Website-copy prompt generator' })).toBeInTheDocument();
+    expect(screen.getByRole('form', { name: 'Copy a Site prompt generator' })).toBeInTheDocument();
     expect(screen.getByLabelText('Website URL')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Generate prompt' })).toBeInTheDocument();
     // The live region must already exist so the first announcement lands.

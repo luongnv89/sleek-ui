@@ -77,6 +77,45 @@ describe('HomePage hero section', () => {
   });
 });
 
+describe('Capability discoverability on the landing surface (#196)', () => {
+  it('names both capabilities in the hero, above the fold (AC3)', () => {
+    render(<App />);
+    const hero = screen.getByRole('heading', { level: 1 }).closest('section')!;
+    expect(hero.textContent).toMatch(/Pair a web theme with a matching coding theme and a backup terminal theme/);
+    expect(hero.textContent).toMatch(/paste any\s+URL to copy that site/);
+  });
+
+  it('offers a one-interaction hero control for each capability (AC3)', () => {
+    render(<App />);
+    expect(screen.getByRole('button', { name: 'Pair a coding theme' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Copy any site' })).toBeInTheDocument();
+  });
+
+  it('renders the paired-theming section with its three labelled parts (AC1)', () => {
+    const { container } = render(<App />);
+    expect(container.querySelector('section#theme-pairing')).toBeInTheDocument();
+    expect(screen.getByText('Web theme')).toBeInTheDocument();
+    expect(screen.getByText('Backup terminal theme')).toBeInTheDocument();
+    expect(screen.getByText('Mapped coding theme')).toBeInTheDocument();
+  });
+
+  it('renders the copy-a-site section as a named feature with its input/output (AC2)', () => {
+    const { container } = render(<App />);
+    expect(container.querySelector('section#copy-site')).toBeInTheDocument();
+    expect(screen.getByText('Copy a Site')).toBeInTheDocument();
+    expect(screen.getByText('One public website URL')).toBeInTheDocument();
+    expect(screen.getByText('A three-phase agent prompt')).toBeInTheDocument();
+  });
+
+  it('places both capability sections ahead of the design catalog (AC3)', () => {
+    const { container } = render(<App />);
+    const ids = Array.from(container.querySelectorAll('section[id]')).map(s => s.id);
+    expect(ids).toEqual(expect.arrayContaining(['how-it-works', 'theme-pairing', 'copy-site', 'catalog']));
+    expect(ids.indexOf('theme-pairing')).toBeLessThan(ids.indexOf('catalog'));
+    expect(ids.indexOf('copy-site')).toBeLessThan(ids.indexOf('catalog'));
+  });
+});
+
 describe('Pain/problem section position (issue #83)', () => {
   it('renders the pain/problem section describing what AI-built apps look like', () => {
     render(<App />);

@@ -19,7 +19,7 @@ export function PairedThemingSection() {
     <section
       id={PAIRED_THEMING_SECTION_ID}
       aria-labelledby="theme-pairing-heading"
-      className="border-t border-border/60 bg-muted/30 px-gutter py-band sm:py-band-lg"
+      className="border-t border-border/60 bg-background px-gutter py-band sm:py-band-lg"
     >
       <div className="mx-auto max-w-page">
         <div className="mx-auto max-w-narrow text-center">
