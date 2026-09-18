@@ -19,7 +19,7 @@ jest.mock('@/data/designs', () => {
   };
 });
 
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import App from '@/App';
 
 async function waitForCatalogLoaded() {
@@ -89,6 +89,39 @@ describe('Capability discoverability on the landing surface (#196)', () => {
     render(<App />);
     expect(screen.getByRole('button', { name: 'Pair a coding theme' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Copy any site' })).toBeInTheDocument();
+  });
+
+  it('reaches each capability section in one interaction from the hero (AC3)', () => {
+    const scrollIntoView = jest.fn();
+    Element.prototype.scrollIntoView = scrollIntoView;
+    try {
+      const { container } = render(<App />);
+      const scrolled = () =>
+        scrollIntoView.mock.instances.map(node => (node as HTMLElement).id);
+
+      fireEvent.click(screen.getByRole('button', { name: 'Pair a coding theme' }));
+      fireEvent.click(screen.getByRole('button', { name: 'Copy any site' }));
+      fireEvent.click(screen.getByRole('button', { name: 'See how it works ↓' }));
+
+      expect(scrolled()).toEqual(['theme-pairing', 'copy-site', 'how-it-works']);
+      // Each hero control resolves to a section that is actually on the page.
+      scrolled().forEach(id => expect(container.querySelector(`section#${id}`)).toBeInTheDocument());
+    } finally {
+      delete (Element.prototype as Partial<Element>).scrollIntoView;
+    }
+  });
+
+  it('scrolls the primary CTA to the catalog (AC5 browsing flow)', async () => {
+    const scrollIntoView = jest.fn();
+    Element.prototype.scrollIntoView = scrollIntoView;
+    try {
+      render(<App />);
+      await waitForCatalogLoaded();
+      fireEvent.click(screen.getByRole('button', { name: /Browse.*Design/ }));
+      expect((scrollIntoView.mock.instances[0] as HTMLElement).id).toBe('catalog');
+    } finally {
+      delete (Element.prototype as Partial<Element>).scrollIntoView;
+    }
   });
 
   it('renders the paired-theming section with its three labelled parts (AC1)', () => {
