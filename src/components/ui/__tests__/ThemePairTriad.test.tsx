@@ -90,6 +90,20 @@ describe('ThemePairTriad (#196)', () => {
     expect(screen.getByLabelText('Backup terminal theme').tagName).toBe('SELECT');
   });
 
+  it('wraps a long mapped-theme title instead of clipping the result the visitor came for', () => {
+    render(
+      <ThemePairTriad
+        web={{ label: 'Web theme' }}
+        backup={{ label: 'Backup terminal theme' }}
+        result={{ label: 'Mapped coding theme', title: 'Vercel Geist × Tokyo Night Storm' }}
+      />,
+    );
+
+    const title = screen.getByText('Vercel Geist × Tokyo Night Storm');
+    expect(title).toHaveClass('break-words');
+    expect(title).not.toHaveClass('truncate');
+  });
+
   it('marks the result part with the primary accent and merges an extra className', () => {
     render(
       <ThemePairTriad
@@ -101,7 +115,7 @@ describe('ThemePairTriad (#196)', () => {
     );
 
     expect(screen.getByTestId('theme-pair-triad')).toHaveClass('mt-flow');
-    expect(screen.getByText('Mapped coding theme')).toHaveClass('text-primary');
-    expect(screen.getByText('Web theme')).toHaveClass('text-muted-foreground');
+    expect(screen.getByText('Mapped coding theme')).toHaveClass('text-eyebrow', 'text-primary');
+    expect(screen.getByText('Web theme')).toHaveClass('text-eyebrow', 'text-muted-foreground');
   });
 });

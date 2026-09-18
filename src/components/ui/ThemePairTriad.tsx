@@ -54,7 +54,7 @@ function Part({ part, emphasis = false }: { part: ThemePairPart; emphasis?: bool
       )}
 
       {part.title && (
-        <p className="truncate text-label font-semibold text-foreground">{part.title}</p>
+        <p className="break-words text-label font-semibold text-foreground">{part.title}</p>
       )}
 
       {part.swatches && part.swatches.length > 0 && (

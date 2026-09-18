@@ -47,6 +47,17 @@ describe("cn()", () => {
     expect(cn("dark:bg-black", "dark:bg-white")).toBe("dark:bg-white")
   })
 
+  test("classifies the #196 --text-* scale keys as font sizes, not as colours", () => {
+    expect(cn("font-mono text-eyebrow uppercase", "text-primary")).toBe(
+      "font-mono text-eyebrow uppercase text-primary"
+    )
+    expect(cn("bg-primary text-primary-foreground", "text-label")).toBe(
+      "bg-primary text-primary-foreground text-label"
+    )
+    // One scale means a scale key still overrides a legacy Tailwind font size.
+    expect(cn("text-sm", "text-label")).toBe("text-label")
+  })
+
   test("preserves arbitrary-value classes and merges them with named-scale siblings", () => {
     expect(cn("w-[120px]", "w-8")).toBe("w-8")
     expect(cn("w-8", "w-[120px]")).toBe("w-[120px]")
