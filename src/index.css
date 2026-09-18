@@ -3,7 +3,19 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  /* Sleek-ui brand green — single source of truth for the accent color. */
+  /* ──────────────────────────────────────────────────────────────────────────
+     Interactive/accent token: `--primary`.
+     `--primary` (and only `--primary`) colors every interactive and stateful
+     surface — buttons, CTAs, pressed tabs, focus accents, emphasis. It is
+     re-themed by an applied catalog design, so the whole UI travels together.
+
+     Identity mark: `--color-brand`.
+     The fixed sleek-ui green is an IDENTITY mark, not an accent. Use it only
+     for the logo, the wordmark, and the founder monogram — never for a button,
+     a link, a hover state, a focus ring or any other interactive affordance.
+     Known residual (#196): SocialProofSection still tints its three stat digits
+     with `text-brand`; that file was out of scope for the #196 redesign.
+     ────────────────────────────────────────────────────────────────────────── */
   --color-brand: #00FF41;
   --color-brand-hover: #00e639;
   --color-brand-active: #00cc33;
@@ -35,6 +47,53 @@
   --font-sans: Inter, system-ui, sans-serif;
   --font-heading: Inter, system-ui, sans-serif;
   --font-mono: JetBrains Mono, monospace;
+
+  /* ── Type scale (#196) ───────────────────────────────────────────────────
+     One ratio-based scale for every surface. `eyebrow` is the signature
+     motif: a mono, uppercase, wide-tracked section label. Additive — no
+     existing Tailwind size name is redefined. */
+  --text-eyebrow: 0.6875rem;
+  --text-eyebrow--line-height: 1.2;
+  --text-eyebrow--letter-spacing: 0.16em;
+  --text-eyebrow--font-weight: 600;
+  --text-micro: 0.75rem;
+  --text-micro--line-height: 1.5;
+  --text-label: 0.8125rem;
+  --text-label--line-height: 1.5;
+  --text-body: 0.9375rem;
+  --text-body--line-height: 1.65;
+  --text-lede: 1.0625rem;
+  --text-lede--line-height: 1.6;
+  --text-title: 1.375rem;
+  --text-title--line-height: 1.25;
+  --text-title--letter-spacing: -0.012em;
+  --text-headline: 1.875rem;
+  --text-headline--line-height: 1.15;
+  --text-headline--letter-spacing: -0.022em;
+  --text-display: 2.5rem;
+  --text-display--line-height: 1.08;
+  --text-display--letter-spacing: -0.03em;
+  --text-hero: 3.5rem;
+  --text-hero--line-height: 1.02;
+  --text-hero--letter-spacing: -0.035em;
+
+  /* ── Spacing rhythm (#196) ───────────────────────────────────────────────
+     Four named steps so every band, block and card breathes on the same
+     grid instead of ad-hoc py-16/py-20/mt-8 pairs. */
+  --spacing-gutter: 1rem;
+  --spacing-stack: 0.75rem;
+  --spacing-flow: 1.5rem;
+  --spacing-band: 4rem;
+  --spacing-band-lg: 5.5rem;
+
+  /* ── Container scale (#196) ──────────────────────────────────────────────
+     Three measures: reading width, standard page, full-bleed catalog.
+     NOTE: `max-w-*` resolves the spacing namespace too, so these names must
+     never collide with a `--spacing-*` name — `--container-band` would be
+     shadowed by `--spacing-band` and silently resolve to 4rem. */
+  --container-narrow: 48rem;
+  --container-page: 72rem;
+  --container-wide: 84rem;
 }
 
 @layer base {
@@ -60,13 +119,6 @@
     --input: 240 5.9% 90%;
     --ring: 240 5.9% 10%;
     --radius: 0.75rem;
-
-    /* Catalog-specific extras */
-    --header-height: 4rem;
-    --nav-height: 3rem;
-    --sidebar-width: 280px;
-    --transition-fast: 150ms ease;
-    --transition-normal: 200ms ease;
   }
 
   .dark {
@@ -90,13 +142,6 @@
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
-
-    /* Catalog-specific extras */
-    --header-height: 4rem;
-    --nav-height: 3rem;
-    --sidebar-width: 280px;
-    --transition-fast: 150ms ease;
-    --transition-normal: 200ms ease;
   }
 }
 
@@ -116,7 +161,7 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: var(--font-sans, Inter, system-ui, sans-serif);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -147,28 +192,5 @@
 
   .text-pretty {
     text-wrap: pretty;
-  }
-
-  /* Focus visible for accessibility */
-  .focus-visible {
-    outline: none;
-    ring-width: 2px;
-    ring-color: hsl(var(--ring));
-    ring-offset-width: 2px;
-    ring-offset-color: hsl(var(--background));
-  }
-
-  /* Gradient text for headings */
-  .gradient-text {
-    background-image: linear-gradient(to right, hsl(var(--foreground)), hsl(var(--muted-foreground)));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  /* Glassmorphism effect */
-  .glass {
-    background-color: hsla(var(--background), 0.8);
-    backdrop-filter: blur(12px);
-    border-color: hsla(var(--border), 0.5);
   }
 }
