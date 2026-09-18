@@ -55,6 +55,17 @@ describe('Header capability navigation (#196)', () => {
     expect(labels).toEqual(['Theme pairing', 'Copy a site', 'How it works']);
   });
 
+  it('gives every desktop navigation control a padded 44px target', () => {
+    renderHeader();
+    const nav = screen.getByRole('banner').querySelector('nav')!;
+    const controls = nav.querySelectorAll(':scope > a, :scope > button');
+
+    expect(controls).toHaveLength(5);
+    controls.forEach(control => {
+      expect(control).toHaveClass('inline-flex', 'min-h-[44px]', 'items-center', 'px-3');
+    });
+  });
+
   it('scrolls to the theme-pairing section rather than navigating to a hash href', () => {
     const scrollIntoView = jest.fn();
     Element.prototype.scrollIntoView = scrollIntoView;
@@ -70,6 +81,11 @@ describe('Header capability navigation (#196)', () => {
     } finally {
       target.remove();
     }
+  });
+
+  it('gives the mobile menu trigger a 44px touch target', () => {
+    renderHeader();
+    expect(screen.getByRole('button', { name: 'Open menu' })).toHaveClass('h-11', 'w-11');
   });
 
   it('repeats both capability sections in the mobile menu and closes it on use', () => {

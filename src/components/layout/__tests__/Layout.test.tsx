@@ -49,6 +49,17 @@ describe('Layout (#120)', () => {
     );
   });
 
+  it('gives every footer navigation control an aligned 44px target', () => {
+    renderLayout();
+    const footer = screen.getByRole('contentinfo');
+    const controls = footer.querySelectorAll('nav > a, nav > button');
+
+    expect(controls).toHaveLength(6);
+    controls.forEach(control => {
+      expect(control).toHaveClass('inline-flex', 'min-h-[44px]', 'items-center', 'px-2');
+    });
+  });
+
   it('marks the static Brand page link as external so the SPA route survives (#141)', () => {
     renderLayout();
     const footer = screen.getByRole('contentinfo');

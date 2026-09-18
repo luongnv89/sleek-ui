@@ -20,6 +20,7 @@ export function Layout() {
   const { designs, loading } = useDesignCatalog()
   const scrollToSection = useSectionScroll()
   const designCount = loading ? null : designs.length
+  const footerNavClass = 'inline-flex min-h-[44px] items-center px-2 transition-colors hover:text-foreground'
   return (
     <div className="min-h-screen bg-background text-foreground font-sans">
       <Header />
@@ -43,20 +44,20 @@ export function Layout() {
             </a>
           </div>
           <nav className="mt-flow flex flex-wrap justify-center gap-x-5 gap-y-1 text-label text-muted-foreground">
-            <Link to="/" className="transition-colors hover:text-foreground">Catalog</Link>
+            <Link to="/" className={footerNavClass}>Catalog</Link>
             {FOOTER_SECTIONS.map(section => (
               <button
                 key={section.id}
                 type="button"
                 onClick={() => scrollToSection(section.id)}
-                className="transition-colors hover:text-foreground"
+                className={footerNavClass}
               >
                 {section.label}
               </button>
             ))}
-            <a href="https://github.com/luongnv89/sleek-ui" className="transition-colors hover:text-foreground" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <a href="https://github.com/luongnv89/sleek-ui" className={footerNavClass} target="_blank" rel="noopener noreferrer">GitHub</a>
             {/* Static page outside the SPA — open in a new tab so the SPA route is preserved (#141) */}
-            <a href="/sleek-ui/logo/brand-showcase.html" className="hover:text-foreground transition-colors" target="_blank" rel="noopener noreferrer">Brand</a>
+            <a href="/sleek-ui/logo/brand-showcase.html" className={footerNavClass} target="_blank" rel="noopener noreferrer">Brand</a>
           </nav>
           <p className="mt-flow text-micro text-muted-foreground opacity-60">
             Free • Open source • {designCount !== null ? `${designCount}+ ${designCount === 1 ? 'design' : 'designs'}` : 'designs'}

@@ -81,8 +81,8 @@ export function Header() {
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [isMenuOpen])
 
-  const navLinkClass = "text-label font-medium text-foreground transition-colors hover:text-muted-foreground"
-  const navLinkMutedClass = "text-label font-medium text-muted-foreground transition-colors hover:text-foreground"
+  const navLinkClass = "inline-flex min-h-[44px] items-center px-3 text-label font-medium text-foreground transition-colors hover:text-muted-foreground"
+  const navLinkMutedClass = "inline-flex min-h-[44px] items-center px-3 text-label font-medium text-muted-foreground transition-colors hover:text-foreground"
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -123,7 +123,7 @@ export function Header() {
           <button
             ref={menuButtonRef}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-md border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-md border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
             aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={isMenuOpen}
           >
