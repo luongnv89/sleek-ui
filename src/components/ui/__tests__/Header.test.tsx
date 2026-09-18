@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from '@/context/ThemeContext';
@@ -36,6 +36,11 @@ beforeAll(() => {
       dispatchEvent: jest.fn(),
     })),
   });
+  window.requestAnimationFrame = callback => {
+    callback(0);
+    return 1;
+  };
+  window.cancelAnimationFrame = jest.fn();
 });
 
 describe('Header capability navigation (#196)', () => {
@@ -83,11 +88,22 @@ describe('Header capability navigation (#196)', () => {
     expect(screen.queryByRole('button', { name: /Close menu/i })).toBeNull();
   });
 
-  it('moves focus to the destination after keyboard activation closes the mobile menu', async () => {
+  it('closes the mobile menu before scrolling and focusing the destination', async () => {
     const user = userEvent.setup();
-    Element.prototype.scrollIntoView = jest.fn();
+    const order: string[] = [];
+    let frameCallback: FrameRequestCallback | undefined;
+    const defaultRequestAnimationFrame = window.requestAnimationFrame;
+    const defaultCancelAnimationFrame = window.cancelAnimationFrame;
+    window.requestAnimationFrame = jest.fn(callback => {
+      order.push('scheduled');
+      frameCallback = callback;
+      return 2;
+    });
+    window.cancelAnimationFrame = jest.fn();
+    Element.prototype.scrollIntoView = jest.fn(() => order.push('scroll'));
     const target = document.createElement('section');
     target.id = 'theme-pairing';
+    target.addEventListener('focus', () => order.push('focus'));
     document.body.appendChild(target);
     try {
       renderHeader();
@@ -101,9 +117,18 @@ describe('Header capability navigation (#196)', () => {
       await user.keyboard('{Enter}');
 
       expect(screen.queryByRole('button', { name: /Close menu/i })).toBeNull();
+      expect(order).toEqual(['scheduled']);
+      expect(target).not.toHaveAttribute('tabindex');
+      expect(document.activeElement).not.toBe(target);
+
+      act(() => frameCallback?.(0));
+
+      expect(order).toEqual(['scheduled', 'scroll', 'focus']);
       expect(target).toHaveAttribute('tabindex', '-1');
       expect(document.activeElement).toBe(target);
     } finally {
+      window.requestAnimationFrame = defaultRequestAnimationFrame;
+      window.cancelAnimationFrame = defaultCancelAnimationFrame;
       target.remove();
     }
   });

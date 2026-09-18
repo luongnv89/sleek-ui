@@ -25,8 +25,24 @@ export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
+  const pendingSectionRef = useRef<string | null>(null)
 
   const closeMenu = () => setIsMenuOpen(false)
+  const closeMenuThenScroll = (id: string) => {
+    pendingSectionRef.current = id
+    setIsMenuOpen(false)
+  }
+
+  useEffect(() => {
+    if (isMenuOpen || !pendingSectionRef.current) return
+
+    const frame = window.requestAnimationFrame(() => {
+      const id = pendingSectionRef.current
+      pendingSectionRef.current = null
+      if (id) scrollToSection(id)
+    })
+    return () => window.cancelAnimationFrame(frame)
+  }, [isMenuOpen, scrollToSection])
 
   // Escape closes the menu and returns focus to the toggle; Tab is trapped
   // between the toggle button and the open menu (#139).
@@ -132,10 +148,7 @@ export function Header() {
                 key={section.id}
                 type="button"
                 className="block min-h-[44px] py-2.5 text-left text-label font-medium text-muted-foreground hover:text-foreground"
-                onClick={() => {
-                  scrollToSection(section.id)
-                  closeMenu()
-                }}
+                onClick={() => closeMenuThenScroll(section.id)}
               >
                 {section.label}
               </button>
@@ -153,10 +166,7 @@ export function Header() {
               <Button
                 type="button"
                 className="min-h-[44px] w-full"
-                onClick={() => {
-                  scrollToSection('catalog')
-                  closeMenu()
-                }}
+                onClick={() => closeMenuThenScroll('catalog')}
               >
                 Browse Designs
               </Button>

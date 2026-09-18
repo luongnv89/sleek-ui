@@ -7,9 +7,55 @@ const SAFE_TOKEN_VALUE = /^[A-Za-z0-9 _%.,'"#+/-]+$/;
 const SAFE_TOKEN_KEY = /^[A-Za-z0-9_-]+$/;
 const HSL_TOKEN = /^(-?(?:\d+(?:\.\d+)?|\.\d+))\s+(-?(?:\d+(?:\.\d+)?|\.\d+))%\s+(-?(?:\d+(?:\.\d+)?|\.\d+))%$/;
 const MIN_TEXT_CONTRAST = 4.5;
+const MIN_FOCUS_CONTRAST = 3;
+const SAFE_COLOR_FALLBACKS = {
+  light: {
+    background: '0 0% 100%',
+    foreground: '0 0% 9%',
+    card: '0 0% 100%',
+    'card-foreground': '0 0% 9%',
+    popover: '0 0% 100%',
+    'popover-foreground': '0 0% 9%',
+    muted: '0 0% 96%',
+    'muted-foreground': '0 0% 35%',
+    primary: '0 0% 9%',
+    'primary-foreground': '0 0% 100%',
+    secondary: '0 0% 96%',
+    'secondary-foreground': '0 0% 9%',
+    accent: '0 0% 96%',
+    'accent-foreground': '0 0% 9%',
+    destructive: '0 0% 9%',
+    'destructive-foreground': '0 0% 100%',
+    border: '0 0% 85%',
+    input: '0 0% 85%',
+    ring: '0 0% 20%',
+  },
+  dark: {
+    background: '0 0% 4%',
+    foreground: '0 0% 98%',
+    card: '0 0% 4%',
+    'card-foreground': '0 0% 98%',
+    popover: '0 0% 4%',
+    'popover-foreground': '0 0% 98%',
+    muted: '0 0% 15%',
+    'muted-foreground': '0 0% 70%',
+    primary: '0 0% 98%',
+    'primary-foreground': '0 0% 9%',
+    secondary: '0 0% 15%',
+    'secondary-foreground': '0 0% 98%',
+    accent: '0 0% 15%',
+    'accent-foreground': '0 0% 98%',
+    destructive: '0 0% 98%',
+    'destructive-foreground': '0 0% 9%',
+    border: '0 0% 25%',
+    input: '0 0% 25%',
+    ring: '0 0% 80%',
+  },
+} satisfies Record<'light' | 'dark', Record<string, string>>;
 export const ALLOWED_FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 
 type Rgb = [number, number, number];
+type ColorMode = keyof typeof SAFE_COLOR_FALLBACKS;
 
 function hslToRgb(value: string | undefined): Rgb | null {
   const match = value?.trim().match(HSL_TOKEN);
@@ -59,6 +105,29 @@ export function getContrastRatio(first: string, second: string): number | null {
   return firstRgb && secondRgb ? rgbContrast(firstRgb, secondRgb) : null;
 }
 
+/** Contrast for text over an alpha-composited token, matching Tailwind's `/opacity` states. */
+export function getOverlayContrastRatio(
+  text: string,
+  overlay: string,
+  background: string,
+  opacity: number,
+): number | null {
+  const textRgb = hslToRgb(text);
+  const overlayRgb = hslToRgb(overlay);
+  const backgroundRgb = hslToRgb(background);
+  if (!textRgb || !overlayRgb || !backgroundRgb || opacity < 0 || opacity > 1) return null;
+  return rgbContrast(textRgb, composite(overlayRgb, backgroundRgb, opacity));
+}
+
+function orderedLightnesses(original: number): number[] {
+  return [
+    original,
+    ...Array.from({ length: 1001 }, (_, index) => index / 10).sort(
+      (first, second) => Math.abs(first - original) - Math.abs(second - original),
+    ),
+  ];
+}
+
 function readableForeground(
   preferred: string | undefined,
   primary: Rgb,
@@ -73,33 +142,93 @@ function readableForeground(
   }) ?? null;
 }
 
+function deriveAccessibleRing(scale: Record<string, string>, surfaces: Rgb[]): string | null {
+  const preferredMatch = scale.ring?.trim().match(HSL_TOKEN);
+  const candidates = [
+    scale.ring,
+    scale.primary,
+    scale.foreground,
+    scale['primary-foreground'],
+    '0 0% 0%',
+    '0 0% 100%',
+  ];
+  if (preferredMatch) {
+    const hue = Number(preferredMatch[1]);
+    const saturation = Number(preferredMatch[2]);
+    candidates.push(
+      ...orderedLightnesses(Number(preferredMatch[3])).map(
+        lightness => `${hue} ${saturation}% ${Number(lightness.toFixed(1))}%`,
+      ),
+    );
+  }
+
+  return candidates.find((value, index) => {
+    if (!value || candidates.indexOf(value) !== index) return false;
+    const ring = hslToRgb(value);
+    return ring !== null && surfaces.every(surface => rgbContrast(ring, surface) >= MIN_FOCUS_CONTRAST);
+  }) ?? null;
+}
+
+/** Postcondition shared by runtime normalization and catalog-wide regressions. */
+export function isAccessibleColorScale(scale: Record<string, string>): boolean {
+  const background = hslToRgb(scale.background);
+  const card = hslToRgb(scale.card);
+  const muted = hslToRgb(scale.muted);
+  const primary = hslToRgb(scale.primary);
+  const foreground = hslToRgb(scale['primary-foreground']);
+  const ring = hslToRgb(scale.ring);
+  if (!background || !card || !muted || !primary || !foreground || !ring) return false;
+
+  const accentSurfaces = [
+    background,
+    card,
+    composite(muted, background, 0.3),
+    composite(primary, background, 0.1),
+    composite(primary, card, 0.1),
+  ];
+  const controlSurfaces = [
+    primary,
+    composite(primary, background, 0.9),
+    composite(primary, card, 0.9),
+  ];
+
+  return accentSurfaces.every(surface => rgbContrast(primary, surface) >= MIN_TEXT_CONTRAST)
+    && controlSurfaces.every(surface => rgbContrast(foreground, surface) >= MIN_TEXT_CONTRAST)
+    && [background, card].every(surface => rgbContrast(ring, surface) >= MIN_FOCUS_CONTRAST);
+}
+
+function fallbackScale(scale: Record<string, string>, mode?: ColorMode): Record<string, string> {
+  const background = hslToRgb(scale.background);
+  const fallbackMode = mode ?? (background && luminance(background) < 0.5 ? 'dark' : 'light');
+  return { ...scale, ...SAFE_COLOR_FALLBACKS[fallbackMode] };
+}
+
 /**
  * Applied designs can contain visually valid swatches that are not valid UI
  * pairs. Derive a same-hue primary that remains readable as both small accent
  * text and a button surface, including the translucent backgrounds used by the
  * catalog. The catalog JSON itself remains untouched.
  */
-export function withAccessiblePrimary(scale: Record<string, string>): Record<string, string> {
+export function withAccessiblePrimary(
+  scale: Record<string, string>,
+  mode?: ColorMode,
+): Record<string, string> {
   const primaryMatch = scale.primary?.trim().match(HSL_TOKEN);
   const background = hslToRgb(scale.background);
-  if (!primaryMatch || !background) return scale;
+  if (!primaryMatch || !background) return fallbackScale(scale, mode);
 
-  const card = hslToRgb(scale.card) ?? background;
-  const muted = hslToRgb(scale.muted);
-  const fixedSurfaces = [background, card];
-  if (muted) fixedSurfaces.push(composite(muted, background, 0.3));
-
+  const normalizedSurfaces = {
+    ...scale,
+    card: hslToRgb(scale.card) ? scale.card : scale.background,
+    muted: hslToRgb(scale.muted) ? scale.muted : scale.background,
+  };
+  const card = hslToRgb(normalizedSurfaces.card)!;
+  const muted = hslToRgb(normalizedSurfaces.muted)!;
+  const fixedSurfaces = [background, card, composite(muted, background, 0.3)];
   const hue = Number(primaryMatch[1]);
   const saturation = Number(primaryMatch[2]);
-  const originalLightness = Number(primaryMatch[3]);
-  const lightnesses = [
-    originalLightness,
-    ...Array.from({ length: 1001 }, (_, index) => index / 10).sort(
-      (first, second) => Math.abs(first - originalLightness) - Math.abs(second - originalLightness),
-    ),
-  ];
 
-  for (const lightness of lightnesses) {
+  for (const lightness of orderedLightnesses(Number(primaryMatch[3]))) {
     const candidate = `${hue} ${saturation}% ${Number(lightness.toFixed(1))}%`;
     const primary = hslToRgb(candidate)!;
     const accentSurfaces = [
@@ -111,21 +240,26 @@ export function withAccessiblePrimary(scale: Record<string, string>): Record<str
 
     // Primary controls use a 90%-opaque hover surface. Validate that state too,
     // rather than making only the resting CTA readable.
-    const controlSurfaces = [
-      composite(primary, background, 0.9),
-      composite(primary, card, 0.9),
-    ];
     const foreground = readableForeground(
       scale['primary-foreground'],
       primary,
-      controlSurfaces,
+      [composite(primary, background, 0.9), composite(primary, card, 0.9)],
     );
     if (!foreground) continue;
 
-    return { ...scale, primary: candidate, 'primary-foreground': foreground };
+    const candidateScale = {
+      ...normalizedSurfaces,
+      primary: candidate,
+      'primary-foreground': foreground,
+    };
+    const ring = deriveAccessibleRing(candidateScale, [background, card]);
+    if (!ring) break;
+
+    const result = { ...candidateScale, ring };
+    if (isAccessibleColorScale(result)) return result;
   }
 
-  return scale;
+  return fallbackScale(scale, mode);
 }
 
 interface AppliedDesign {
@@ -221,11 +355,11 @@ function removeFonts() {
 function buildCssVars(data: DesignData): string {
   const { colors, radius, typography } = data.tokens;
 
-  const lightVars = Object.entries(withAccessiblePrimary(colors.light || {}))
+  const lightVars = Object.entries(withAccessiblePrimary(colors.light || {}, 'light'))
     .map(([k, v]) => `  --${k}: ${v};`)
     .join('\n');
 
-  const darkVars = Object.entries(withAccessiblePrimary(colors.dark || {}))
+  const darkVars = Object.entries(withAccessiblePrimary(colors.dark || {}, 'dark'))
     .map(([k, v]) => `  --${k}: ${v};`)
     .join('\n');
 

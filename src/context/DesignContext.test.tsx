@@ -1,12 +1,17 @@
 import { memo } from 'react';
+import { readFileSync, readdirSync } from 'fs';
+import { join } from 'path';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import {
   DesignProvider,
   getContrastRatio,
+  getOverlayContrastRatio,
+  isAccessibleColorScale,
   useDesign,
   withAccessiblePrimary,
 } from './DesignContext';
 import elevenLabs from '@/data/designs/elevenlabs.json';
+import linear from '@/data/designs/linear.app.json';
 import type { DesignData, TransformedDesign } from '@/types/design';
 
 const baseDesign: DesignData = {
@@ -94,7 +99,7 @@ describe('DesignContext validation (#102)', () => {
     expect(css).toContain('.dark {');
   });
 
-  it('derives readable primary text and control pairs for the real ElevenLabs theme', () => {
+  it('derives readable primary, hover, and focus pairs for the real ElevenLabs theme', () => {
     const data = elevenLabs as unknown as DesignData;
     render(
       <DesignProvider>
@@ -106,18 +111,71 @@ describe('DesignContext validation (#102)', () => {
     const css = getAppliedStyle()?.textContent ?? '';
     for (const mode of ['light', 'dark'] as const) {
       const source = data.tokens.colors[mode];
-      const normalized = withAccessiblePrimary(source);
+      const normalized = withAccessiblePrimary(source, mode);
+      expect(isAccessibleColorScale(normalized)).toBe(true);
       expect(getContrastRatio(normalized.primary, normalized.background)).toBeGreaterThanOrEqual(4.5);
       expect(
-        getContrastRatio(normalized.primary, normalized['primary-foreground']),
+        getOverlayContrastRatio(
+          normalized['primary-foreground'],
+          normalized.primary,
+          normalized.background,
+          0.9,
+        ),
       ).toBeGreaterThanOrEqual(4.5);
+      expect(getContrastRatio(normalized.ring, normalized.background)).toBeGreaterThanOrEqual(3);
+      expect(getContrastRatio(normalized.ring, normalized.card)).toBeGreaterThanOrEqual(3);
       expect(css).toContain(`--primary: ${normalized.primary};`);
       expect(css).toContain(`--primary-foreground: ${normalized['primary-foreground']};`);
+      expect(css).toContain(`--ring: ${normalized.ring};`);
     }
 
-    expect(withAccessiblePrimary(data.tokens.colors.light).primary).not.toBe(
+    expect(withAccessiblePrimary(data.tokens.colors.light, 'light').primary).not.toBe(
       data.tokens.colors.light.primary,
     );
+  });
+
+  it('uses a complete safe fallback for Linear dark and impossible mixed surfaces', () => {
+    const linearDark = withAccessiblePrimary(linear.tokens.colors.dark, 'dark');
+    expect(isAccessibleColorScale(linearDark)).toBe(true);
+    expect(linearDark.background).not.toBe(linear.tokens.colors.dark.background);
+    expect(linearDark.card).not.toBe(linear.tokens.colors.dark.card);
+
+    const impossible = {
+      background: '0 0% 100%',
+      card: '0 0% 0%',
+      muted: '0 0% 50%',
+      primary: '220 80% 50%',
+      'primary-foreground': '0 0% 100%',
+      popover: '0 0% 0%',
+      'popover-foreground': '0 0% 0%',
+      destructive: '0 0% 100%',
+      'destructive-foreground': '0 0% 100%',
+      ring: '0 0% 50%',
+    };
+    const normalized = withAccessiblePrimary(impossible, 'light');
+    expect(normalized).not.toEqual(impossible);
+    expect(normalized.background).toBe('0 0% 100%');
+    expect(normalized.card).toBe('0 0% 100%');
+    expect(normalized.popover).toBe('0 0% 100%');
+    expect(normalized.destructive).toBe('0 0% 9%');
+    expect(getContrastRatio(normalized.destructive, normalized['destructive-foreground']))
+      .toBeGreaterThanOrEqual(4.5);
+    expect(isAccessibleColorScale(normalized)).toBe(true);
+  });
+
+  it('normalizes every catalog color mode to the accessibility postcondition', () => {
+    const designsDirectory = join(process.cwd(), 'src/data/designs');
+    const failures: string[] = [];
+
+    for (const file of readdirSync(designsDirectory).filter(name => name.endsWith('.json'))) {
+      const data = JSON.parse(readFileSync(join(designsDirectory, file), 'utf8')) as DesignData;
+      for (const mode of ['light', 'dark'] as const) {
+        const normalized = withAccessiblePrimary(data.tokens.colors[mode], mode);
+        if (!isAccessibleColorScale(normalized)) failures.push(`${file}:${mode}`);
+      }
+    }
+
+    expect(failures).toEqual([]);
   });
 
   it.each([
