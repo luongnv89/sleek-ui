@@ -191,6 +191,15 @@ export type Collection = 'web' | 'terminal' | 'coding';
 
 export type AppTarget = 'pi' | 'ghostty' | 'iterm2' | 'warp' | 'opencode' | 'vscode';
 
+/**
+ * Apply-prompt targets offered for every theme. They are added in code rather
+ * than declared in design JSON, so they never appear in `appTargets` (#203, #202).
+ */
+export type UniversalAppTarget = 'claude-code' | 'omarchy' | 'ai-tool';
+
+/** Any apply-prompt target: declared by a design file or offered for every theme. */
+export type AnyAppTarget = AppTarget | UniversalAppTarget;
+
 export interface TransformedDesign {
   slug: string;
   name: string;

@@ -221,3 +221,23 @@ describe('buildMappedThemePrompt (#187)', () => {
     expect(cleanPrompt).toContain('(none — derive from the colors above)');
   });
 });
+
+describe('buildMappedThemePrompt universal targets (#203, #202)', () => {
+  const base = { websiteUrl: 'w', websiteName: 'apple', backupUrl: 'b', backupName: 'aura' };
+
+  it('appends Claude Code apply instructions to a mapped website theme', () => {
+    const prompt = buildMappedThemePrompt({ ...base, mapped: mapWebsiteToCodingTheme(website, backup), appTarget: 'claude-code' });
+    expect(prompt).toContain('APPLY INSTRUCTIONS (Claude Code)');
+    expect(prompt).toContain('~/.claude/themes/<theme-slug>.json');
+  });
+
+  it('appends Omarchy OS instructions for a light mapped theme without a stray dark palette', () => {
+    const lightSite = { ...website, defaultMode: 'light' } as DesignData;
+    const mapped = mapWebsiteToCodingTheme(lightSite, backup, { mode: 'keep' });
+    expect(mapped.defaultMode).toBe('light');
+    const prompt = buildMappedThemePrompt({ ...base, mapped, appTarget: 'omarchy' });
+    expect(prompt).toContain('APPLY INSTRUCTIONS (Omarchy OS)');
+    expect(prompt).toContain('omarchy-theme-set <theme-slug>');
+    expect(prompt).not.toContain('tokens.colors.dark');
+  });
+});

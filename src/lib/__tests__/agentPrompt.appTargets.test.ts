@@ -1,5 +1,5 @@
 import { buildAgentPrompt, buildAppThemePrompt } from '../agentPrompt';
-import { APP_TARGETS } from '../appTargets';
+import { APP_TARGETS, getAvailableAppTargets } from '../appTargets';
 import type { DesignData } from '../../types/design';
 
 const makeDesignData = (): DesignData =>
@@ -58,5 +58,52 @@ describe('buildAgentPrompt app targets (#181)', () => {
     expect([...APP_TARGETS].sort()).toEqual(
       ['ghostty', 'iterm2', 'opencode', 'pi', 'vscode', 'warp'].sort(),
     );
+  });
+});
+
+describe('universal apply prompts (#203, #202)', () => {
+  const url = 'https://luongnv.com/sleek-ui/designs/terminal-pi-dracula.json';
+  const build = (appTarget: 'claude-code' | 'omarchy' | 'ai-tool') =>
+    buildAgentPrompt(url, { collection: 'terminal', appTarget, designData: makeDesignData() });
+
+  it('builds a Claude Code theme-change prompt that writes a custom theme and selects it with /theme', () => {
+    const prompt = build('claude-code');
+    expect(prompt).toContain('Fetch the app theme at:');
+    expect(prompt).toContain('This is a Claude Code application theme');
+    expect(prompt).toContain('APPLY INSTRUCTIONS (Claude Code)');
+    expect(prompt).toContain('~/.claude/themes/<theme-slug>.json');
+    expect(prompt).toMatch(/"base": "dark" or "light"/);
+    expect(prompt).toContain('"overrides"');
+    expect(prompt).toContain('#rrggbb');
+    expect(prompt).toContain('/theme');
+    expect(prompt).toContain('custom:<theme-slug>');
+    // Carries the theme values the agent needs to fill the overrides.
+    expect(prompt).toContain('231 15% 18%');
+  });
+
+  it('builds an Omarchy OS prompt that writes colors.toml, applies it and verifies the change', () => {
+    const prompt = build('omarchy');
+    expect(prompt).toContain('APPLY INSTRUCTIONS (Omarchy OS)');
+    expect(prompt).toContain('~/.config/omarchy/themes/<theme-slug>/colors.toml');
+    for (const key of ['mode', 'accent', 'selection', 'muted', 'dark_background', 'lighter_background', 'bright_foreground', 'bright_magenta']) {
+      expect(prompt).toContain(key);
+    }
+    expect(prompt).toContain('omarchy-theme-set <theme-slug>');
+    expect(prompt).toContain('omarchy-theme-current');
+    expect(prompt).toMatch(/visibly switch/);
+  });
+
+  it('builds a general AI tool prompt that is clearly marked as a placeholder', () => {
+    const prompt = build('ai-tool');
+    expect(prompt).toContain('APPLY INSTRUCTIONS (General AI tool (placeholder))');
+    expect(prompt).toMatch(/PLACEHOLDER/);
+  });
+
+  it('gives every offered target, declared or universal, its own apply instructions', () => {
+    for (const target of getAvailableAppTargets(APP_TARGETS)) {
+      const prompt = buildAppThemePrompt('https://example.com/x.json', target, makeDesignData());
+      expect(prompt).toContain('APPLY INSTRUCTIONS (');
+      expect(prompt).toContain('Also follow agentInstructions.steps');
+    }
   });
 });

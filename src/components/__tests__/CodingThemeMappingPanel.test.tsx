@@ -120,3 +120,37 @@ describe('CodingThemeMappingPanel (#187)', () => {
     expect(screen.getByRole('status')).toHaveTextContent('Could not load the backup theme');
   });
 });
+
+describe('CodingThemeMappingPanel universal targets (#203, #202)', () => {
+  it('offers Claude Code, Omarchy OS and the placeholder for the mapped theme', async () => {
+    renderPanel();
+    await act(async () => {
+      fireEvent.change(screen.getByLabelText('Backup terminal theme'), { target: { value: 'aura' } });
+    });
+    const options = Array.from((screen.getByLabelText('App target') as HTMLSelectElement).options).map(o => o.textContent);
+    expect(options).toEqual(['Any app', 'Pi', 'VS Code', 'Claude Code', 'Omarchy OS', 'General AI tool (placeholder)']);
+
+    fireEvent.change(screen.getByLabelText('App target'), { target: { value: 'omarchy' } });
+    const prompt = screen.getByTestId('mapped-theme-prompt');
+    expect(prompt.textContent).toContain('APPLY INSTRUCTIONS (Omarchy OS)');
+    fireEvent.change(screen.getByLabelText('App target'), { target: { value: 'claude-code' } });
+    expect(prompt.textContent).toContain('APPLY INSTRUCTIONS (Claude Code)');
+  });
+
+  it('shows the app target select even when the backup declares no targets', async () => {
+    render(
+      <CodingThemeMappingPanel
+        websiteUrl="u"
+        websiteName="apple"
+        websiteData={apple as unknown as DesignData}
+        backupThemes={[{ ...auraTheme, appTargets: [] }]}
+        loadBackup={loadBackup}
+      />,
+    );
+    await act(async () => {
+      fireEvent.change(screen.getByLabelText('Backup terminal theme'), { target: { value: 'aura' } });
+    });
+    const options = Array.from((screen.getByLabelText('App target') as HTMLSelectElement).options).map(o => o.value);
+    expect(options).toEqual(['', 'claude-code', 'omarchy', 'ai-tool']);
+  });
+});

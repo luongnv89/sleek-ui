@@ -52,7 +52,11 @@ Designs are grouped into **collections**: `web` (the default, above), `terminal`
 (Pi, Ghostty, iTerm2, Warp) and `coding` (OpenCode, VS Code). Terminal and coding
 themes carry syntax `tokenColors` and per-app apply instructions, and the detail
 page's Agent Prompt panel lets you pick an app target so the copied prompt tells
-your agent exactly how to install the theme there.
+your agent exactly how to install the theme there. Every terminal and coding theme
+(and every mapped website theme in Theme pairing) also offers three universal
+targets: **Claude Code** (writes a `~/.claude/themes/` custom theme and selects it
+with `/theme`), **Omarchy OS** (writes `~/.config/omarchy/themes/<slug>/colors.toml`
+and runs `omarchy-theme-set`), and a **General AI tool** placeholder.
 
 Glassmorphic is an original design inspired by glassmorphism / frosted-glass directions from designdotmd.directory (adapted to Sleek UI's token schema and quality bar).
 

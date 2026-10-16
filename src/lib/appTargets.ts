@@ -1,4 +1,4 @@
-import type { AppTarget } from '../types/design';
+import type { AnyAppTarget, AppTarget, UniversalAppTarget } from '../types/design';
 
 export const APP_TARGETS: readonly AppTarget[] = [
   'pi',
@@ -9,22 +9,39 @@ export const APP_TARGETS: readonly AppTarget[] = [
   'vscode',
 ];
 
-export const APP_TARGET_LABELS: Record<AppTarget, string> = {
+/**
+ * Targets offered for every theme, after the ones its design file declares.
+ * They live in code only: design JSON, the schema and the validator never list
+ * them, so `isAppTarget`/`normalizeAppTargets` stay limited to APP_TARGETS.
+ */
+export const UNIVERSAL_APP_TARGETS: readonly UniversalAppTarget[] = [
+  'claude-code',
+  'omarchy',
+  'ai-tool',
+];
+
+export const APP_TARGET_LABELS: Record<AnyAppTarget, string> = {
   pi: 'Pi',
   ghostty: 'Ghostty',
   iterm2: 'iTerm2',
   warp: 'Warp',
   opencode: 'OpenCode',
   vscode: 'VS Code',
+  'claude-code': 'Claude Code',
+  omarchy: 'Omarchy OS',
+  'ai-tool': 'General AI tool (placeholder)',
 };
 
-export const APP_TARGET_INSTRUCTIONS: Record<AppTarget, string> = {
+export const APP_TARGET_INSTRUCTIONS: Record<AnyAppTarget, string> = {
   pi: 'Apply to Pi: copy the token-colors below into your pi theme file (see pi-extensions/themes). Set background/foreground/cursor from tokens.colors.dark, then restart pi.',
   ghostty: 'Apply to Ghostty: map tokens.colors.dark to Ghostty config (background, foreground, palette 0-15 from token-colors). Paste into ~/.config/ghostty/config and reload.',
   iterm2: 'Apply to iTerm2: import token-colors as an .itermcolors profile. Map background/foreground/cursor plus ANSI 0-15, then select the profile in Preferences > Profiles.',
   warp: 'Apply to Warp: create a custom theme from token-colors (background, foreground, accent, ANSI colors) in Warp Settings > Appearance > Themes.',
   opencode: 'Apply to OpenCode: paste token-colors into your opencode theme config. Map primary/background/foreground to UI accents and syntax tokens to editor colors.',
   vscode: 'Apply to VS Code: map token-colors to workbench.colorCustomizations plus editor.tokenColorCustomizations (see vscode-themes seed). Paste into settings.json.',
+  'claude-code': 'Apply to Claude Code: write a custom theme file at ~/.claude/themes/<theme-slug>.json shaped {"name": "<theme name>", "base": "dark" or "light", "overrides": {...}}. Pick base and the tokens.colors palette from the theme\'s default mode. Convert every HSL value to #rrggbb hex (Claude Code also accepts #rgb, rgb(r,g,b), ansi256(n) and ansi:<name>). Map overrides: claude and claudeShimmer <- primary, text <- foreground, inverseText <- primary-foreground, inactive and subtle <- muted-foreground, suggestion and permission <- accent (or primary), promptBorder <- border, success/warning/error <- green/yellow/destructive hues (derive from token-colors when the palette lacks them), diffAdded/diffRemoved <- dark tints of the success/error hues, userMessageBackground <- muted (or card). Unknown token names are ignored, so keep to these. Then run /theme in Claude Code and select the new custom theme (saved as custom:<theme-slug>). Claude Code reloads ~/.claude/themes/ on change; restart once if that folder did not exist before. Verify the spinner, input border and messages show the new colors.',
+  omarchy: 'Apply to Omarchy OS: create ~/.config/omarchy/themes/<theme-slug>/colors.toml. Convert every HSL value to a quoted "#rrggbb" hex string. Set mode = "dark" or "light" from the theme\'s default mode and use that tokens.colors palette (for a light theme on older Omarchy releases, also add an empty light.mode file in the folder). Fill every key: accent <- primary, selection <- accent (or muted), muted <- muted-foreground; background <- background, dark_background and darker_background <- progressively darker background, lighter_background <- card (or muted); foreground <- foreground, dark_foreground <- muted-foreground, light_foreground and bright_foreground <- progressively lighter foreground; red, yellow, orange, green, cyan, blue, magenta, brown and bright_red, bright_yellow, bright_green, bright_cyan, bright_blue, bright_magenta <- the matching hues from token-colors (derive them from the palette when absent). Add at least one wallpaper image in a backgrounds/ folder next to colors.toml. Then run omarchy-theme-set <theme-slug> and confirm with omarchy-theme-current; the terminal, Waybar and Hyprland window borders should visibly switch to the new colors.',
+  'ai-tool': 'Apply with a general AI tool (PLACEHOLDER: tool-specific steps are not written yet). Ask your AI tool to find where the app you want to theme stores its colors, map background/foreground/primary/accent and the syntax token-colors above to that app\'s theme format, write the theme file or settings it reads, then switch to the new theme and reload the app.',
 };
 
 export function isAppTarget(value: unknown): value is AppTarget {
@@ -36,10 +53,18 @@ export function normalizeAppTargets(value: unknown): AppTarget[] {
   return value.filter(isAppTarget);
 }
 
-export function getAppTargetLabel(target: AppTarget): string {
+export function getAppTargetLabel(target: AnyAppTarget): string {
   return APP_TARGET_LABELS[target];
 }
 
-export function getAppTargetInstructions(target: AppTarget): string {
+export function getAppTargetInstructions(target: AnyAppTarget): string {
   return APP_TARGET_INSTRUCTIONS[target];
+}
+
+/**
+ * Targets a theme's apply prompt can offer: the ones its design file declares,
+ * then every universal target (#203, #202). Duplicates are dropped.
+ */
+export function getAvailableAppTargets(designTargets: readonly AppTarget[] = []): AnyAppTarget[] {
+  return [...new Set<AnyAppTarget>([...designTargets, ...UNIVERSAL_APP_TARGETS])];
 }

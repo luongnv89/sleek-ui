@@ -1,4 +1,4 @@
-import type { AppTarget, DesignData } from '../types/design';
+import type { AnyAppTarget, DesignData } from '../types/design';
 import { APP_TARGET_INSTRUCTIONS, APP_TARGET_LABELS } from './appTargets';
 
 /** Where a mapped value came from: the website design (primary) or the backup coding theme. */
@@ -321,7 +321,7 @@ export interface MappedThemePromptOptions {
   backupName: string;
   mapped: MappedTheme;
   choices?: Record<string, ConflictChoice>;
-  appTarget?: AppTarget;
+  appTarget?: AnyAppTarget;
 }
 
 /** Prompt that applies a website design as a complete coding/terminal theme with a backup fallback. */
