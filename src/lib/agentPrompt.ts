@@ -1,5 +1,5 @@
 import type { AnyAppTarget, DesignData, MotionDuration, MotionEasing, MotionTokens } from '../types/design';
-import { APP_TARGET_LABELS, APP_TARGET_INSTRUCTIONS } from './appTargets';
+import { APP_TARGET_LABELS, APP_TARGET_INSTRUCTIONS, isColorOnlyAppTarget } from './appTargets';
 import { COLLECTION_LABELS } from './collections';
 
 export interface AppThemePromptOptions {
@@ -83,6 +83,22 @@ export function buildAppThemePrompt(
   const colorBlock = formatColorBlock(designData);
   const tokenBlock = formatTokenColorBlock(designData);
   const librariesSection = formatLibrariesSection(designData);
+
+  if (isColorOnlyAppTarget(appTarget)) {
+    // The target's instructions carry their own contrast and scope rules.
+    return `Fetch the app theme at: ${designUrl}
+
+This is a ${label} application theme (collection: ${designData?.collection ?? 'terminal/coding'}). Apply its colors below; token-colors are only a source for status hues.
+
+COLORS (tokens.colors light + dark)
+${colorBlock}
+
+TOKEN-COLORS (syntax highlighting)
+${tokenBlock}
+
+APPLY INSTRUCTIONS (${label})
+${instructions}`;
+  }
 
   return `Fetch the app theme at: ${designUrl}
 

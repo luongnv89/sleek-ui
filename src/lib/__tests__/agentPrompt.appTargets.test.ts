@@ -103,7 +103,21 @@ describe('universal apply prompts (#203, #202)', () => {
     for (const target of getAvailableAppTargets(APP_TARGETS)) {
       const prompt = buildAppThemePrompt('https://example.com/x.json', target, makeDesignData());
       expect(prompt).toContain('APPLY INSTRUCTIONS (');
-      expect(prompt).toContain('Also follow agentInstructions.steps');
+      if (target !== 'claude-code') expect(prompt).toContain('Also follow agentInstructions.steps');
     }
+  });
+
+  it('keeps the Claude Code prompt to what a Claude Code theme can apply', () => {
+    const prompt = build('claude-code');
+    expect(prompt).not.toContain('STYLE');
+    expect(prompt).not.toContain('fontFamily');
+    expect(prompt).not.toContain('Also follow agentInstructions.steps');
+    expect(prompt).not.toContain('Test in both light and dark modes');
+    expect(prompt).toContain('write only that one file');
+    expect(prompt).toContain('hsl(150 80% 70%) on a dark base');
+    expect(prompt).toContain('adjust lightness only (keep the hue)');
+    expect(prompt).toContain('promptBorder reaches 3:1');
+    expect(prompt).toContain('ignore fonts, spacing, syntax highlighting, the other mode and agentInstructions.steps');
+    expect(prompt).toContain('reply with only the file path and the /theme step');
   });
 });

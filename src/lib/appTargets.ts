@@ -20,6 +20,14 @@ export const UNIVERSAL_APP_TARGETS: readonly UniversalAppTarget[] = [
   'ai-tool',
 ];
 
+/**
+ * Targets whose theme format holds UI colors only (no fonts, spacing or
+ * second mode). Their prompts drop the STYLE block and the generic
+ * "follow agentInstructions.steps / test both modes" tail, which the agent
+ * could only report back as skipped.
+ */
+export const COLOR_ONLY_APP_TARGETS: readonly AnyAppTarget[] = ['claude-code'];
+
 export const APP_TARGET_LABELS: Record<AnyAppTarget, string> = {
   pi: 'Pi',
   ghostty: 'Ghostty',
@@ -39,7 +47,7 @@ export const APP_TARGET_INSTRUCTIONS: Record<AnyAppTarget, string> = {
   warp: 'Apply to Warp: create a custom theme from token-colors (background, foreground, accent, ANSI colors) in Warp Settings > Appearance > Themes.',
   opencode: 'Apply to OpenCode: paste token-colors into your opencode theme config. Map primary/background/foreground to UI accents and syntax tokens to editor colors.',
   vscode: 'Apply to VS Code: map token-colors to workbench.colorCustomizations plus editor.tokenColorCustomizations (see vscode-themes seed). Paste into settings.json.',
-  'claude-code': 'Apply to Claude Code: write a custom theme file at ~/.claude/themes/<theme-slug>.json shaped {"name": "<theme name>", "base": "dark" or "light", "overrides": {...}}. Pick base and the tokens.colors palette from the theme\'s default mode. Convert every HSL value to #rrggbb hex (Claude Code also accepts #rgb, rgb(r,g,b), ansi256(n) and ansi:<name>). Map overrides: claude and claudeShimmer <- primary, text <- foreground, inverseText <- primary-foreground, inactive and subtle <- muted-foreground, suggestion and permission <- accent (or primary), promptBorder <- border, success/warning/error <- green/yellow/destructive hues (derive from token-colors when the palette lacks them), diffAdded/diffRemoved <- dark tints of the success/error hues, userMessageBackground <- muted (or card). Unknown token names are ignored, so keep to these. Then run /theme in Claude Code and select the new custom theme (saved as custom:<theme-slug>). Claude Code reloads ~/.claude/themes/ on change; restart once if that folder did not exist before. Verify the spinner, input border and messages show the new colors.',
+  'claude-code': 'Apply to Claude Code: write one custom theme file at ~/.claude/themes/<theme-slug>.json shaped {"name": "<theme name>", "base": "dark" or "light", "overrides": {...}}. Use the theme\'s default mode for base and for the tokens.colors palette, and write only that one file. Convert every HSL value to #rrggbb hex. Map overrides: claude and claudeShimmer <- primary, text <- foreground, inverseText <- primary-foreground, inactive and subtle <- muted-foreground, suggestion and permission <- accent (or primary), promptBorder <- border, warning <- the yellow (number) hue from token-colors, error <- destructive, success <- a green hue from token-colors or the palette, or hsl(150 80% 70%) on a dark base and hsl(150 70% 30%) on a light base when there is none, diffAdded/diffRemoved <- dark tints (light tints on a light base) of the success/error hues, userMessageBackground <- muted (or card). Use only these keys; unknown names are ignored. Before writing the file, check contrast against the palette background and adjust lightness only (keep the hue) until every text-colored key reaches 4.5:1, promptBorder reaches 3:1, inverseText reaches 4.5:1 on claude, and text reaches 4.5:1 on userMessageBackground, diffAdded and diffRemoved. A Claude Code theme sets UI colors only and renders on the terminal\'s own background: ignore fonts, spacing, syntax highlighting, the other mode and agentInstructions.steps. Then run /theme in Claude Code and select custom:<theme-slug> (Claude Code reloads ~/.claude/themes/ on change; restart once if that folder did not exist before). When done, reply with only the file path and the /theme step: no contrast figures, color tables, derived-color notes or lists of skipped settings.',
   omarchy: 'Apply to Omarchy OS: create ~/.config/omarchy/themes/<theme-slug>/colors.toml. Convert every HSL value to a quoted "#rrggbb" hex string. Set mode = "dark" or "light" from the theme\'s default mode and use that tokens.colors palette (for a light theme on older Omarchy releases, also add an empty light.mode file in the folder). Fill every key: accent <- primary, selection <- accent (or muted), muted <- muted-foreground; background <- background, dark_background and darker_background <- progressively darker background, lighter_background <- card (or muted); foreground <- foreground, dark_foreground <- muted-foreground, light_foreground and bright_foreground <- progressively lighter foreground; red, yellow, orange, green, cyan, blue, magenta, brown and bright_red, bright_yellow, bright_green, bright_cyan, bright_blue, bright_magenta <- the matching hues from token-colors (derive them from the palette when absent). Add at least one wallpaper image in a backgrounds/ folder next to colors.toml. Then run omarchy-theme-set <theme-slug> and confirm with omarchy-theme-current; the terminal, Waybar and Hyprland window borders should visibly switch to the new colors.',
   'ai-tool': 'Apply with a general AI tool (PLACEHOLDER: tool-specific steps are not written yet). Ask your AI tool to find where the app you want to theme stores its colors, map background/foreground/primary/accent and the syntax token-colors above to that app\'s theme format, write the theme file or settings it reads, then switch to the new theme and reload the app.',
 };
@@ -55,6 +63,10 @@ export function normalizeAppTargets(value: unknown): AppTarget[] {
 
 export function getAppTargetLabel(target: AnyAppTarget): string {
   return APP_TARGET_LABELS[target];
+}
+
+export function isColorOnlyAppTarget(target: AnyAppTarget): boolean {
+  return COLOR_ONLY_APP_TARGETS.includes(target);
 }
 
 export function getAppTargetInstructions(target: AnyAppTarget): string {
