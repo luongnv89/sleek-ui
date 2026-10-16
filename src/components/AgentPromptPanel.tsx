@@ -5,9 +5,9 @@ import { Badge } from '@/components/ui/Badge';
 import { PromptSurface, promptBodyProps } from '@/components/ui/PromptSurface';
 import { useClipboard } from '@/hooks/useClipboard';
 import { buildAgentPrompt } from '@/lib/agentPrompt';
-import { APP_TARGET_LABELS } from '@/lib/appTargets';
+import { APP_TARGET_LABELS, getAvailableAppTargets } from '@/lib/appTargets';
 import { getCollectionLabel } from '@/lib/collections';
-import type { AppTarget, Collection, DesignData } from '@/types/design';
+import type { AnyAppTarget, AppTarget, Collection, DesignData } from '@/types/design';
 
 export { buildAgentPrompt };
 
@@ -20,20 +20,24 @@ interface AgentPromptPanelProps {
 
 export function AgentPromptPanel({ designUrl, collection = 'web', appTargets = [], designData = null }: AgentPromptPanelProps) {
   const isAppTheme = collection === 'terminal' || collection === 'coding';
-  const [activeTarget, setActiveTarget] = useState<AppTarget | null>(
+  // Declared targets first, then the universal ones every theme offers (#203, #202).
+  const availableTargets = isAppTheme ? getAvailableAppTargets(appTargets) : [];
+  const [activeTarget, setActiveTarget] = useState<AnyAppTarget | null>(
     isAppTheme && appTargets.length > 0 ? appTargets[0] : null,
   );
   // Reset the selected target when navigating between designs: a stale target
   // from the previous design would otherwise fall back to the generic prompt.
+  // A design with no declared targets keeps the generic prompt until a
+  // universal target is picked.
   const appTargetsKey = appTargets.join(',');
   useEffect(() => {
     setActiveTarget(prev =>
-      isAppTheme && appTargets.length > 0
-        ? (prev && appTargets.includes(prev) ? prev : appTargets[0])
+      isAppTheme
+        ? (prev && getAvailableAppTargets(appTargets).includes(prev) ? prev : (appTargets[0] ?? null))
         : null,
     );
   }, [designUrl, collection, appTargetsKey]);
-  const selectedTarget = isAppTheme && activeTarget && appTargets.includes(activeTarget)
+  const selectedTarget = isAppTheme && activeTarget && availableTargets.includes(activeTarget)
     ? activeTarget
     : null;
   const agentPrompt = selectedTarget
@@ -51,10 +55,10 @@ export function AgentPromptPanel({ designUrl, collection = 'web', appTargets = [
       label="Agent prompt"
       description="Copy and paste this into Claude Code, Cursor, or any AI agent"
       meta={
-        isAppTheme && appTargets.length > 0 ? (
+        isAppTheme ? (
           <div className="flex flex-wrap items-center gap-2 pt-1" role="group" aria-label="Select app target">
             <Badge variant="secondary" className="text-micro">{getCollectionLabel(collection)}</Badge>
-            {appTargets.map(target => (
+            {availableTargets.map(target => (
               <button
                 key={target}
                 type="button"

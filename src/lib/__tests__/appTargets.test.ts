@@ -1,6 +1,8 @@
 import {
   APP_TARGETS,
+  UNIVERSAL_APP_TARGETS,
   getAppTargetInstructions,
+  getAvailableAppTargets,
   getAppTargetLabel,
   isAppTarget,
   normalizeAppTargets,
@@ -52,5 +54,42 @@ describe('appTargets (#181)', () => {
     );
     expect(prompt).toContain('"scope": "comment"');
     expect(prompt).toContain('"scope": "keyword"');
+  });
+});
+
+describe('universal app targets (#203, #202)', () => {
+  it('offers Claude Code, Omarchy OS and a general AI tool for every theme', () => {
+    expect([...UNIVERSAL_APP_TARGETS]).toEqual(['claude-code', 'omarchy', 'ai-tool']);
+    expect(getAvailableAppTargets()).toEqual(['claude-code', 'omarchy', 'ai-tool']);
+  });
+
+  it('lists declared targets first, then universal ones, without duplicates', () => {
+    expect(getAvailableAppTargets(['ghostty', 'pi', 'ghostty'])).toEqual([
+      'ghostty',
+      'pi',
+      'claude-code',
+      'omarchy',
+      'ai-tool',
+    ]);
+  });
+
+  it('keeps file-declared targets strict: universal ids are never read from design JSON', () => {
+    for (const target of UNIVERSAL_APP_TARGETS) {
+      expect(isAppTarget(target)).toBe(false);
+    }
+    expect(normalizeAppTargets(['pi', 'claude-code', 'omarchy'])).toEqual(['pi']);
+  });
+
+  it('labels each universal target and marks the general AI tool as a placeholder', () => {
+    expect(getAppTargetLabel('claude-code')).toBe('Claude Code');
+    expect(getAppTargetLabel('omarchy')).toBe('Omarchy OS');
+    expect(getAppTargetLabel('ai-tool')).toMatch(/placeholder/i);
+    expect(getAppTargetInstructions('ai-tool')).toMatch(/PLACEHOLDER/);
+  });
+
+  it('keeps universal instructions free of the dark-palette literal the mapped prompt rewrites', () => {
+    for (const target of UNIVERSAL_APP_TARGETS) {
+      expect(getAppTargetInstructions(target)).not.toContain('tokens.colors.dark');
+    }
   });
 });

@@ -1,10 +1,10 @@
-import type { AppTarget, DesignData, MotionDuration, MotionEasing, MotionTokens } from '../types/design';
+import type { AnyAppTarget, DesignData, MotionDuration, MotionEasing, MotionTokens } from '../types/design';
 import { APP_TARGET_LABELS, APP_TARGET_INSTRUCTIONS } from './appTargets';
 import { COLLECTION_LABELS } from './collections';
 
 export interface AppThemePromptOptions {
   collection?: 'web' | 'terminal' | 'coding';
-  appTarget?: AppTarget;
+  appTarget?: AnyAppTarget;
   designData?: DesignData | null;
 }
 
@@ -74,7 +74,7 @@ ${librariesSection}Also follow agentInstructions.steps from the JSON. ${CONFLICT
 
 export function buildAppThemePrompt(
   designUrl: string,
-  appTarget: AppTarget,
+  appTarget: AnyAppTarget,
   designData?: DesignData | null,
 ): string {
   const label = APP_TARGET_LABELS[appTarget];

@@ -4,14 +4,14 @@ import { Button } from '@/components/ui/Button';
 import { PromptSurface, promptBodyProps } from '@/components/ui/PromptSurface';
 import { ThemePairTriad } from '@/components/ui/ThemePairTriad';
 import { useClipboard } from '@/hooks/useClipboard';
-import { APP_TARGET_LABELS } from '@/lib/appTargets';
+import { APP_TARGET_LABELS, getAvailableAppTargets } from '@/lib/appTargets';
 import { getCollectionLabel } from '@/lib/collections';
 import {
   buildMappedThemePrompt,
   mapWebsiteToCodingTheme,
   type ConflictChoice,
 } from '@/lib/themeMapping';
-import type { AppTarget, DesignData, TransformedDesign } from '@/types/design';
+import type { AnyAppTarget, DesignData, TransformedDesign } from '@/types/design';
 
 const selectClass =
   'min-h-[44px] w-full rounded-md border border-input bg-background px-3 text-label focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring';
@@ -46,7 +46,7 @@ export function CodingThemeMappingPanel({
   const [backupFailed, setBackupFailed] = useState(false);
   const [choices, setChoices] = useState<Record<string, ConflictChoice>>({});
   const [validated, setValidated] = useState(false);
-  const [appTarget, setAppTarget] = useState<AppTarget | ''>('');
+  const [appTarget, setAppTarget] = useState<AnyAppTarget | ''>('');
   const { copied, error: copyError, copy, resetCopy } = useClipboard<'mappedPrompt' | null>('mappedPrompt', null);
 
   const backup = backupThemes.find(t => t.slug === backupSlug) ?? null;
@@ -105,7 +105,8 @@ export function CodingThemeMappingPanel({
     setValidated(false);
   };
 
-  const showAppTarget = backup !== null && (backup.appTargets?.length ?? 0) > 0;
+  // Universal targets (Claude Code, Omarchy OS, ...) make the select available for every backup (#203, #202).
+  const showAppTarget = backup !== null;
 
   return (
     <section
@@ -165,11 +166,11 @@ export function CodingThemeMappingPanel({
               <select
                 id={`${selectId}-target`}
                 value={appTarget}
-                onChange={e => setAppTarget(e.target.value as AppTarget | '')}
+                onChange={e => setAppTarget(e.target.value as AnyAppTarget | '')}
                 className={selectClass}
               >
                 <option value="">Any app</option>
-                {backup?.appTargets?.map(target => (
+                {getAvailableAppTargets(backup?.appTargets).map(target => (
                   <option key={target} value={target}>
                     {APP_TARGET_LABELS[target]}
                   </option>
